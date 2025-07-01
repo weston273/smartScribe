@@ -23,6 +23,8 @@ body, html {
   width: 100%;
   height: auto;
   object-fit: contain;
+  /* transform: translateX(-50%); */
+  animation : blink 4s infinite;
 }
 
 .loading-text {
