@@ -1,0 +1,51 @@
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  height: 5rem; /* 64px = 4rem */
+  background-color: #2E2E3D; /* Matches splash screen */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.navbar .left-side-navbar {
+  width : 50%;
+  height : 110%;
+  display: flex;
+  justify-content: first baseline;
+  gap : 10px;
+}
+
+.navbar .left-side-navbar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.navbar .left-side-navbar .logo-navbar img {
+  width : 130%
+
+}
+
+.toggle-sidebar{
+    transition: 0.3s ease;
+    box-shadow: 0.3s ease;
+}
+
+.toggle-sidebar:hover{
+  transform: scale(1.05);
+  box-shadow: #00C9A7;
+}
+
+.profile-icon-container {
+  transition: 0.3s ease;
+  box-shadow: 0.3s ease;
+}
+
+.profile-icon-container:hover {
+  transform: scale(1.05);
+  box-shadow: #00C9A7;
+}
+

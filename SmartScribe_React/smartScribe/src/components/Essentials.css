@@ -1,0 +1,51 @@
+.essentials-container {
+    background: #2E2E3D;
+    width : 50%;
+    margin : -4% 5% 50%;
+    margin-left: 25%;
+    height : auto;
+    display: flex;
+    justify-content: space-between;
+    border : 1px solid #2E2E3D;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 100px;
+    align-items: center;
+}
+
+.essentials {
+    width : 15%;
+    height : 100%;
+    background-color: #00C9A7;
+    border-radius: 50%;
+    text-align: center;
+}
+
+
+.essentials img {
+    width : 90%;
+
+}
+
+.essentials p {
+    font-size: small;
+    font-weight: bold ;
+    padding : 30% 20% 20% 20%;
+    
+}
+
+.notes-container {
+    background-color: #ffffff;
+    width : 10%;
+    height : 80%;
+    /* background-color: #00C9A7; */
+    border-radius: 50%;
+    text-align: center;
+}
+
+.notes-container h1 {
+    font-size: 30px;
+    padding : 0% 30% 0% 30%;
+}

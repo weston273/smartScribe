@@ -23,5 +23,20 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
     "vite": "^6.3.5"
-  }
+  },
+  
+  "features": [
+    "Record and transcribe voice notes in real-time",
+    "Annotate directly on your recordings",
+    "Generate quizzes from your notes using AI",
+    "Multi-language support for global users",
+    "AI-powered topic breakdown for clarity",
+    "Voice interaction — talk with your notes",
+    "Understand and summarize uploaded PDFs",
+    "Summarize website links and extract insights",
+    "Works seamlessly on desktop and mobile",
+    "Save and organize notes for each project"
+  ]
 }
+
+
