@@ -49,3 +49,66 @@
   box-shadow: #00C9A7;
 }
 
+/* ------------------ Media Queries ------------------ */
+
+/* Mobile phones (max-width: 599px) */
+@media (max-width: 599px) {
+  .navbar {
+    flex-direction: column;
+    height: auto;
+    padding: 0.5rem 1rem;
+  }
+
+  .navbar .left-side-navbar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 0.5rem;
+  }
+
+  .navbar .left-side-navbar img,
+  .navbar .left-side-navbar .logo-navbar img {
+    width: 60px;
+    height: auto;
+  }
+
+  .toggle-sidebar,
+  .profile-icon-container {
+    margin-top: 0.5rem;
+  }
+}
+
+/* Tablets (600px - 899px) */
+@media (min-width: 600px) and (max-width: 899px) {
+  .navbar {
+    padding: 0 1.5rem;
+  }
+
+  .navbar .left-side-navbar {
+    width: 60%;
+    gap: 10px;
+  }
+
+  .navbar .left-side-navbar img,
+  .navbar .left-side-navbar .logo-navbar img {
+    width: 80px;
+    height: auto;
+  }
+}
+
+/* Desktops (≥900px) */
+@media (min-width: 900px) {
+  .navbar {
+    padding: 0 2rem;
+  }
+
+  .navbar .left-side-navbar {
+    width: 50%;
+  }
+
+  .navbar .left-side-navbar .logo-navbar img {
+    width: 130%;
+  }
+}

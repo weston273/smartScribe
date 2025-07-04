@@ -49,3 +49,85 @@
     font-size: 30px;
     padding : 0% 30% 0% 30%;
 }
+
+/* ------------------ Media Queries ------------------ */
+
+/* Phones (max-width: 599px) */
+@media (max-width: 599px) {
+  .essentials-container {
+    width: 90%;
+    margin: 20px auto;
+    flex-direction: column;
+    border-radius: 30px;
+    gap: 15px;
+  }
+
+  .essentials,
+  .notes-container {
+    width: 60%;
+    height: auto;
+    border-radius: 30px;
+    padding: 10px 0;
+  }
+
+  .essentials p {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+
+  .notes-container h1 {
+    font-size: 24px;
+    padding: 10px;
+  }
+}
+
+/* Tablets (600px - 899px) */
+@media (min-width: 600px) and (max-width: 899px) {
+  .essentials-container {
+    width: 80%;
+    margin-left: 10%;
+    border-radius: 60px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .essentials,
+  .notes-container {
+    width: 30%;
+    height: auto;
+    border-radius: 40px;
+    padding: 10px 0;
+  }
+
+  .essentials p {
+    font-size: 0.95rem;
+    padding: 15px;
+  }
+
+  .notes-container h1 {
+    font-size: 28px;
+    padding: 15px;
+  }
+}
+
+/* Desktops (≥ 900px) */
+@media (min-width: 900px) {
+  .essentials-container {
+    width: 50%;
+    margin-left: 25%;
+    flex-direction: row;
+    border-radius: 100px;
+  }
+
+  .essentials {
+    width: 15%;
+    height: 100%;
+    border-radius: 50%;
+  }
+
+  .notes-container {
+    width: 10%;
+    height: 80%;
+    border-radius: 50%;
+  }
+}

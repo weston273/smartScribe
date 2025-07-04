@@ -56,3 +56,67 @@
   background-color: white;
   border-color: white;
 }
+
+/* Phones (max-width: 599px) */
+@media (max-width: 599px) {
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 20px 5%;
+    gap: 10px;
+  }
+
+  .footer-left-container {
+    flex-direction: column;
+    margin-right: 0;
+    gap: 10px;
+  }
+
+  .label-theme {
+    font-size: 13px;
+  }
+
+  .footer a {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+}
+
+/* Tablets (600px - 899px) */
+@media (min-width: 600px) and (max-width: 899px) {
+  .footer {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 10% 5% 0 5%;
+    gap: 20px;
+  }
+
+  .footer-left-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .footer a {
+    font-size: 15px;
+  }
+
+  .label-theme {
+    font-size: 14px;
+  }
+}
+
+/* Desktops (≥900px) */
+@media (min-width: 900px) {
+  .footer {
+    flex-direction: row;
+    justify-content: space-between;
+    margin: -50% 5% 0 5%;
+  }
+
+  .footer a {
+    font-size: 16px;
+  }
+}

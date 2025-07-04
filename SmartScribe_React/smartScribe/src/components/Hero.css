@@ -39,3 +39,69 @@ input {
   border: none;
   outline: none;
 }
+
+/* ------------------ Media Queries ------------------ */
+
+/* Phones (max-width: 599px) */
+@media (max-width: 599px) {
+  .hero-container {
+    margin: 20% 5% 5%;
+    height: auto;
+    padding: 20px 0;
+  }
+
+  .placeholder-text {
+    font-size: 4rem;
+    margin-bottom: 15px;
+  }
+
+  .output-text {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+
+  input {
+    font-size: 14px;
+    padding: 8px;
+    max-width: 90%;
+  }
+}
+
+/* Tablets (600px - 899px) */
+@media (min-width: 600px) and (max-width: 899px) {
+  .hero-container {
+    margin: 15% 5% 5%;
+    height: auto;
+  }
+
+  .placeholder-text {
+    font-size: 8rem;
+    margin-bottom: 18px;
+  }
+
+  .output-text {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  input {
+    font-size: 15px;
+    padding: 9px;
+    max-width: 80%;
+  }
+}
+
+/* Desktops (≥ 900px) */
+@media (min-width: 900px) {
+  .placeholder-text {
+    font-size: 14rem;
+  }
+
+  .output-text {
+    font-size: 24px;
+  }
+
+  input {
+    font-size: 16px;
+  }
+}

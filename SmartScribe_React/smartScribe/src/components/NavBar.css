@@ -7,3 +7,35 @@
   top: 0;
   left: 0;
 }
+
+/* Optional: adjust font size or spacing for internal navbar content */
+/* Example: .navbar a { padding, font-size, etc. } */
+
+/* ------------------ Media Queries ------------------ */
+
+/* Phones (max-width: 599px) */
+@media (max-width: 599px) {
+  .navbar {
+    height: 4rem; /* smaller height on small devices */
+    padding: 0 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+}
+
+/* Tablets (600px - 899px) */
+@media (min-width: 600px) and (max-width: 899px) {
+  .navbar {
+    height: 4.5rem;
+    padding: 0 1.5rem;
+  }
+}
+
+/* Desktops (≥ 900px) */
+@media (min-width: 900px) {
+  .navbar {
+    height: 5rem;
+    padding: 0 2rem;
+  }
+}
