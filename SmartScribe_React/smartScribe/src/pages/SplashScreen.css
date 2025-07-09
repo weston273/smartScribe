@@ -20,6 +20,7 @@ body, html {
 }
 
 .splash-logo {
+  margin-bottom: 12%;
   max-width: 40%;
   /* margin-top: 10%; */
   width: 100%;
@@ -42,7 +43,7 @@ body, html {
 
 .feature-text {
   position: absolute;
-  bottom: 2rem;
+  bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
   color: var(--primary-text-color);

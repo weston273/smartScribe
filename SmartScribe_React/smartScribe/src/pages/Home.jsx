@@ -6,7 +6,7 @@ import Footer from '../components/Footer.jsx';
 const Home = ({ theme, toggleTheme }) => {
   return (
     <>
-      < NavBar1 />
+      < NavBar1 theme ={theme} />
       <Hero />
       <Essentials />
       {/* Pass theme and toggleTheme to Footer */}
