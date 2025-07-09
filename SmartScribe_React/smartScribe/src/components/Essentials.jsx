@@ -8,7 +8,7 @@ import {Link} from 'react-router-dom'
 export default function Essentials() {
   return (
     
-        <section className='essentials-container' data-theme="light">
+        <section className='essentials-container' >
         
         <span className='essentials'>
           <Link to='/' aria-label="Artificial Intelligence features">

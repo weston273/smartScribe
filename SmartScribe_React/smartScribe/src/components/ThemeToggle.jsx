@@ -1,27 +1,23 @@
 // ThemeToggle.js
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-export default function ThemeToggle() {
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'dark';
-  });
+function ThemeToggle() {
+  const [lightMode, setLightMode] =useState(false);
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const handleToggle = (e) => {
-    setTheme(e.target.checked ? 'light' : 'dark');
-  };
+  const handleToggle = () => setLightMode((prev) => !prev);
 
   return (
-    <input
-      type="checkbox"
-      id="theme-radio-btn"
-      className="radiobtn"
-      onChange={handleToggle}
-      checked={theme === 'light'}
-    />
-  );
+    <div data-theme={lightMode ? 'light' : ''}>
+      <input 
+        type='checkbox' 
+        id='theme-radio-btn'
+        className='radiobtn'
+        onClick={handleToggle}
+        // {lightMode ? 'Switch to Dark Theme' : 'Switch to Light Theme'}
+        /> 
+        <label htmlFor='theme-radio-btn' className='label-theme' onClick={handleToggle}>Dark Theme</label>
+    </div>
+    
+  )
 }
+export default ThemeToggle

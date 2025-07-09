@@ -5,8 +5,8 @@ export default function Hero() {
     const [text, setText] = useState('');
 
   return (
-    <>
-      <div className='hero-container' data-theme='light'>
+    
+      <div className='hero-container' >
         <div className={text ? 'output-text' : 'placeholder-text'}>
         {text || 'SmartScribe'}
         </div>
@@ -18,6 +18,6 @@ export default function Hero() {
       />
      
         </div>
-    </>
+    
   )
 }
