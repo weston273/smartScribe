@@ -44,7 +44,7 @@ const SplashScreen = () => {
 
   return (
     <>
-      <NavBar />
+      {/* <NavBar /> */}
       <div className="splash-container" data-theme={"light"}>
       <img src={logo} alt="Smart Logo" className="splash-logo" />
       {/* <p className="loading-text">loading...</p> */}
