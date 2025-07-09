@@ -6,10 +6,10 @@ export default function Hero() {
 
   return (
     <>
-      <div className='hero-container'>
-          <div className={text ? 'output-text' : 'placeholder-text'}>
-          {text || 'SmartScribe'}
-      </div>
+      <div className='hero-container' data-theme='light'>
+        <div className={text ? 'output-text' : 'placeholder-text'}>
+        {text || 'SmartScribe'}
+        </div>
       <input
         type="text"
         value={text}

@@ -1,14 +1,14 @@
 import React from "react";
 import "./NavBar.css";
 
-const Navbar = () => {
+const NavBar = () => {
   return (
     <nav className="navbar">
       {/* nothing for now*/}
-      
+      <p style={{ color: 'white' }}></p>
 
     </nav>
   );
 };
 
-export default Navbar;
+export default NavBar;

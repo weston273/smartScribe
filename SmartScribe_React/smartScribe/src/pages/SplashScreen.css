@@ -2,8 +2,7 @@ body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: #0B0F1A;
-  font-family: 'Segoe UI', sans-serif;
+  
 }
 
 .splash-container {
@@ -16,6 +15,8 @@ body, html {
   position: relative;
   text-align: center;
   overflow: hidden;
+  font-family: 'Orbitron', sans-serif;
+  background-color: var(--background-color);
 }
 
 .splash-logo {
@@ -34,7 +35,7 @@ body, html {
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  color: #eee;
+  color: var(--primary-text-color);
   font-size: 1rem;
   animation: blink 1.5s infinite;
 }
@@ -44,7 +45,7 @@ body, html {
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  color: #eee;
+  color: var(--primary-text-color);
   font-size: 1rem;
   text-align: center;
   animation: fadeIn 2s ease-in;
