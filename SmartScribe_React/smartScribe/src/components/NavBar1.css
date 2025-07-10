@@ -22,11 +22,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  cursor: pointer;
 }
 
 .navbar .left-side-navbar .logo-navbar img {
-  width : 130%
-
+  width : 130%;
+  
 }
 
 .toggle-sidebar{
