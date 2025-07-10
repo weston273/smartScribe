@@ -3,6 +3,8 @@ import './SideBar.css'
 
 import Sidebar from '../../assets/sidebar.png';
 import LogoNav from '../../assets/logo-nav.png';
+import Home from  '../../assets/home_sideBar_icon.png'
+import HomeLight from '../../assets/home_sideBar_icon_light.png'
 
 export default function SideBar({ onClose }) {
     return (
@@ -22,8 +24,14 @@ export default function SideBar({ onClose }) {
             </div>
         <div className='sidebar-content'>
             <ul>
-                <li>
-                    Home
+                <li className='nav-item'>
+                    <div className='icon-text'>
+                        <img src={HomeLight} alt="DashBoard" className='icon'/>
+                        <span className='link-container'>
+                        <a href="#" alt=''>Dashboard</a>
+                    </span>
+                    </div>
+                    
                 </li>
             </ul>
         </div>

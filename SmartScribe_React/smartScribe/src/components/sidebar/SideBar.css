@@ -45,3 +45,13 @@
 .horizontal-line {
     margin-top: -16%;;
 }
+
+.icon-container{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.sidebar-content li .link-container{
+    text-decoration: none;
+}
