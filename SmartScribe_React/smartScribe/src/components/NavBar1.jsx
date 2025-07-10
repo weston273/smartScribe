@@ -6,7 +6,7 @@ import Profile from '../assets/profile.png';
 import Profile_light from '../assets/profile_light.png';
 import {Link} from 'react-router-dom';
 
-export default function NavBar1({theme}) {
+export default function NavBar1({theme, onSideBarToggle }) {
   const profileImg = theme === 'dark' ? Profile : Profile_light;
 
     return(
@@ -15,7 +15,7 @@ export default function NavBar1({theme}) {
         <nav className="navbar">
         {/* left side of the navbar */}
           <div className="left-side-navbar">
-            <span className="toggle-sidebar">
+            <span className="toggle-sidebar" onClick={onSideBarToggle}>
               <img src={Sidebar} alt="sidebar" />
             </span>
             <span className="logo-navbar">
