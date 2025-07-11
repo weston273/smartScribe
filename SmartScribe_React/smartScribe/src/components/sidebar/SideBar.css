@@ -52,6 +52,7 @@
     flex-direction: row;
 }
 
-.sidebar-content li .link-container{
-    text-decoration: none;
+.sidebar-content ul {
+  list-style: none;
+  
 }
