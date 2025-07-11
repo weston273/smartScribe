@@ -30,6 +30,7 @@ export default function SideBar({ onClose }) {
                         <span className='link-container'>
                         <a href="#" alt=''>Dashboard</a>
                     </span>
+                    
                     </div>
                     
                 </li>
