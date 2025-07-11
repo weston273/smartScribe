@@ -43,16 +43,70 @@
 }
 
 .horizontal-line {
-    margin-top: -16%;;
+    margin-top: -16%;
 }
 
-.icon-container{
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
+.horizontal-line hr {
+  height: 1.5px;
+  background-color: var(--primary-text-color);
 }
+
+.nav-item {
+  margin-top : 15%;
+  margin-left : -15%;
+}
+
+.nav-link {
+  text-decoration: none;
+ 
+}
+
+.nav-link p {
+  text-decoration: none;
+  color : var(--primary-text-color);
+  font-size: 1.2rem;
+  margin : 0;
+}
+
+.icon-box {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0; /* prevents shrinking */
+  overflow: hidden; /* crop any overflow */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px; /* optional: makes icons look neater */
+}
+
+
+
+
+.icon-text{
+  display: flex;
+  align-items : center;
+  gap : 0.8rem;
+}
+
+.icon-home {
+  margin-left: -0.5%;
+}
+
 
 .sidebar-content ul {
-  list-style: none;
-  
+  list-style: none; 
 }
+
+.icon-text img.icon {
+  height: 2.5rem;
+  width: 2.5rem;
+  object-fit: cover; /* this will ensure that the image will fit inside the block without being distorted */
+  display : block;
+}
+
+.icon-text img.notes-icon {
+  height: 2rem;
+  width : 2rem;
+} 
+
+

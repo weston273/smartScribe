@@ -27,7 +27,7 @@
 
 .navbar .left-side-navbar .logo-navbar img {
   width : 130%;
-  
+
 }
 
 .toggle-sidebar{
@@ -41,6 +41,7 @@
 }
 
 .profile-icon-container {
+  margin-right : 3.5%;
   transition: 0.3s ease;
   box-shadow: 0.3s ease;
 }
@@ -49,6 +50,8 @@
   transform: scale(1.05);
   box-shadow: #00C9A7;
 }
+
+
 
 /* ------------------ Media Queries ------------------ */
 

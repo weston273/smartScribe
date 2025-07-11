@@ -1,12 +1,22 @@
 import React from 'react';
 import './SideBar.css'
+import {Link} from 'react-router-dom'
 
 import Sidebar from '../../assets/sidebar.png';
 import LogoNav from '../../assets/logo-nav.png';
-import Home from  '../../assets/home_sideBar_icon.png'
+// nav items
+import HomeDark from  '../../assets/home_sideBar_icon.png'
 import HomeLight from '../../assets/home_sideBar_icon_light.png'
+import NotesLight from '../../assets/note_side_bar_icon_light.png'
+import NotesDark from '../../assets/note_side_bar_icon.png'
+import AILight from '../../assets/AI_icon_sideBar_light.png'
+import AIDark from '../../assets/AI_icon_sideBar.png'
 
-export default function SideBar({ onClose }) {
+export default function SideBar({ theme, onClose }) {
+    const HomeIcon = theme === 'dark' ? HomeDark : HomeLight;
+    const NotesIcon = theme === 'dark' ? NotesDark : NotesLight;
+    const AIIcon = theme === 'dark' ? AIDark : AILight;
+
     return (
         <div className='sidebar'>
             <div className='top-sidebar'>
@@ -24,14 +34,45 @@ export default function SideBar({ onClose }) {
             </div>
         <div className='sidebar-content'>
             <ul>
+                {/* Home Nav item */}
                 <li className='nav-item'>
-                    <div className='icon-text'>
-                        <img src={HomeLight} alt="DashBoard" className='icon'/>
+                    <Link to='/home' className='nav-link'>
+                        <div className='icon-text icon-home' >
+                        <div className='icon-box'>
+                            <img src={HomeIcon} alt="DashBoard" className='icon'/>
+                        </div>
                         <span className='link-container'>
-                        <a href="#" alt=''>Dashboard</a>
-                    </span>
-                    
+                            <p>Dashboard</p>
+                        </span>
                     </div>
+                    </Link>
+                    
+                </li>
+                {/* Notes Nav Item */}
+                <li className='nav-item'>
+                    <Link to='#' className='nav-link'>                   
+                        <div className='icon-text'>
+                            <div className='icon-box'>
+                                <img src={NotesIcon} alt="Notes" className='notes-icon'/>
+                            </div>
+                            <span className='link-container'>
+                                <p>Notes</p>
+                            </span>
+                        </div>
+                    </Link>
+                </li>
+                {/* Notes AI Chat */}
+                <li className='nav-item'>
+                    <Link to='#' className='nav-link'>  
+                        <div className='icon-text'>
+                        <div className='icon-box'>
+                            <img src={AIIcon} alt="AI Chat" className='icon'/>
+                        </div>
+                        <span className='link-container'>
+                            <p>AI Chat</p>
+                        </span>
+                     </div>
+                    </Link>
                     
                 </li>
             </ul>

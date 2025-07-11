@@ -22,7 +22,7 @@ const Home = ({ theme, toggleTheme }) => {
   return (
     <>
       < NavBar1 theme ={theme} onSideBarToggle={toggleSideBar} />
-      {showSideBar && <SideBar onClose={toggleSideBar} />}  {/* Conditionally render */}
+      {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}  {/* Conditionally render */}
       <Hero showInput={showInput} />
       <Essentials onNotesClick={toggleInput} />
       {/* Pass theme and toggleTheme to Footer */}

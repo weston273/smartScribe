@@ -15,7 +15,7 @@ export default function NavBar1({theme, onSideBarToggle }) {
         <nav className="navbar">
         {/* left side of the navbar */}
           <div className="left-side-navbar">
-            <span className="toggle-sidebar" onClick={onSideBarToggle}>
+            <span className="toggle-sidebar" onClick={onSideBarToggle} theme={theme}>
               <img src={Sidebar} alt="sidebar" />
             </span>
             <span className="logo-navbar">
