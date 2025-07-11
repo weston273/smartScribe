@@ -7,15 +7,40 @@ import {Link} from 'react-router-dom'
 
 export default function Essentials() {
   return (
-    <>
-        <div className='essentials-container'>
-        <span className='essentials'><img src={AI} alt="ai icon" /></span>
-        <span className="essentials"><img src={Pdf} alt="pdf icon" /></span>
-        <span className="notes-container"><h1>+</h1></span>
-        <span className='essentials'><p>record</p></span>
-        <span className="essentials"><img src={Cloud} alt="cloud icon" /></span>
-    </div>
-    </>
+    
+        <section className='essentials-container' >
+        
+        <span className='essentials'>
+          <Link to='/' aria-label="Artificial Intelligence features">
+            <img src={AI} alt="ai icon" />
+          </Link>
+          </span>
+
+        <span className="essentials" >
+          <Link to='/'aria-label="PDF features" >
+            <img src={Pdf} alt="pdf icon" />
+          </Link>
+        </span>
+
+        <span className="essentials-notes" >
+          <Link to='/' aria-label="Take Notes">
+            <h1>+</h1>
+          </Link>
+        </span>
+
+        <span className='essentials' >
+          <Link to='/' aria-label="Recording features">
+            <p>record</p>
+          </Link>
+        </span>
+
+        <span className="essentials" >
+          <Link to='/'>
+            <img src={Cloud} alt="cloud icon" aria-label="Cloud features"/>
+          </Link>
+        </span>
+    </section>
+  
     
   )
 }

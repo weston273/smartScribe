@@ -1,133 +1,124 @@
 .essentials-container {
-    background: #2E2E3D;
+    background: var(--essentials-background-color);
     width : 50%;
     margin : -4% 5% 50%;
     margin-left: 25%;
     height : auto;
     display: flex;
     justify-content: space-between;
-    border : 1px solid #2E2E3D;
+    border : 2px solid #2E2E3D;
     flex-direction: row;
     flex-wrap: wrap;
     padding: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 100px;
     align-items: center;
+    
 }
 
 .essentials {
-    width : 15%;
-    height : 100%;
-    background-color: #00C9A7;
-    border-radius: 50%;
-    text-align: center;
+  width: 15%;
+  aspect-ratio: 1 / 1; /* keeps height equal to width */
+  background-color: var(--essentials-items-background-color);
+  border-radius: 50%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s ease-in-out;
+  cursor: pointer;
+  overflow: hidden
+}
+
+.essentials:hover {
+    background-color: rgba(77, 74, 74, 0.185);
+}
+
+.essentials a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 
 .essentials img {
     width : 90%;
-
+    /* max-width: 70%; */
+    height: auto;
+    object-fit: contain;
 }
 
 .essentials p {
     font-size: small;
     font-weight: bold ;
     padding : 30% 20% 20% 20%;
-    
+    text-decoration: none;
+    /* ........................... */
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-decoration: none;
+    color: var(--essentials-items-color)
+
+
 }
 
-.notes-container {
-    background-color: #ffffff;
+.essentials-notes {
+    background-color: var(--essentials-main-item-background-color);
+    color : var(--essentials-main-item-text-color);
     width : 10%;
     height : 80%;
+    aspect-ratio: 1/1;
     /* background-color: #00C9A7; */
     border-radius: 50%;
     text-align: center;
+     /* display: flex; */
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
 }
 
-.notes-container h1 {
-    font-size: 30px;
-    padding : 0% 30% 0% 30%;
+.essentials-notes a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
-/* ------------------ Media Queries ------------------ */
 
-/* Phones (max-width: 599px) */
-@media (max-width: 599px) {
+.essentials-notes:hover{
+    background-color: #3e3e5aef;
+    color : #00c9a7;
+}
+
+.essentials-notes h1 {
+    /* padding : 0% 30% 0% 30%; */
+    font-size: 2.5rem;
+    margin: 0;
+    /* user-select: none;  */
+}
+
+
+/* media queries */
+
+@media (max-width: 600px) {
   .essentials-container {
     width: 90%;
-    margin: 20px auto;
-    flex-direction: column;
-    border-radius: 30px;
-    gap: 15px;
+    margin-left: 5%;
   }
-
-  .essentials,
-  .notes-container {
-    width: 60%;
-    height: auto;
-    border-radius: 30px;
-    padding: 10px 0;
-  }
-
-  .essentials p {
-    font-size: 0.9rem;
-    padding: 10px;
-  }
-
-  .notes-container h1 {
-    font-size: 24px;
-    padding: 10px;
-  }
-}
-
-/* Tablets (600px - 899px) */
-@media (min-width: 600px) and (max-width: 899px) {
-  .essentials-container {
-    width: 80%;
-    margin-left: 10%;
-    border-radius: 60px;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-
-  .essentials,
-  .notes-container {
-    width: 30%;
-    height: auto;
-    border-radius: 40px;
-    padding: 10px 0;
-  }
-
-  .essentials p {
-    font-size: 0.95rem;
-    padding: 15px;
-  }
-
-  .notes-container h1 {
-    font-size: 28px;
-    padding: 15px;
-  }
-}
-
-/* Desktops (≥ 900px) */
-@media (min-width: 900px) {
-  .essentials-container {
-    width: 50%;
-    margin-left: 25%;
-    flex-direction: row;
-    border-radius: 100px;
-  }
-
   .essentials {
-    width: 15%;
-    height: 100%;
-    border-radius: 50%;
+    width: 25%;
   }
-
-  .notes-container {
-    width: 10%;
-    height: 80%;
-    border-radius: 50%;
+  .essentials-notes {
+    width: 20%;
   }
 }

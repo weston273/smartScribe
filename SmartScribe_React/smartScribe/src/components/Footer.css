@@ -3,15 +3,15 @@
     flex-direction: row;
     margin : -50% 5% 0 5%;
     justify-content: space-between;
-    padding : 10px;
-    color : white;
+    padding : 10px ;
+    color : var(--primary-text-color);
     font-family:'Orbitron', sans-serif;
-
+    
 }
 
 .footer a {
     text-decoration: none;
-    color: white;
+    color: var(--primary-text-color);;
     /* font-size: 18px; */
     /* font-weight: bold; */
     margin-right: 10px;
@@ -29,13 +29,13 @@
   display: none;
 }
 
-/* Style the label to act like a checkbox */
+
 .label-theme {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 14px;
-  color: white;
+  color: var(--primary-text-color);
   cursor: pointer;
   font-family: 'Orbitron', sans-serif;
 }
@@ -46,7 +46,7 @@
   height: 12px;
   display: inline-block;
   background-color: black;
-  border: 2px solid white;
+  border: 2px solid black;
   border-radius: 2px;
   box-sizing: border-box;
 }
@@ -54,7 +54,28 @@
 /* When the radio is checked, show a white dot */
 .radiobtn:checked + .label-theme::before {
   background-color: white;
-  border-color: white;
+  border-color: black;
+}
+
+/* media query */
+
+@media (max-width: 600px) {
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .footer-left-container {
+    flex-direction: column;
+    align-items: center;
+    margin-right: 0;
+  }
+
+  .footer a {
+    margin: 5px 0;
+  }
 }
 
 /* Phones (max-width: 599px) */

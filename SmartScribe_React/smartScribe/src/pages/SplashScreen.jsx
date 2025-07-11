@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
+// import useLocalStorage from "use-local-storage";
 import { useNavigate } from "react-router-dom";
 import "./SplashScreen.css";
 import logo from "../assets/logo-nav.png";
-import Navbar  from "../components/NavBar";
+import NavBar  from "../components/NavBar";
+
 
 const SplashScreen = () => {
   
+  // const [isDark, setIsDark] = useLocalStorage("isDark", preference)
+
   const [feature, setFeature] = useState("Loading SmartScribe features...");
   const navigate = useNavigate();
 
@@ -40,8 +44,8 @@ const SplashScreen = () => {
 
   return (
     <>
-      <Navbar />
-      <div className="splash-container">
+      {/* <NavBar /> */}
+      <div className="splash-container" >
       <img src={logo} alt="Smart Logo" className="splash-logo" />
       {/* <p className="loading-text">loading...</p> */}
       {feature && <p className="feature-text">{feature}</p>}
