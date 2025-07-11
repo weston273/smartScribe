@@ -8,8 +8,12 @@ import SideBar from '../components/sidebar/SideBar.jsx' // Have to create don't 
 
 const Home = ({ theme, toggleTheme }) => {
   const [showSideBar, setShowSideBar] = useState(false);
+  // Account dropdown function
+  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+  
   // Toggle Function
   const toggleSideBar =() => setShowSideBar(prev => !prev);
+  const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
 
   // Visibility state for the input box
   const [showInput, setShowInput] = useState(false);
