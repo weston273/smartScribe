@@ -11,11 +11,15 @@ import NotesLight from '../../assets/note_side_bar_icon_light.png'
 import NotesDark from '../../assets/note_side_bar_icon.png'
 import AILight from '../../assets/AI_icon_sideBar_light.png'
 import AIDark from '../../assets/AI_icon_sideBar.png'
+// account image
+import profileLight from '../../assets/profile_dark.png'
+import profileDark from '../../assets/profile.png'
 
 export default function SideBar({ theme, onClose }) {
     const HomeIcon = theme === 'dark' ? HomeDark : HomeLight;
     const NotesIcon = theme === 'dark' ? NotesDark : NotesLight;
     const AIIcon = theme === 'dark' ? AIDark : AILight;
+    const Profile = theme === 'dark' ? profileDark : profileLight
 
     return (
         <div className='sidebar'>
@@ -77,6 +81,23 @@ export default function SideBar({ theme, onClose }) {
                 </li>
             </ul>
         </div>
+            <div className='horizontal-line btm-line'>
+                <hr />
+            </div>
+
+            <div className='account-container'>
+                <Link className='account Link' to='#'>
+                    <div className='image-container'>
+                        <img src={Profile} alt="account image" />
+                    </div>
+                    <div className='account-link-container'>
+                            <p>
+                               Account 
+                            </p>
+                    </div>
+                    
+                </Link>
+            </div>
         </div>
     )
 }

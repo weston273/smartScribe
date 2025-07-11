@@ -109,4 +109,37 @@
   width : 2rem;
 } 
 
+.btm-line{
+  margin-top: 15%;
+}
+
+.account-container {
+  display: flex;
+  flex-direction: row;
+  margin-left : 10%;
+  margin-top: 70%;
+  align-items: center;
+  gap: 10px;
+  /* background-color: red; */
+}
+
+.account-container img {
+  height: 2.5rem;
+  width: 2.5rem;
+  /* background-color: blue; */
+}
+
+.account {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--primary-text-color);
+}
+
+.account-link-container {
+  margin-top : -10%;
+}
+
 

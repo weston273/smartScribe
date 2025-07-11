@@ -3,7 +3,7 @@
   display: flex;
   justify-content: space-between;
   height: 5rem; /* 64px = 4rem */
-  background-color: #0B0F1A; /* Matches splash screen */
+  background-color: #2E2E3D; 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   position: fixed;
   top: 0;
