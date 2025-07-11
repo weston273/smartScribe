@@ -5,7 +5,7 @@ import Pdf from './../assets/pdf.webp'
 import Cloud from '../assets/cloud.webp'
 import {Link} from 'react-router-dom'
 
-export default function Essentials() {
+export default function Essentials({ onNotesClick}) {
   return (
     
         <section className='essentials-container' >
@@ -22,8 +22,8 @@ export default function Essentials() {
           </Link>
         </span>
 
-        <span className="essentials-notes" >
-          <Link to='/' aria-label="Take Notes">
+        <span className="essentials-notes" onClick={onNotesClick} >
+          <Link to='' aria-label="Take Notes">
             <h1>+</h1>
           </Link>
         </span>

@@ -45,7 +45,7 @@
   width: 12px;
   height: 12px;
   display: inline-block;
-  background-color: black;
+  background-color: white;
   border: 2px solid black;
   border-radius: 2px;
   box-sizing: border-box;
@@ -53,8 +53,8 @@
 
 /* When the radio is checked, show a white dot */
 .radiobtn:checked + .label-theme::before {
-  background-color: white;
-  border-color: black;
+  background-color: black;
+  border-color: white;
 }
 
 /* media query */

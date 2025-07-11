@@ -1,0 +1,57 @@
+/* Sidebar.css */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 15.625rem;
+  height: 100vh;
+  background: var(--background-color);
+  color: var( --primary-text-color);
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  /* Add more styling as needed */
+}
+
+.top-sidebar{
+    display : flex;
+    justify-content: space-between;
+}
+.close-btn {
+  margin: 10px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.logo-container{
+    margin: 10px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  font-size: 1.5rem;
+  /* cursor: pointer; */
+}
+
+.logo-container img {
+    width : 100%;
+    /* height : 80%;
+     */
+     height: auto;
+     margin-top : -12%;
+}
+
+.horizontal-line {
+    margin-top: -16%;;
+}
+
+.icon-container{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.sidebar-content li .link-container{
+    text-decoration: none;
+}
