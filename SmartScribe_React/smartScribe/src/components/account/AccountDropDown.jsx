@@ -1,40 +1,64 @@
-import React from "react";
-import './AccountDropDown.css'
-import {Link} from 'react-router-dom';
+import React, { useRef, useEffect, useState } from "react";
+import './AccountDropDown.css';
+import { Link } from 'react-router-dom';
 
-export default function AccountDropDown() {
-    return (
-        <div className="account-dropdown">
-            {/* Account Profile */}
+export default function AccountDropDown({ theme, onClose }) {
+  const dropdownRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 700); // 700ms loading
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Close dropdown if click is outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        onClose();
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
+
+  return (
+    <div className="account-dropdown-overlay">
+      <div className="account-dropdown" ref={dropdownRef}>
+        {isLoading ? (
+          <div className='loading-bar-container'>
+            <div className="loading-bar" />
+          </div>
+        ) : (
+          <>
             <div className="account-details">
-                <p className="account-name">
-                    Name of Account
-                </p>
-                <div className="account-icon">
-                    <img src="" alt="" />
-                </div>
-                <div className="account-user-name-container">
-                    <p className="account-user-name"> 
-                        HI! Name of User
-                    </p>
-                </div>
+              <p className="account-name">USER</p>
+              <div className="account-avatar">
+                {/* Use your profile icon here */}
+                <img src="" alt="User Avatar" />
+              </div>
+              <p className="account-login-text">PLEASE LOG IN</p>
+              <button className="login-btn">LOG IN</button>
             </div>
-            {/* account buttons */}
-            <div className="account-buttons">
-                <button>
-                    <span className="account-button-image">
-                        +
-                    </span>
-                    Add Account
-                </button>
-
-                 <button>
-                    <span className="account-button-image">
-                        <img src="" alt="sign-out" />
-                    </span>
-                    Sign Out
-                </button>
+            <div className="account-actions">
+              <button className="add-account-btn">
+                <span className="account-button-image">+</span>
+                Add Account
+              </button>
+              <button className="sign-up-btn">
+                SIGN UP
+              </button>
             </div>
-        </div>
-    )
+            <div className="account-links-container">
+              <Link to="#" className="privacy-policy">Privacy policy</Link>
+              <span className="dot">·</span>
+              <Link to="#" className="sign-up-link">Sign Up</Link>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
 }

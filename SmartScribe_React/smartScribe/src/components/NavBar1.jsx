@@ -6,7 +6,7 @@ import Profile from '../assets/profile.png';
 import Profile_light from '../assets/profile_light.png';
 import {Link} from 'react-router-dom';
 
-export default function NavBar1({theme, onSideBarToggle }) {
+export default function NavBar1({theme, onSideBarToggle, onProfileClick }) {
   const profileImg = theme === 'dark' ? Profile : Profile_light;
 
     return(
@@ -23,7 +23,7 @@ export default function NavBar1({theme, onSideBarToggle }) {
             </span>
           </div>
         {/* right side of the navbar */}
-          <div className='profile-icon-container'>
+          <div className='profile-icon-container' onClick={onProfileClick}>
             <Link to='#' className='profile-icon'>
               <img src={profileImg} alt="profile-icon" />
             </Link>
