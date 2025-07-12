@@ -1,58 +1,150 @@
 .account-dropdown {
   position: fixed;
-  top: 70px; /* adjust based on navbar height */
-  right: 40px; /* adjust as needed */
-  z-index: 1000;
-  background: white;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.15);
-  border-radius: 8px;
-  min-width: 280px;
-  /* ...other styles... */
-}
-
-.loading-bar-container {
-  width: 100%;
-  height: 4px;
-  background: #eee;
-  overflow: hidden;
-  border-radius: 2px 2px 0 0;
-}
-.loading-bar {
-  height: 100%;
-  width: 0;
-  background: #1abc9c; /* or your theme color */
-  animation: loadingBarAnim 0.7s linear forwards;
-}
-.account-dropdown-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 2000;
-  background: transparent; /* or rgba(0,0,0,0.01) if you want slight click-capture */
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-  pointer-events: all;
-}
-
-.account-dropdown {
-  margin-top: 20px; /* adjust to align with navbar */
-  margin-right: 40px; /* adjust to align with profile icon */
-  background: #2c242c;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.16);
-  min-width: 340px;
-  min-height: 410px;
+  top: 70px;
+  right: 10px;
+  margin-top: 20px;
+  margin-right: 20px;
   padding: 32px 24px 16px 24px;
-  position: relative;
-  z-index: 2100;
-  color: #fff;
+  min-width: 450px;
+  max-width: 90vw;
+  min-height: 340px;
+  background: var(--account-dropdown-background-color);
+  color: var(--account-dropdown-primary-text-color, #222);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index: 2100;
+  transition: all 0.3s ease-in-out;
 }
+
+.account-details {
+  text-align: center;
+  margin-bottom: 15px;
+  margin-top: -34px;
+}
+
+.account-name {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-left: -10%;
+}
+
+.account-avatar {
+  height: 130px;
+  width : 130px;
+  padding-left: 10%;
+   margin-bottom: 1px;
+}
+
+.account-avatar img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #c9c9c9c5;
+  object-fit: cover;
+
+}
+
+
+.account-login-text {
+  font-size: 1.35rem;
+  font-weight: bold;
+  padding: 0 15px 0 10px;
+}
+
+.account-login-text p {
+  color: inherit;
+}
+
+
+.login-btn {
+  width: 180%;
+  padding: 12px 24px 12px 24px;
+  margin-left: -45%;
+  border-radius: 8px;
+  border: 2px solid var(--account-dropdown-btn-color);
+  background: var(--account-dropdown-background-color);
+  color: #fff;
+  font-weight:700;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.login-btn:hover {
+    background : var(--account-dropdown-btn-color)
+}
+.login-btn:focus {
+  background: #000;
+  outline: none;
+}
+
+.account-actions {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.add-account-btn,
+.sign-up-btn {
+  flex: 1;
+  padding: 30px 20px;
+  border-radius: 8px;
+  border: none;
+  background: var(--account-dropdown-btn-color);
+  color: #222;
+  font-size: 1.6rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.add-account-btn{
+    border-top-right-radius: 0px;
+    border-bottom-right-radius:0px ;
+}
+.sign-up-btn {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius:0px ;
+}
+
+.add-account-btn:hover,
+.sign-up-btn:hover {
+  background: #e0e0e0;
+  transform: scale(1.02);
+}
+.add-account-btn:focus,
+.sign-up-btn:focus {
+  outline: 2px solid #999;
+}
+
+.add-account-btn-image {
+    background-color: #00000032;
+    border-radius: 50%;
+}
+
+.account-links-container {
+  width: 100%;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #777;
+  margin-top: 0px;
+  margin-left: -9%;
+}
+
+.account-links-container a{
+    text-decoration: none;
+    color: #ffffff;
+    /* font-weight: bold; */
+    transition: all 0.3s ease
+}
+
+.dot {
+  margin: 0 5px;
+   font-size: 1rem;
+}
+
 
 .loading-bar-container {
   width: 100%;
@@ -66,7 +158,7 @@
 .loading-bar {
   height: 100%;
   width: 0;
-  background: #1abc9c;
+  background: var(--hero-color, #1abc9c);
   animation: loadingBarAnim 0.7s linear forwards;
 }
 
@@ -75,57 +167,40 @@
   to { width: 100%; }
 }
 
-/* Style the rest according to your design */
-.account-details {
-  text-align: center;
-  margin-bottom: 24px;
-}
-.account-avatar img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: #fff;
-  margin-bottom: 16px;
-}
-.login-btn {
-  width: 100%;
-  padding: 12px;
-  margin: 16px 0;
-  border-radius: 8px;
-  border: none;
-  background: #222;
-  color: #fff;
-  font-weight: bold;
-  font-size: 1.1rem;
-  cursor: pointer;
-}
-.account-actions {
+.account-dropdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2000;
+  background: transparent;
   display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-.add-account-btn, .sign-up-btn {
-  flex: 1;
-  padding: 10px 0;
-  border-radius: 8px;
-  border: none;
-  background: #f5f5f5;
-  color: #222;
-  font-weight: bold;
-  cursor: pointer;
-}
-.account-links-container {
-  width: 100%;
-  text-align: center;
-  font-size: 0.95rem;
-  color: #bbb;
-  margin-top: 12px;
-}
-.dot {
-  margin: 0 8px;
+  justify-content: flex-end;
+  align-items: flex-start;
+  pointer-events: all;
 }
 
-@keyframes loadingBarAnim {
-  from { width: 0; }
-  to { width: 100%; }
+@media (max-width: 768px) {
+  .account-dropdown {
+    right: 5%;
+    left: 5%;
+    width: auto;
+    max-width: 100%;
+    padding: 24px 16px;
+    min-height: unset;
+  }
+
+  .account-avatar img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .account-name {
+    font-size: 1.1rem;
+  }
+
+  .account-login-text {
+    font-size: 1.15rem;
+  }
 }

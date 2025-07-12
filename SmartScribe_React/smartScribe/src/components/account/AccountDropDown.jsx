@@ -2,7 +2,13 @@ import React, { useRef, useEffect, useState } from "react";
 import './AccountDropDown.css';
 import { Link } from 'react-router-dom';
 
+import AccountImage from '../../assets/profile_dark.png'
+import DotLight from '../../assets/dot.png'
+import DotDark from '../../assets/dot_dark.png'
+
 export default function AccountDropDown({ theme, onClose }) {
+    const Dot = theme === 'light' ? DotLight : DotDark;
+
   const dropdownRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -28,7 +34,7 @@ export default function AccountDropDown({ theme, onClose }) {
     <div className="account-dropdown-overlay">
       <div className="account-dropdown" ref={dropdownRef}>
         {isLoading ? (
-          <div className='loading-bar-container'>
+          <div className='loading-bar-container' theme={theme}>
             <div className="loading-bar" />
           </div>
         ) : (
@@ -36,11 +42,12 @@ export default function AccountDropDown({ theme, onClose }) {
             <div className="account-details">
               <p className="account-name">USER</p>
               <div className="account-avatar">
-                {/* Use your profile icon here */}
-                <img src="" alt="User Avatar" />
+                <img src={AccountImage} alt="User Avatar" />
               </div>
+
               <p className="account-login-text">PLEASE LOG IN</p>
               <button className="login-btn">LOG IN</button>
+
             </div>
             <div className="account-actions">
               <button className="add-account-btn">
@@ -53,7 +60,9 @@ export default function AccountDropDown({ theme, onClose }) {
             </div>
             <div className="account-links-container">
               <Link to="#" className="privacy-policy">Privacy policy</Link>
-              <span className="dot">·</span>
+              <span className="dot">
+                <img src={Dot} alt="Dot" />
+              </span>
               <Link to="#" className="sign-up-link">Sign Up</Link>
             </div>
           </>

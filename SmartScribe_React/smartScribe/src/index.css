@@ -21,6 +21,12 @@
   --secondary-text-color: #0B0F1A;
   --input-outline-color : #00C9A7;
   --input-box-shadow : 0 0 5px rgba(0, 201, 167, 0.6);
+  --account-dropdown-background-color : #000;
+  --account-dropdown-primary-text-color : #fff;
+  --account-dropdown-secondary-text-color : #fff;
+  --account-dropdown-btn-color : #00C9A7;
+  
+
 }
 
 [data-theme="light"] {
@@ -36,6 +42,11 @@
   --secondary-text-color: #eee;
   --input-outline-color : #000000;
   --input-box-shadow : 0 0 5px rgba(16, 17, 17, 0.6);
+  --account-dropdown-background-color : #2E2E3D;
+  --account-dropdown-primary-text-color : #fff;
+  --account-dropdown-secondary-text-color : #000;
+  --account-dropdown-btn-color : #D9D9D9;
+  
 }
 
 [data-theme="dark"] {
@@ -51,6 +62,10 @@
   --secondary-text-color: #0B0F1A;
   --input-outline-color: #00C9A7;
   --input-box-shadow: 0 0 5px rgba(0, 201, 167, 0.6);
+  --account-dropdown-background-color : #000;
+  --account-dropdown-primary-text-color : #fff;
+  --account-dropdown-secondary-text-color : #fff;
+  --account-dropdown-btn-color : #00C9A7;
 }
 
 /* Example usage: apply background and text colors */
