@@ -61,7 +61,7 @@
 
 .login-btn {
   width: 180%;
-  padding: 12px 24px 12px 24px;
+  padding: 12px 15px 12px 15px;
   margin-left: -45%;
   border-radius: 8px;
   border: 2px solid var(--account-dropdown-btn-color);
@@ -90,12 +90,12 @@
 .add-account-btn,
 .sign-up-btn {
   flex: 1;
-  padding: 30px 20px;
+  padding: 10px 20px;
   border-radius: 8px;
   border: none;
   background: var(--account-dropdown-btn-color);
-  color: #222;
-  font-size: 1.6rem;
+  color: var(--account-dropdown-secondary-text-color);
+  font-size: 1.5rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -112,6 +112,7 @@
 .add-account-btn:hover,
 .sign-up-btn:hover {
   background: #e0e0e0;
+  color: #fff;
   transform: scale(1.02);
 }
 .add-account-btn:focus,
@@ -138,6 +139,11 @@
     color: #ffffff;
     /* font-weight: bold; */
     transition: all 0.3s ease
+}
+
+.account-links-container a:hover{
+    transform: scale(1.02);
+    color : var(--hero-color);
 }
 
 .dot {
