@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import AccountImage from '../../assets/profile_dark.png'
 import DotLight from '../../assets/dot.png'
 import DotDark from '../../assets/dot_dark.png'
+import SignUp from '../../assets/sign_up.png'
 
 export default function AccountDropDown({ theme, onClose }) {
     const Dot = theme === 'light' ? DotLight : DotDark;
@@ -55,7 +56,10 @@ export default function AccountDropDown({ theme, onClose }) {
                 Add Account
               </button>
               <button className="sign-up-btn">
-                SIGN UP
+                <span className="sign-up-button-image">
+                    <img src={SignUp} alt="" />
+                </span>
+                Sign Up
               </button>
             </div>
             <div className="account-links-container">

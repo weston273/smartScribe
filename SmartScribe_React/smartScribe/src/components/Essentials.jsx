@@ -1,6 +1,7 @@
 import React from 'react'
 import './Essentials.css';
 import AI from './../assets/AI.webp'
+// import Notes from './../assets/note_sidebar_icon.png'
 import Pdf from './../assets/pdf.webp'
 import Cloud from '../assets/cloud.webp'
 import {Link} from 'react-router-dom'
@@ -12,7 +13,7 @@ export default function Essentials({ onNotesClick}) {
         
         <span className='essentials'>
           <Link to='/' aria-label="Artificial Intelligence features">
-            <img src={AI} alt="ai icon" />
+            <img src={Notes} alt="notes icon" />
           </Link>
           </span>
 
