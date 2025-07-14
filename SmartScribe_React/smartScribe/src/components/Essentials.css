@@ -52,6 +52,12 @@
     object-fit: contain;
 }
 
+.notes img { 
+  width : 90%;
+  height : auto;
+  margin-left: 10%;
+}
+
 .essentials p {
     font-size: small;
     font-weight: bold ;
