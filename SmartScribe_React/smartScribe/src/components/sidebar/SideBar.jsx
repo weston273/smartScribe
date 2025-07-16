@@ -69,7 +69,7 @@ export default function SideBar({ theme, onClose }) {
                 </li>
                 {/* Quizz section */}
                 <li className='nav-item'>
-                    <Link to='#' className='nav-link'>  
+                    <Link to='/quiz' className='nav-link'>  
                         <div className='icon-text'>
                         <div className='icon-box'>
                             <img src={Quizz} alt="AI Chat" className='icon'/>
@@ -88,7 +88,7 @@ export default function SideBar({ theme, onClose }) {
             </div>
 
             <div className='account-container'>
-                <Link className='account Link' to='#'>
+                <Link className='account Link' to='/login'>
                     <div className='image-container'>
                         <img src={Profile} alt="account image" />
                     </div>
