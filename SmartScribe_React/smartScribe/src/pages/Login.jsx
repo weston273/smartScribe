@@ -4,9 +4,13 @@ import { Link } from 'react-router-dom';
 import Input from '../components/input/Input';
 import Password from '../components/input/Password';
 import Buttons from '../components/buttons/Buttons';
-import LogoPlaceholder from '../assets/smart_logo.png';
+import Logo from '../assets/smart_logo.png';
+import GoogleIcon from '../assets/AI_icon_sideBar_light.png'
+import GoogleIconDark from '../assets/google_icon_dark.png'
+
 
 export default function Login({ theme }) {
+    const Google = theme = 'light' 
   return (
     <div className="login-container">
       <div className="login-left">
@@ -24,7 +28,7 @@ export default function Login({ theme }) {
           <Buttons btn={{ name: 'Login', path: '/' }} />
           <div className="divider">or continue with</div>
           <div className="socials">
-            <img src="/google.png" alt="Google" />
+            <img src={Google} alt="Google" />
             <img src="/apple.png" alt="Apple" />
             <img src="/facebook.png" alt="Facebook" />
           </div>
@@ -32,7 +36,7 @@ export default function Login({ theme }) {
         </div>
       </div>
       <div className="login-right">
-        <img src={LogoPlaceholder} alt="Smart Logo" className="smart-logo" />
+        <img src={Logo} alt="Smart Logo" className="smart-logo" />
         <div className="login-tagline">
           <p>Smarter notes start here. <br />Note it. Know it. Nail it</p>
           <div className="dots">
