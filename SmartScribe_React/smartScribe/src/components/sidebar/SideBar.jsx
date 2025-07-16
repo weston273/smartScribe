@@ -11,6 +11,8 @@ import NotesLight from '../../assets/note_side_bar_icon_light.png'
 import NotesDark from '../../assets/note_side_bar_icon.png'
 import AILight from '../../assets/AI_icon_sideBar_light.png'
 import AIDark from '../../assets/AI_icon_sideBar.png'
+import QuizzLight from '../../assets/quizz_icon_side_bar_light.png'
+import QuizzDark from '../../assets/quizz_icon_side_bar.png'
 // account image
 import profileLight from '../../assets/profile_dark.png'
 import profileDark from '../../assets/profile.png'
@@ -18,7 +20,7 @@ import profileDark from '../../assets/profile.png'
 export default function SideBar({ theme, onClose }) {
     const HomeIcon = theme === 'dark' ? HomeDark : HomeLight;
     const NotesIcon = theme === 'dark' ? NotesDark : NotesLight;
-    const AIIcon = theme === 'dark' ? AIDark : AILight;
+    const Quizz = theme === 'light' ? QuizzLight : QuizzDark;
     const Profile = theme === 'dark' ? profileDark : profileLight
 
     return (
@@ -65,17 +67,17 @@ export default function SideBar({ theme, onClose }) {
                         </div>
                     </Link>
                 </li>
-                {/* Notes AI Chat */}
+                {/* Quizz section */}
                 <li className='nav-item'>
                     <Link to='#' className='nav-link'>  
                         <div className='icon-text'>
                         <div className='icon-box'>
-                            <img src={AIIcon} alt="AI Chat" className='icon'/>
+                            <img src={Quizz} alt="AI Chat" className='icon'/>
                         </div>
-                        <span className='link-container'>
-                            <p>AI Chat</p>
-                        </span>
-                     </div>
+                             <span className='link-container'>
+                                 <p>Quizz</p>
+                             </span>
+                        </div>
                     </Link>
                     
                 </li>

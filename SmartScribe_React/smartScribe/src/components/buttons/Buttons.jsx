@@ -1,15 +1,13 @@
-import React from 'react'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './Buttons.css';
 
-function Buttons({btn}) {
+function Buttons({ btn }) {
   return (
-    <>
-        <button>
-            <Link to={btn.path}>
-                {btn.name}
-            </Link>
-        </button>
-    </>
-  )
+    <Link to={btn.path} className="login-button">
+      {btn.name}
+    </Link>
+  );
 }
 
-export default Buttons
+export default Buttons;

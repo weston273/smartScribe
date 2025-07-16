@@ -25,9 +25,12 @@
   --account-dropdown-primary-text-color : #fff;
   --account-dropdown-secondary-text-color : #fff;
   --account-dropdown-btn-color : #00C9A7;
-
+/* input styling */
   --input-background-color: #2E2E2E;
   --input-text-color : #00c9a783;
+  /* button styling */
+  --login-button-background : #2E2E3D;
+  --login-button-text : #00C9A7;
 }
 
 [data-theme="light"] {
@@ -50,6 +53,9 @@
   
   --input-background-color : #D9D9D9;
   --input-text-color : #00000086;
+
+  --login-button-background : #2E2E3D;
+  --login-button-text : #FFFFFF;
 }
 
 [data-theme="dark"] {
@@ -72,7 +78,13 @@
 
   --input-background-color: #2E2E2E;
   --input-text-color : #00c9a780;
+
+  --login-button-background : #2E2E3D;
+  --login-button-text : #00C9A7;
+
 }
+
+
 
 /* Example usage: apply background and text colors */
 body {

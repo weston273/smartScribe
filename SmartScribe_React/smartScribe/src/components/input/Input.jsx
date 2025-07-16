@@ -1,12 +1,14 @@
-import React from 'react'
-import './Input.css'
+import React from 'react';
+import './Input.css';
 
-function Input() {
+function Input({ placeholder = 'Username' }) {
   return (
-    <>
-       <input type="text" placeholder='Username' className='input'/>
-    </>
-  )
+    <input
+      type="text"
+      placeholder={placeholder}
+      className="input"
+    />
+  );
 }
 
-export default Input
+export default Input;

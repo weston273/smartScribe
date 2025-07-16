@@ -1,4 +1,4 @@
-input {
+.input {
     border : none;
     background-color: var(--input-background-color);
     color : var(--input-text-color);
@@ -11,7 +11,7 @@ input {
     margin-top : 10%;
 }
 
-input::placeholder {
+.input::placeholder {
   color: var(--input-text-color);
   font-size: 17px;
   font-weight : bold;

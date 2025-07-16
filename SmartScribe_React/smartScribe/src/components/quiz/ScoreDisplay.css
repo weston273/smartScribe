@@ -1,0 +1,34 @@
+.score-display {
+  text-align: center;
+  padding: 3rem 2rem;
+  background-color: var(--essentials-background-color);
+  color: var(--primary-text-color);
+  border-radius: 12px;
+  box-shadow: var(--input-box-shadow);
+}
+
+.score-display h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.score-display p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.score-display button {
+  background-color: var(--login-button-background);
+  color: var(--login-button-text);
+  padding: 12px 24px;
+  border: none;
+  font-size: 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.score-display button:hover {
+  opacity: 0.9;
+}

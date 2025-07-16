@@ -10,7 +10,7 @@ export default function Hero({ showInput }) {
         {text || 'SmartScribe'}
         </div>
         {showInput && (
-            <input
+            <input className='hero-input'
               type="text"
               value={text}
               onChange={(e) => setText(e.target.value)}

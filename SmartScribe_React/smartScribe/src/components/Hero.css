@@ -46,14 +46,13 @@
    transition: all 0.3s ease-in-out;
 }
 
-input {
+input{
   padding: 10px;
   font-size: 16px;
   border-radius: 8px;
   border: 1px solid black;
   outline: none;
   transition: box-shadow 0.3s ease;
-  /* display: none; */
 }
 
 input:focus {
