@@ -25,8 +25,9 @@
   --account-dropdown-primary-text-color : #fff;
   --account-dropdown-secondary-text-color : #fff;
   --account-dropdown-btn-color : #00C9A7;
-  
 
+  --input-background-color: #2E2E2E;
+  --input-text-color : #00c9a783;
 }
 
 [data-theme="light"] {
@@ -47,6 +48,8 @@
   --account-dropdown-secondary-text-color : #000;
   --account-dropdown-btn-color : #D9D9D9;
   
+  --input-background-color : #D9D9D9;
+  --input-text-color : #00000086;
 }
 
 [data-theme="dark"] {
@@ -66,6 +69,9 @@
   --account-dropdown-primary-text-color : #fff;
   --account-dropdown-secondary-text-color : #fff;
   --account-dropdown-btn-color : #00C9A7;
+
+  --input-background-color: #2E2E2E;
+  --input-text-color : #00c9a780;
 }
 
 /* Example usage: apply background and text colors */

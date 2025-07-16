@@ -1,0 +1,34 @@
+.login-container {
+    margin: 0;
+    padding : 0;
+}
+
+.first-half{
+    display: inline-block;
+    /* justify-content: center; */
+    flex-direction: column;
+    margin : 1% 10% 1px 5%;
+}
+
+.first-half-top{
+    display: inblock;    
+    /* background-color: green; */
+}
+
+.first-half-top h1{
+    font-size: 50px;
+    margin-bottom: 0px;
+}
+
+.first-half-top p{
+    /* background-color: green; */
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    margin-top: 0%;
+    margin-left: 10%;
+    /* margin-bottom: 50%; */
+}
+
+
+

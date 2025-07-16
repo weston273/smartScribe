@@ -47,7 +47,10 @@ export default function AccountDropDown({ theme, onClose }) {
               </div>
 
               <p className="account-login-text">PLEASE LOG IN</p>
-              <button className="login-btn">LOG IN</button>
+              <Link to='/login'>
+                <button className="login-btn">LOG IN</button>
+              </Link>
+              
 
             </div>
             <div className="account-actions">
