@@ -5,8 +5,19 @@ import Password from '../components/input/Password';
 import Buttons from '../components/buttons/Buttons';
 import { Link } from 'react-router-dom';
 import LogoPlaceholder from '../assets/smart_logo.png';
+import GoogleIcon from '../assets/google_icon.png'
+import GoogleIconDark from '../assets/google_icon_dark.png'
+import AppleIcon from '../assets/apple_icon.png'
+import AppleIconDark from '../assets/AI_icon_sideBar_light.png'
+import FacebookIcon from '../assets/facebook_icon.png'
+import FacebookIconDark from '../assets/facebook_icon_dark.png'
+
+
 
 export default function SignUp({ theme }) {
+        const Google = theme === 'light' ? GoogleIcon : GoogleIconDark
+        const Apple = theme === 'light' ? AppleIcon : AppleIconDark
+        const Facebook = theme === 'light' ? FacebookIcon : FacebookIconDark
   return (
     <div className="signup-container">
       <div className="signup-left">
@@ -37,9 +48,9 @@ export default function SignUp({ theme }) {
 
         <div className="divider">or continue with</div>
         <div className="socials">
-          <img src="/google.png" alt="Google" />
-          <img src="/apple.png" alt="Apple" />
-          <img src="/facebook.png" alt="Facebook" />
+          <img src={Google} alt="Google" />
+          <img src={Apple} alt="Apple" />
+          <img src={Facebook} alt="Facebook" />
         </div>
       </div>
     </div>

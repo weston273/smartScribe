@@ -70,7 +70,7 @@ export default function AccountDropDown({ theme, onClose }) {
               <span className="dot">
                 <img src={Dot} alt="Dot" />
               </span>
-              <Link to="#" className="sign-up-link">Sign Up</Link>
+              <Link to="/signup" className="sign-up-link">Sign Up</Link>
             </div>
           </>
         )}
