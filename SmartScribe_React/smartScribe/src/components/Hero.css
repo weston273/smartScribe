@@ -4,11 +4,25 @@
   align-items: center;
   justify-content: center;
   width : 90%;
-  margin:12% 5% 5% 5%;
+  margin:9% 5% 5% 5%;
   height: 60vh;
   background-color: var(--background-color);
   border : 1px dashed var(--hero-color);
 }
+
+.hero-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* centers vertically */
+  align-items: center;     /* centers horizontally */
+  padding: 2rem;
+  text-align: center;
+  box-sizing: border-box;
+  max-height: 50vh; /* optional cap to avoid crowding */
+}
+
+
 
 /* .hero-container::before{
     content: "";
@@ -70,3 +84,11 @@ input:focus {
     font-size: 6rem;
   }
 }
+
+@media (max-width: 768px) {
+  .hero-container {
+    padding: 1.5rem;
+    max-height: none;
+  }
+}
+

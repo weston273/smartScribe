@@ -13,7 +13,6 @@ import AppleIconDark from '../assets/apple_icon_dark.png'
 import FacebookIcon from '../assets/facebook_icon.png'
 import FacebookIconDark from '../assets/facebook_icon_dark.png'
 
-
 export default function Login({ theme }) {
     const Google = theme === 'light' ? GoogleIcon : GoogleIconDark
     const Apple = theme === 'light' ? AppleIcon : AppleIconDark

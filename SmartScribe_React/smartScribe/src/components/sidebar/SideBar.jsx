@@ -16,12 +16,16 @@ import QuizzDark from '../../assets/quizz_icon_side_bar.png'
 // account image
 import profileLight from '../../assets/profile_dark.png'
 import profileDark from '../../assets/profile.png'
+// Record Image
+import RecordLight from '../../assets/record_light.png'
+import RecordDark from '../../assets/record_dark.png'
 
 export default function SideBar({ theme, onClose }) {
     const HomeIcon = theme === 'dark' ? HomeDark : HomeLight;
     const NotesIcon = theme === 'dark' ? NotesDark : NotesLight;
     const Quizz = theme === 'light' ? QuizzLight : QuizzDark;
     const Profile = theme === 'dark' ? profileDark : profileLight
+    const Record = theme === 'dark' ? RecordDark : RecordLight
 
     return (
         <div className='sidebar'>
@@ -56,7 +60,7 @@ export default function SideBar({ theme, onClose }) {
                 </li>
                 {/* Notes Nav Item */}
                 <li className='nav-item'>
-                    <Link to='#' className='nav-link'>                   
+                    <Link to='/notes' className='nav-link'>                   
                         <div className='icon-text'>
                             <div className='icon-box'>
                                 <img src={NotesIcon} alt="Notes" className='notes-icon'/>
@@ -79,8 +83,21 @@ export default function SideBar({ theme, onClose }) {
                              </span>
                         </div>
                     </Link>
-                    
                 </li>
+
+                {/* Voice Record Section */}
+                    <li className='nav-item'>
+                      <Link to='/record' className='nav-link'>  
+                        <div className='icon-text'>
+                          <div className='icon-box record'>
+                            <img src={Record} alt="Record" className='icon'/>
+                          </div>
+                          <span className='link-container'>
+                            <p>Record</p>
+                          </span>
+                        </div>
+                      </Link>
+                    </li>
             </ul>
         </div>
             <div className='horizontal-line btm-line'>

@@ -27,23 +27,26 @@ const Home = ({ theme, toggleTheme }) => {
   
 
   return (
-    <>
-      < NavBar1 theme ={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-      {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}  {/* Conditionally render */}
+    <div className="home-wrapper">
+      <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
+    {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
+    
+    <main className="main-content">
       <Hero showInput={showInput} />
       <Essentials onNotesClick={toggleInput} />
-      {/* Pass theme and toggleTheme to Footer */}
-      <Footer theme={theme} toggleTheme={toggleTheme} />
+    </main>
 
-      {/* Overlay dropdown above content */}
-      {showAccountDropdown && (
-        <AccountDropDown
-          theme={theme}
-          onClose={handleCloseDropdown}
-        />
-      )}
-    </>
-  );
+    <Footer theme={theme} toggleTheme={toggleTheme} />
+
+    {showAccountDropdown && (
+      <AccountDropDown
+        theme={theme}
+        onClose={handleCloseDropdown}
+      />
+    )}
+  </div>
+);
+
 };
 
 export default Home;

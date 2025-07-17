@@ -2,12 +2,23 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
-  height: 5rem; /* 64px = 4rem */
+  height: 5rem; 
   background-color: #2E2E3D; 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   position: fixed;
   top: 0;
   left: 0;
+}
+.navbar{
+  padding-left: 1rem;
+  padding-right: 1rem;
+  max-width: 100vw;
+}
+@media (max-width: 600px) {
+  .navbar{
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+  }
 }
 
 .navbar .left-side-navbar {

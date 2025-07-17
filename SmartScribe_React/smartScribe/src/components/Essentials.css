@@ -1,20 +1,62 @@
 .essentials-container {
-    background: var(--essentials-background-color);
-    width : 50%;
-    margin : -4% 5% 50%;
-    margin-left: 25%;
-    height : auto;
-    display: flex;
-    justify-content: space-between;
-    border : 2px solid #2E2E3D;
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 100px;
-    align-items: center;
-    
+  background: var(--essentials-background-color);
+  max-width: 650px;        /* desktop max width */
+  width: 100%;             /* mobile = 100% of parent */
+  margin: 1.5rem auto 0 auto;/* center horizontally */
+  height: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid #2E2E3D;
+  border-radius: 100px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.2rem 2rem;
+  gap: 1.1rem;
 }
+
+.essentials p {
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.essentials p:hover {
+  color: red;
+}
+
+@media (max-width: 700px) {
+  .essentials-container {
+    max-width: 99vw;   /* allow nearly full viewport width */
+    padding: 1rem 0.2rem;
+    gap: 0.4rem;
+  }
+  .essentials, .essentials-notes {
+    width: 18vw;
+    max-width: 56px;
+    min-width: 36px;
+    font-size: 1.5rem;
+  }
+}
+
+.essentials, .essentials-notes {
+  width: 55px;  /* Or use a vw-based value if you want proportional resizing, but capped max-width */
+  aspect-ratio: 1;
+  max-width: 20vw;
+  min-width: 36px;
+}
+@media (max-width: 600px) {
+  .essentials, .essentials-notes {
+    width: 17vw;
+    min-width: 32px;
+    max-width: 48px;
+  }
+}
+
+
+
+
+
+
 
 .essentials {
   width: 15%;

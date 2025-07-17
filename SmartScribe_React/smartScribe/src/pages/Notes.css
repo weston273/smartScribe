@@ -1,0 +1,154 @@
+.notes-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background);
+}
+
+.notes-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.notes-main {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+}
+
+.note-tabs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.tab {
+  padding: 10px 18px;
+  border-radius: 20px;
+  border: none;
+  background-color: #e0e0e0;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab.active {
+  background-color: #4B8B3B;
+  color: white;
+}
+
+.note-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.note-card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.note-tag {
+  background-color: #F4A300;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  width: fit-content;
+}
+
+.note-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.note-snippet {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.note-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.note-avatars img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin-right: -10px;
+  border: 2px solid white;
+}
+
+.note-time {
+  font-size: 12px;
+  color: #888;
+}
+
+.note-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 1rem 2rem;
+  position: relative;
+}
+
+.category-toggle-wrapper {
+  position: relative;
+}
+
+.category-toggle {
+  padding: 0.5rem 1rem;
+  background-color: var(--button-background-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.category-dropdown {
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+  background-color: var(--card-background-color);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 99;
+  min-width: 200px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dropdown-item {
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: var(--text-color);
+}
+
+.dropdown-item:hover {
+  background-color: var(--hover-background-color);
+}
+
+.create-category-btn {
+  margin-top: 0.5rem;
+  background: var(--accent-color);
+  color: white;
+  padding: 0.4rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

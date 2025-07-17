@@ -1,0 +1,85 @@
+.record-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: var(--essentials-background-color);
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  color: var(--primary-text-color);
+  font-family: system-ui, sans-serif;
+}
+
+.record-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.record-btn {
+  cursor: pointer;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  width: 100%;
+  max-width: 300px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  transition: background-color 0.3s;
+  color: var(--essentials-items-color);
+  background-color: var(--essentials-items-background-color);
+}
+
+.record-btn:hover {
+  opacity: 0.85;
+}
+
+.record-btn-stop {
+  background-color: #e94e77;
+  color: #fff;
+}
+
+.notes {
+  border-top: 2px solid var(--essentials-items-background-color);
+  padding-top: 20px;
+}
+
+.notes-header {
+  font-weight: bold;
+  font-size: 1.25rem;
+  margin-bottom: 15px;
+}
+
+.notes-empty {
+  font-style: italic;
+  color: var(--essentials-items-color);
+}
+
+.recording-entry {
+  background-color: var(--essentials-items-background-color);
+  color: var(--essentials-items-color);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.audio-player {
+  border-radius: 10px;
+  outline: none;
+}
+
+.loading-text {
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.notes-section strong {
+  display: block;
+  margin-bottom: 5px;
+}
