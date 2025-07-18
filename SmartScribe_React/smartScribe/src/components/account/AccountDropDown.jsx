@@ -26,8 +26,8 @@ export default function AccountDropDown({ onClose }) {
             <User size={32} />
           </div>
           <div className="account-info">
-            <h3>John Doe</h3>
-            <p>john.doe@example.com</p>
+            <h3>Weston N Sululu</h3>
+            <p>sululuweston@gmail.com</p>
           </div>
         </div>
         

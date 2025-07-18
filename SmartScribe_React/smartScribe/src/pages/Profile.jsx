@@ -11,12 +11,12 @@ export default function Profile({ theme, toggleTheme }) {
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
-    location: 'New York, NY',
-    joinDate: 'January 2024',
-    bio: 'Passionate about learning and taking smart notes. Love using AI to enhance productivity and knowledge management.'
+    name: 'Weston N Sululu',
+    email: 'sululuweston@gmail.com',
+    phone: '+263 771 840 862',
+    location: 'Mufakose, Harare',
+    joinDate: 'July 2025',
+    bio: 'Passionate sometimes.'
   });
 
   const toggleSideBar = () => setShowSideBar(prev => !prev);
