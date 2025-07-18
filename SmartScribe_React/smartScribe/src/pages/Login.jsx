@@ -1,56 +1,89 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import './Login.css';
-import { Link } from 'react-router-dom';
-import Input from '../components/input/Input';
-import Password from '../components/input/Password';
-import Buttons from '../components/buttons/Buttons';
-import LogoLight from '../assets/smart_logo.png';
-import LogoDark from '../assets/smart_logo_dark.png'
-import GoogleIcon from '../assets/google_icon.png'
-import GoogleIconDark from '../assets/google_icon_dark.png'
-import AppleIcon from '../assets/apple_icon.png'
-import AppleIconDark from '../assets/apple_icon_dark.png'
-import FacebookIcon from '../assets/facebook_icon.png'
-import FacebookIconDark from '../assets/facebook_icon_dark.png'
 
-export default function Login({ theme }) {
-    const Google = theme === 'light' ? GoogleIcon : GoogleIconDark
-    const Apple = theme === 'light' ? AppleIcon : AppleIconDark
-    const Facebook = theme === 'light' ? FacebookIcon : FacebookIconDark
-    const Logo = theme === 'light' ? LogoLight : LogoDark
+export default function Login() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    username: '',
+    password: ''
+  });
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Simple validation - in real app, you'd authenticate with backend
+    if (formData.username && formData.password) {
+      navigate('/home');
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   return (
     <div className="login-container">
-      <div className="login-left">
-        <div className="welcome-text">
-          <h1>Welcome back!</h1>
-          <p>
-            Smarter notes. Sharper focus. <br />
-            Greater impact — with SmartScribe
-          </p>
-          <div className="form-fields">
-            <Input theme={theme} placeholder="Username" />
-            <Password theme={theme} />
-            <Link to="#" className="forgot-password">Forgot Password?</Link>
-          </div>
-          <Buttons btn={{ name: 'Login', path: '/' }} />
-          <div className="divider">or continue with</div>
-          <div className="socials">
-            <img src={Google} alt="Google" />
-            <img src={Apple} alt="Apple" />
-            <img src={Facebook} alt="Facebook" />
-          </div>
-          <p className="footer-note">Not a member? <Link to="/signup">Sign Up now</Link></p>
+      <div className="login-card">
+        <div className="login-header">
+          <h1>Welcome Back</h1>
+          <p>Sign in to your SmartScribe account</p>
         </div>
-      </div>
-      <div className="login-right">
-        <img src={Logo} alt="Smart Logo" className="smart-logo" />
-        <div className="login-tagline">
-          <p>Smarter notes start here. <br />Note it. Know it. Nail it</p>
-          <div className="dots">
-            <span className="dot" />
-            <span className="dot active" />
-            <span className="dot" />
+
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="form-group">
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleChange}
+              className="form-input"
+              required
+            />
           </div>
+
+          <div className="form-group">
+            <div className="password-input">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                className="form-input"
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
+
+          <Link to="#" className="forgot-password">
+            Forgot Password?
+          </Link>
+
+          <button type="submit" className="login-button">
+            Sign In
+          </button>
+        </form>
+
+        <div className="login-footer">
+          <p>
+            Don't have an account?{' '}
+            <Link to="/signup" className="signup-link">
+              Sign up
+            </Link>
+          </p>
         </div>
       </div>
     </div>

@@ -1,123 +1,273 @@
-import React, { useState, useRef } from "react";
-import "./Record.css";
+import React, { useState, useRef } from 'react';
+import { Mic, MicOff, Play, Pause, Square, Download, Trash2, Volume2 } from 'lucide-react';
+import NavBar1 from '../components/NavBar1';
+import SideBar from '../components/sidebar/SideBar.jsx';
+import Footer from '../components/Footer';
+import AccountDropDown from '../components/account/AccountDropDown.jsx';
+import './Record.css'
 
-// import NavBar1 from './../'
-
-export default function Record() {
+export default function Record({ theme, toggleTheme }) {
+  const [showSideBar, setShowSideBar] = useState(false);
+  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [recordings, setRecordings] = useState([]);
+  const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
+  
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+  const timerRef = useRef(null);
+  const streamRef = useRef(null);
 
-  // Store recordings as { id, url (audio), notes, summary, loading }
-  const [recordings, setRecordings] = useState([]);
+  const toggleSideBar = () => setShowSideBar(prev => !prev);
+  const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
+  const handleCloseDropdown = () => setShowAccountDropdown(false);
 
-  const handleRecordClick = async () => {
-    if (!isRecording) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const mediaRecorder = new MediaRecorder(stream);
-        mediaRecorderRef.current = mediaRecorder;
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
 
-        mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            audioChunksRef.current.push(event.data);
-          }
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const newRecording = {
+          id: Date.now(),
+          url: audioUrl,
+          blob: audioBlob,
+          duration: recordingTime,
+          timestamp: new Date().toLocaleString(),
+          name: `Recording ${recordings.length + 1}`
         };
+        setRecordings(prev => [newRecording, ...prev]);
+        
+        // Stop all tracks
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+        }
+      };
 
-        mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
-          const audioUrl = URL.createObjectURL(audioBlob);
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+      
+      // Start timer
+      timerRef.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
 
-          // Create new recording entry
-          const id = Date.now();
-
-          // Add a loading placeholder while "AI" generates notes
-          const newRecording = {
-            id,
-            url: audioUrl,
-            notes: "",
-            summary: "",
-            loading: true,
-          };
-          setRecordings((prev) => [newRecording, ...prev]);
-
-          // Clear chunks
-          audioChunksRef.current = [];
-
-          // Simulate AI call for notes + summary
-          mockGenerateNotes(audioBlob).then(({ notes, summary }) => {
-            setRecordings((prev) =>
-              prev.map((rec) =>
-                rec.id === id ? { ...rec, notes, summary, loading: false } : rec
-              )
-            );
-          });
-        };
-
-        audioChunksRef.current = [];
-        mediaRecorder.start();
-        setIsRecording(true);
-      } catch (err) {
-        alert("Microphone access denied or error: " + err.message);
-      }
-    } else {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+      alert('Unable to access microphone. Please check permissions.');
     }
   };
 
-  // Mock "AI" function simulating async note & summary generation
-  const mockGenerateNotes = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Here you could integrate a real AI API to analyze the audio
-        const notes = "These are AI-generated notes based on your recording.";
-        const summary = "Summary: Recording is clear and focuses on React audio recording.";
-        resolve({ notes, summary });
-      }, 2000); // simulate 2 sec processing delay
-    });
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      setIsPaused(false);
+      clearInterval(timerRef.current);
+    }
+  };
+
+  const pauseRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      if (isPaused) {
+        mediaRecorderRef.current.resume();
+        timerRef.current = setInterval(() => {
+          setRecordingTime(prev => prev + 1);
+        }, 1000);
+      } else {
+        mediaRecorderRef.current.pause();
+        clearInterval(timerRef.current);
+      }
+      setIsPaused(!isPaused);
+    }
+  };
+
+  const playRecording = (recording) => {
+    if (currentlyPlaying === recording.id) {
+      setCurrentlyPlaying(null);
+      return;
+    }
+    
+    const audio = new Audio(recording.url);
+    audio.play();
+    setCurrentlyPlaying(recording.id);
+    
+    audio.onended = () => {
+      setCurrentlyPlaying(null);
+    };
+  };
+
+  const downloadRecording = (recording) => {
+    const link = document.createElement('a');
+    link.href = recording.url;
+    link.download = `${recording.name}.webm`;
+    link.click();
+  };
+
+  const deleteRecording = (recordingId) => {
+    setRecordings(prev => prev.filter(r => r.id !== recordingId));
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
+    <div className="page-wrapper">
+      <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
 
-    <div className="record-container">
-      <h2 className="record-title">Audio Recorder & AI Notes</h2>
+      <div className="record-body">
+        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
+        
+        <main className="record-main">
+          <div className="record-header">
+            <h1 className="record-title">Voice Recorder</h1>
+            <p className="record-subtitle">Capture your thoughts and ideas with AI-powered recording</p>
+          </div>
 
-      <button
-        className={`record-btn ${isRecording ? "record-btn-stop" : "record-btn-start"}`}
-        onClick={handleRecordClick}
-      >
-        {isRecording ? "Stop Recording" : "Start Recording"}
-      </button>
+          {/* Recording Interface */}
+          <div className="recording-interface">
+            <div className="recording-visualizer">
+              <div className={`pulse-ring ${isRecording && !isPaused ? 'active' : ''}`}>
+                <div className="recording-button-container">
+                  <button 
+                    className={`record-btn ${isRecording ? 'recording' : ''}`}
+                    onClick={isRecording ? stopRecording : startRecording}
+                  >
+                    {isRecording ? <Square size={32} /> : <Mic size={32} />}
+                  </button>
+                </div>
+              </div>
+            </div>
 
-      <section className="notes">
-        <p className="notes-header">record</p>
+            <div className="recording-controls">
+              <div className="recording-time">
+                {formatTime(recordingTime)}
+              </div>
+              
+              {isRecording && (
+                <div className="recording-actions">
+                  <button 
+                    className="control-btn pause-btn"
+                    onClick={pauseRecording}
+                  >
+                    {isPaused ? <Play size={20} /> : <Pause size={20} />}
+                  </button>
+                  <button 
+                    className="control-btn stop-btn"
+                    onClick={stopRecording}
+                  >
+                    <Square size={20} />
+                  </button>
+                </div>
+              )}
+            </div>
 
-        {recordings.length === 0 && (
-          <p className="notes-empty">No recordings yet. Start recording to see notes.</p>
-        )}
+            <div className="recording-status">
+              {isRecording ? (
+                <span className={`status ${isPaused ? 'paused' : 'recording'}`}>
+                  {isPaused ? 'Recording Paused' : 'Recording...'}
+                </span>
+              ) : (
+                <span className="status ready">Ready to Record</span>
+              )}
+            </div>
+          </div>
 
-        {recordings.map(({ id, url, notes, summary, loading }) => (
-          <div className="recording-entry" key={id}>
-            <audio controls src={url} className="audio-player" />
-
-            {loading ? (
-              <p className="loading-text">AI generating notes & summary...</p>
+          {/* Recordings List */}
+          <div className="recordings-section">
+            <h2 className="recordings-title">Your Recordings</h2>
+            
+            {recordings.length === 0 ? (
+              <div className="empty-state">
+                <Mic size={48} className="empty-icon" />
+                <p>No recordings yet</p>
+                <p className="empty-subtitle">Start recording to see your audio files here</p>
+              </div>
             ) : (
-              <>
-                <div className="notes-section">
-                  <strong>Notes:</strong>
-                  <p>{notes}</p>
-                </div>
-                <div className="notes-section">
-                  <strong>Summary:</strong>
-                  <p>{summary}</p>
-                </div>
-              </>
+              <div className="recordings-list">
+                {recordings.map(recording => (
+                  <div key={recording.id} className="recording-item">
+                    <div className="recording-info">
+                      <h3 className="recording-name">{recording.name}</h3>
+                      <div className="recording-meta">
+                        <span className="recording-duration">{formatTime(recording.duration)}</span>
+                        <span className="recording-timestamp">{recording.timestamp}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="recording-actions">
+                      <button 
+                        className="action-btn play-btn"
+                        onClick={() => playRecording(recording)}
+                      >
+                        {currentlyPlaying === recording.id ? <Volume2 size={18} /> : <Play size={18} />}
+                      </button>
+                      <button 
+                        className="action-btn download-btn"
+                        onClick={() => downloadRecording(recording)}
+                      >
+                        <Download size={18} />
+                      </button>
+                      <button 
+                        className="action-btn delete-btn"
+                        onClick={() => deleteRecording(recording.id)}
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
-        ))}
-      </section>
+
+          {/* AI Features */}
+          <div className="ai-features">
+            <h3 className="features-title">AI-Powered Features</h3>
+            <div className="features-grid">
+              <div className="feature-card">
+                <div className="feature-icon">🎯</div>
+                <h4>Smart Transcription</h4>
+                <p>Convert speech to text with high accuracy</p>
+              </div>
+              <div className="feature-card">
+                <div className="feature-icon">📝</div>
+                <h4>Auto Summarization</h4>
+                <p>Get key points from your recordings</p>
+              </div>
+              <div className="feature-card">
+                <div className="feature-icon">🏷️</div>
+                <h4>Smart Tagging</h4>
+                <p>Automatically categorize your recordings</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      {showAccountDropdown && (
+        <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
+      )}
+
+      <Footer theme={theme} toggleTheme={toggleTheme} />
     </div>
   );
 }

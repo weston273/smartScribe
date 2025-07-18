@@ -1,56 +1,115 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import './SignUp.css';
-import Input from '../components/input/Input';
-import Password from '../components/input/Password';
-import Buttons from '../components/buttons/Buttons';
-import { Link } from 'react-router-dom';
-import LogoPlaceholder from '../assets/smart_logo.png';
-import GoogleIcon from '../assets/google_icon.png'
-import GoogleIconDark from '../assets/google_icon_dark.png'
-import AppleIcon from '../assets/apple_icon.png'
-import AppleIconDark from '../assets/AI_icon_sideBar_light.png'
-import FacebookIcon from '../assets/facebook_icon.png'
-import FacebookIconDark from '../assets/facebook_icon_dark.png'
 
+export default function SignUp() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    email: '',
+    password: ''
+  });
+  const navigate = useNavigate();
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Simple validation - in real app, you'd register with backend
+    if (formData.firstName && formData.lastName && formData.username && formData.email && formData.password) {
+      navigate('/home');
+    }
+  };
 
-export default function SignUp({ theme }) {
-        const Google = theme === 'light' ? GoogleIcon : GoogleIconDark
-        const Apple = theme === 'light' ? AppleIcon : AppleIconDark
-        const Facebook = theme === 'light' ? FacebookIcon : FacebookIconDark
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   return (
     <div className="signup-container">
-      <div className="signup-left">
-        <img src={LogoPlaceholder} alt="Smart Logo" className="smart-logo" />
-        <h1>Welcome back!</h1>
-        <p>
-          To keep connected with us please<br />
-          login with your personal info
-        </p>
-        <Buttons btn={{ name: 'Login', path: '/login' }} />
-      </div>
-
-      <div className="signup-right">
-        <h1>Create Account</h1>
-        <div className="name-inputs">
-          <Input theme={theme} placeholder="First Name" />
-          <Input theme={theme} placeholder="Second Name" />
-        </div>
-        <Input theme={theme} placeholder="Username" />
-        <Password theme={theme} />
-
-        <div className="save-password">
-          <input type="checkbox" id="save-password" />
-          <label htmlFor="save-password">Save Password?</label>
+      <div className="signup-card">
+        <div className="signup-header">
+          <h1>Create Account</h1>
+          <p>Join SmartScribe and start taking smarter notes</p>
         </div>
 
-        <Buttons btn={{ name: 'Sign Up', path: '/' }} />
+        <form onSubmit={handleSubmit} className="signup-form">
+          <div className="name-inputs">
+            <input
+              type="text"
+              name="firstName"
+              placeholder="First Name"
+              value={formData.firstName}
+              onChange={handleChange}
+              className="form-input"
+              required
+            />
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Last Name"
+              value={formData.lastName}
+              onChange={handleChange}
+              className="form-input"
+              required
+            />
+          </div>
 
-        <div className="divider">or continue with</div>
-        <div className="socials">
-          <img src={Google} alt="Google" />
-          <img src={Apple} alt="Apple" />
-          <img src={Facebook} alt="Facebook" />
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={formData.username}
+            onChange={handleChange}
+            className="form-input"
+            required
+          />
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            className="form-input"
+            required
+          />
+
+          <div className="password-input">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="form-input"
+              required
+            />
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+
+          <button type="submit" className="signup-button">
+            Create Account
+          </button>
+        </form>
+
+        <div className="signup-footer">
+          <p>
+            Already have an account?{' '}
+            <Link to="/login" className="login-link">
+              Sign in
+            </Link>
+          </p>
         </div>
       </div>
     </div>

@@ -1,218 +1,3 @@
-.account-dropdown {
-  position: fixed;
-  top: 70px;
-  right: 10px;
-  margin-top: 20px;
-  margin-right: 20px;
-  padding: 32px 24px 16px 24px;
-  min-width: 450px;
-  max-width: 90vw;
-  min-height: 340px;
-  background: var(--account-dropdown-background-color);
-  color: var(--account-dropdown-primary-text-color, #222);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 2100;
-  transition: all 0.3s ease-in-out;
-}
-
-.account-details {
-  text-align: center;
-  margin-bottom: 15px;
-  margin-top: -34px;
-}
-
-.account-name {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-left: -10%;
-}
-
-.account-avatar {
-  height: 130px;
-  width : 130px;
-  padding-left: 10%;
-   margin-bottom: 1px;
-}
-
-.account-avatar img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: #c9c9c9c5;
-  object-fit: cover;
-
-}
-
-.account-login-text {
-  font-size: 1.35rem;
-  font-weight: bold;
-  padding: 0 15px 0 10px;
-}
-
-.account-login-text p {
-  color: inherit;
-}
-
-.login-btn {
-  width: 180%;
-  padding: 12px 15px 12px 15px;
-  margin-left: -45%;
-  border-radius: 8px;
-  border: 2px solid var(--account-dropdown-btn-color);
-  background: var(--account-dropdown-background-color);
-  color: #fff;
-  font-weight:700;
-  font-size: 2rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-.login-btn:hover {
-    background : var(--account-dropdown-btn-color)
-}
-.login-btn:focus {
-  background: #000;
-  outline: none;
-}
-
-.account-actions {
-  display: flex;
-  gap: 5px;
-  margin-bottom: 16px;
-  margin-top: 10px;
-  width: 100%;
-}
-
-.add-account-btn,
-.sign-up-btn {
-  flex: 1;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  background: var(--account-dropdown-btn-color);
-  color: var(--account-dropdown-secondary-text-color);
-  font-size: 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.add-account-btn{
-    border-top-right-radius: 0px;
-    border-bottom-right-radius:0px ;
-}
-.sign-up-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* optional */
-  gap: 8px; /* spacing between image and text */
-  flex: 1;
-  padding: 10px 20px;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border: none;
-  background: var(--account-dropdown-btn-color);
-  color: var(--account-dropdown-secondary-text-color);
-  font-size: 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-
-.add-account-btn:hover,
-.sign-up-btn:hover {
-  background: #e0e0e0;
-  color: #fff;
-  transform: scale(1.02);
-}
-.add-account-btn:focus,
-.sign-up-btn:focus {
-  outline: 2px solid #999;
-}
-
-.account-button-image{
-    background-color: #00000032;
-    border-radius: 100%;
-    padding : 0.5% 2% ;
-    margin-right: 5%;
-    /* display: block; */
-    width: 100%;
-    height: 100%;
-     object-fit: fill;
-}
-
-.account-button-image:hover{
-    color : black;
-}
-.sign-up-button-image{
-    /* border-radius: 100%; */
-    /* padding : 0.5% 2% ; */
-    margin-right: 5%;
-    /* margin-top: 5%; */
-    /* display: block; */
-    /* width: 100%; */
-    /* height: 100%; */
-     /* object-fit: fill; */
-}
-
-.sign-up-button-image img {
-  width : 30px;
-  height: 30px;
-  object-fit: contain;
-  display: block;
-}
-
-
-.account-links-container {
-  width: 100%;
-  text-align: center;
-  font-size: 0.95rem;
-  color: #777;
-  margin-top: 0px;
-  margin-left: -9%;
-}
-
-.account-links-container a{
-    text-decoration: none;
-    color: #ffffff;
-    /* font-weight: bold; */
-    transition: all 0.3s ease
-}
-
-.account-links-container a:hover{
-    transform: scale(1.02);
-    color : var(--hero-color);
-}
-
-.dot {
-  margin: 0 5px;
-   font-size: 1rem;
-}
-
-.loading-bar-container {
-  width: 100%;
-  height: 4px;
-  background: var(--account-dropdown-background-color);
-  border-radius: 2px 2px 0 0;
-  overflow: hidden;
-  margin-bottom: 32px;
-}
-
-.loading-bar {
-  height: 100%;
-  width: 0;
-  background: var(--essentials-items-background-color);
-  animation: loadingBarAnim 0.7s linear forwards;
-}
-
-@keyframes loadingBarAnim {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
 .account-dropdown-overlay {
   position: fixed;
   top: 0;
@@ -224,29 +9,74 @@
   display: flex;
   justify-content: flex-end;
   align-items: flex-start;
-  pointer-events: all;
+  padding: 5rem 2rem 0 0;
+}
+
+.account-dropdown {
+  background-color: var(--essentials-background-color);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+  min-width: 280px;
+  overflow: hidden;
+}
+
+.account-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.account-avatar {
+  width: 48px;
+  height: 48px;
+  background-color: var(--hero-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--background-color);
+}
+
+.account-info h3 {
+  margin: 0;
+  color: var(--primary-text-color);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.account-info p {
+  margin: 0.25rem 0 0 0;
+  color: var(--primary-text-color);
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+.account-menu {
+  padding: 0.5rem 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  color: var(--primary-text-color);
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 @media (max-width: 768px) {
+  .account-dropdown-overlay {
+    padding: 5rem 1rem 0 1rem;
+  }
+  
   .account-dropdown {
-    right: 5%;
-    left: 5%;
-    width: auto;
-    max-width: 100%;
-    padding: 24px 16px;
-    min-height: unset;
-  }
-
-  .account-avatar img {
-    width: 100px;
-    height: 100px;
-  }
-
-  .account-name {
-    font-size: 1.1rem;
-  }
-
-  .account-login-text {
-    font-size: 1.15rem;
+    min-width: 260px;
   }
 }

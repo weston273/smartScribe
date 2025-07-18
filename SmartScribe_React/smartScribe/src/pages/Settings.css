@@ -1,0 +1,379 @@
+.settings-body {
+  display: flex;
+  flex: 1;
+  margin-top: 5rem;
+  min-height: calc(100vh - 5rem);
+}
+
+.settings-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  background-color: var(--background-color);
+}
+
+.settings-header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.settings-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--hero-color);
+  margin-bottom: 0.5rem;
+}
+
+.settings-subtitle {
+  font-size: 1.2rem;
+  color: var(--primary-text-color);
+  opacity: 0.8;
+  margin: 0;
+}
+
+.settings-content {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Settings Sections */
+.settings-section {
+  background-color: rgba(46, 46, 61, 0.6);
+  border-radius: 16px;
+  padding: 2rem;
+  /* backdrop-filter: blur(10px); */
+}
+
+.settings-section.danger-section {
+  border: 1px solid rgba(255, 71, 87, 0.3);
+  background-color: rgba(255, 71, 87, 0.05);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-icon {
+  color: var(--hero-color);
+}
+
+.section-icon.danger-icon {
+  color: #ff4757;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-text-color);
+  margin: 0;
+}
+
+.section-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Setting Items */
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.setting-info {
+  flex: 1;
+  margin-right: 2rem;
+}
+
+.setting-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-text-color);
+  margin: 0 0 0.25rem 0;
+}
+
+.setting-label.danger-label {
+  color: #ff4757;
+}
+
+.setting-description {
+  font-size: 0.9rem;
+  color: var(--primary-text-color);
+  opacity: 0.7;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.setting-control {
+  flex-shrink: 0;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: 0.3s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--hero-color);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+/* Select Dropdown */
+.setting-select {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background-color: var(--input-background-color);
+  color: var(--primary-text-color);
+  font-size: 0.9rem;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.setting-select:focus {
+  outline: none;
+  border-color: var(--hero-color);
+  box-shadow: 0 0 0 2px rgba(0, 201, 167, 0.2);
+}
+
+/* Theme Selector */
+.theme-selector {
+  display: flex;
+  gap: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.theme-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--primary-text-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.theme-btn.active {
+  background-color: var(--hero-color);
+  color: var(--background-color);
+}
+
+.theme-btn:hover:not(.active) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Setting Buttons */
+.setting-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--hero-color);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--hero-color);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.setting-button:hover {
+  background-color: var(--hero-color);
+  color: var(--background-color);
+}
+
+.export-btn {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.export-btn:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.danger-btn {
+  border-color: #ff4757;
+  color: #ff4757;
+}
+
+.danger-btn:hover {
+  background-color: #ff4757;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .settings-main {
+    padding: 1rem;
+  }
+
+  .settings-title {
+    font-size: 2rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .settings-content {
+    max-width: 100%;
+  }
+
+  .settings-section {
+    padding: 1.5rem;
+  }
+
+  .setting-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .setting-info {
+    margin-right: 0;
+  }
+
+  .setting-control {
+    align-self: stretch;
+  }
+
+  .theme-selector {
+    width: 100%;
+  }
+
+  .theme-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .setting-select {
+    width: 100%;
+  }
+
+  .setting-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-title {
+    font-size: 1.5rem;
+  }
+
+  .settings-section {
+    padding: 1rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .setting-label {
+    font-size: 1rem;
+  }
+
+  .setting-description {
+    font-size: 0.85rem;
+  }
+}
+
+/* Theme Adjustments */
+[data-theme="light"] .settings-section {
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .settings-section.danger-section {
+  border: 1px solid rgba(255, 71, 87, 0.3);
+  background-color: rgba(255, 71, 87, 0.05);
+}
+
+[data-theme="light"] .section-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .setting-item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .toggle-slider {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .theme-selector {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .setting-select {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}

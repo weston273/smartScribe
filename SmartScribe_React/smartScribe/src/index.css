@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -6,56 +10,51 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
 
-:root {
-  --background-color : #0B0F1A;
-  --hero-color : #00C9A7;
-  --hero-text-color : #ffffff77;
-  --essentials-background-color : #2E2E3D;
-  --essentials-items-background-color : #00C9A7;
-  --essentials-items-color : #000000;
-  --essentials-main-item-background-color : #FFFFFF;
-  --essentials-main-item-text-color : #2E2E3D;
+  /* Color Variables */
+  --background-color: #0B0F1A;
+  --hero-color: #00C9A7;
+  --hero-text-color: #ffffff77;
+  --essentials-background-color: #2E2E3D;
+  --essentials-items-background-color: #00C9A7;
+  --essentials-items-color: #000000;
+  --essentials-main-item-background-color: #FFFFFF;
+  --essentials-main-item-text-color: #2E2E3D;
   --primary-text-color: #eee;
   --secondary-text-color: #0B0F1A;
-  --input-outline-color : #00C9A7;
-  --input-box-shadow : 0 0 5px rgba(0, 201, 167, 0.6);
-  --account-dropdown-background-color : #000;
-  --account-dropdown-primary-text-color : #fff;
-  --account-dropdown-secondary-text-color : #fff;
-  --account-dropdown-btn-color : #00C9A7;
-/* input styling */
+  --input-outline-color: #00C9A7;
+  --input-box-shadow: 0 0 5px rgba(0, 201, 167, 0.6);
+  --account-dropdown-background-color: #000;
+  --account-dropdown-primary-text-color: #fff;
+  --account-dropdown-secondary-text-color: #fff;
+  --account-dropdown-btn-color: #00C9A7;
   --input-background-color: #2E2E2E;
-  --input-text-color : #00c9a783;
-  /* button styling */
-  --login-button-background : #2E2E3D;
-  --login-button-text : #00C9A7;
+  --input-text-color: #00c9a783;
+  --login-button-background: #2E2E3D;
+  --login-button-text: #00C9A7;
 }
 
 [data-theme="light"] {
-  --background-color : #ffffff;
-  --hero-color : #000000;
-  --hero-text-color : #0b0f1a4b;
-  --essentials-background-color : #2E2E3D;
-  --essentials-items-background-color : #ffffff;
-  --essentials-items-color : #000000;
-  --essentials-main-item-background-color : #000000;
-  --essentials-main-item-text-color : #ffffff;
+  --background-color: #ffffff;
+  --hero-color: #000000;
+  --hero-text-color: #0b0f1a4b;
+  --essentials-background-color: #f5f5f5;
+  --essentials-items-background-color: #ffffff;
+  --essentials-items-color: #000000;
+  --essentials-main-item-background-color: #000000;
+  --essentials-main-item-text-color: #ffffff;
   --primary-text-color: #010101;
   --secondary-text-color: #eee;
-  --input-outline-color : #000000;
-  --input-box-shadow : 0 0 5px rgba(16, 17, 17, 0.6);
-  --account-dropdown-background-color : #2E2E3D;
-  --account-dropdown-primary-text-color : #fff;
-  --account-dropdown-secondary-text-color : #000;
-  --account-dropdown-btn-color : #D9D9D9;
-  
-  --input-background-color : #D9D9D9;
-  --input-text-color : #00000086;
-
-  --login-button-background : #2E2E3D;
-  --login-button-text : #FFFFFF;
+  --input-outline-color: #000000;
+  --input-box-shadow: 0 0 5px rgba(16, 17, 17, 0.6);
+  --account-dropdown-background-color: #2E2E3D;
+  --account-dropdown-primary-text-color: #fff;
+  --account-dropdown-secondary-text-color: #000;
+  --account-dropdown-btn-color: #D9D9D9;
+  --input-background-color: #D9D9D9;
+  --input-text-color: #00000086;
+  --login-button-background: #2E2E3D;
+  --login-button-text: #FFFFFF;
 }
 
 [data-theme="dark"] {
@@ -71,27 +70,151 @@
   --secondary-text-color: #0B0F1A;
   --input-outline-color: #00C9A7;
   --input-box-shadow: 0 0 5px rgba(0, 201, 167, 0.6);
-  --account-dropdown-background-color : #000;
-  --account-dropdown-primary-text-color : #fff;
-  --account-dropdown-secondary-text-color : #fff;
-  --account-dropdown-btn-color : #00C9A7;
-
+  --account-dropdown-background-color: #000;
+  --account-dropdown-primary-text-color: #fff;
+  --account-dropdown-secondary-text-color: #fff;
+  --account-dropdown-btn-color: #00C9A7;
   --input-background-color: #2E2E2E;
-  --input-text-color : #00c9a780;
-
-  --login-button-background : #2E2E3D;
-  --login-button-text : #00C9A7;
-
+  --input-text-color: #00c9a780;
+  --login-button-background: #2E2E3D;
+  --login-button-text: #00C9A7;
 }
 
-body {
-  background-color: var(--background-color);
-  color: var(--primary-text-color);
+* {
+  box-sizing: border-box;
 }
 
 html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
+}
 
+body {
+  background-color: var(--background-color);
+  color: var(--primary-text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Global Layout Classes */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 5rem; /* Account for fixed navbar */
+}
+
+.page-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Responsive Typography */
+h1 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+h2 { font-size: clamp(1.25rem, 3vw, 2rem); }
+h3 { font-size: clamp(1.125rem, 2.5vw, 1.5rem); }
+p { font-size: clamp(0.875rem, 2vw, 1rem); }
+
+/* Button Styles */
+.btn-primary {
+  background-color: var(--hero-color);
+  color: var(--background-color);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: var(--essentials-background-color);
+  color: var(--primary-text-color);
+  border: 1px solid var(--hero-color);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--hero-color);
+  color: var(--background-color);
+}
+
+/* Input Styles */
+.input-field {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 1px solid transparent;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--input-outline-color);
+  box-shadow: var(--input-box-shadow);
+}
+
+.input-field::placeholder {
+  color: var(--input-text-color);
+  opacity: 0.7;
+}
+
+/* Card Styles */
+.card {
+  background-color: var(--essentials-background-color);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Loading Animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.loading {
+  animation: pulse 2s infinite;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--essentials-background-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--hero-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hero-text-color);
 }
