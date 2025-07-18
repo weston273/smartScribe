@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "lucide-react": "^0.525.0",
+    "pdfjs-dist": "^5.3.93",
     "react-router-dom": "^7.6.3",
     "use-local-storage": "^3.0.0"
   }

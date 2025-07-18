@@ -4,6 +4,7 @@ import NavBar1 from '../components/NavBar1';
 import SideBar from '../components/sidebar/SideBar.jsx';
 import Footer from '../components/Footer';
 import AccountDropDown from '../components/account/AccountDropDown.jsx';
+import './Profile.css'
 
 export default function Profile({ theme, toggleTheme }) {
   const [showSideBar, setShowSideBar] = useState(false);

@@ -8,6 +8,7 @@ import Quiz from "./pages/Quiz.jsx"
 import Record from './pages/Record.jsx'
 import Notes from './pages/Notes.jsx'
 import Settings from './pages/Settings.jsx'
+import Profile from './pages/Profile.jsx'
 import Footer from '../src/components/Footer.jsx'
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
         <Route path='/record' element={<Record theme={theme} toggleTheme={toggleTheme} />} />
         <Route path='/notes' element={<Notes theme={theme} toggleTheme={toggleTheme} />} />
         <Route path='/settings' element={<Settings theme={theme} toggleTheme={toggleTheme} />} />
+        <Route path='/profile' element={<Profile theme={theme} toggleTheme={toggleTheme} />} />
         <Route path="/quiz" element={<Quiz theme={theme} />} />
         <Route path="/home" element={<Home theme={theme} toggleTheme={toggleTheme} />} />
         
