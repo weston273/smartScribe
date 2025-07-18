@@ -67,7 +67,7 @@ export default function Record() {
   };
 
   // Mock "AI" function simulating async note & summary generation
-  const mockGenerateNotes = (audioBlob) => {
+  const mockGenerateNotes = () => {
     return new Promise((resolve) => {
       setTimeout(() => {
         // Here you could integrate a real AI API to analyze the audio
