@@ -1,0 +1,311 @@
+.voice-command-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 1rem;
+  }
+  
+  .voice-command-modal {
+    background: var(--essentials-background-color);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+  
+  .voice-command-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, var(--hero-color), #00a085);
+    border-radius: 16px 16px 0 0;
+  }
+  
+  .voice-command-header h2 {
+    color: white;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  .voice-command-content {
+    padding: 2rem;
+  }
+  
+  .voice-controls {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .control-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  
+  .voice-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0, 201, 167, 0.1);
+    border: 2px solid var(--hero-color);
+    color: var(--hero-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+  }
+  
+  .voice-btn:hover {
+    background: var(--hero-color);
+    color: var(--background-color);
+    transform: translateY(-2px);
+  }
+  
+  .voice-btn.listening {
+    background: var(--hero-color);
+    color: var(--background-color);
+    animation: pulse 2s infinite;
+  }
+  
+  .voice-btn.speaking {
+    background: #ff6b6b;
+    border-color: #ff6b6b;
+    color: white;
+    animation: pulse 2s infinite;
+  }
+  
+  .listening-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    color: var(--hero-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .pulse-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--hero-color);
+    animation: pulse 1.5s infinite;
+  }
+  
+  .current-transcript {
+    background: rgba(0, 201, 167, 0.1);
+    border: 1px solid var(--hero-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .current-transcript h4 {
+    color: var(--hero-color);
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+  }
+  
+  .current-transcript p {
+    color: var(--primary-text-color);
+    margin: 0;
+    font-style: italic;
+  }
+  
+  .voice-settings {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .setting-group {
+    margin-bottom: 1rem;
+  }
+  
+  .setting-group:last-child {
+    margin-bottom: 0;
+  }
+  
+  .setting-group label {
+    display: block;
+    color: var(--primary-text-color);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  
+  .language-select {
+    width: 100%;
+    background: var(--input-background-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--primary-text-color);
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+  
+  .language-select:focus {
+    outline: none;
+    border-color: var(--hero-color);
+    box-shadow: 0 0 0 2px rgba(0, 201, 167, 0.2);
+  }
+  
+  .setting-group input[type="checkbox"] {
+    margin-right: 0.75rem;
+    accent-color: var(--hero-color);
+    transform: scale(1.2);
+  }
+  
+  .command-examples {
+    margin-bottom: 2rem;
+  }
+  
+  .command-examples h4 {
+    color: var(--primary-text-color);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .command-list {
+    display: grid;
+    gap: 0.5rem;
+  }
+  
+  .command-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 0.75rem;
+    color: var(--primary-text-color);
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+  }
+  
+  .command-history h4 {
+    color: var(--primary-text-color);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .clear-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--primary-text-color);
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+  
+  .clear-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .history-list {
+    display: grid;
+    gap: 0.75rem;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .history-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  
+  .history-text {
+    color: var(--primary-text-color);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+  }
+  
+  .history-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--hero-color);
+  }
+  
+  .not-supported {
+    text-align: center;
+    padding: 3rem;
+    color: var(--primary-text-color);
+  }
+  
+  .not-supported h3 {
+    color: #ff6b6b;
+    margin-bottom: 1rem;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { 
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% { 
+      transform: scale(1.05);
+      opacity: 0.8;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .voice-command-modal {
+      margin: 1rem;
+      max-width: none;
+    }
+    
+    .voice-command-content {
+      padding: 1rem;
+    }
+    
+    .control-group {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .voice-btn {
+      width: 100%;
+      max-width: 200px;
+    }
+  }
