@@ -1,17 +1,36 @@
-// src/utils/ai.js
+/**
+ * Calls the DeepSeek model via OpenRouter Chat API with given messages.
+ * @param {Array} messages - Array of message objects: [{ role: 'user'|'assistant'|'system', content: string }]
+ * @returns {Promise<string>} AI response text
+ */
 export async function askOpenAI(messages) {
-  const apiKey = "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”
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
+  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+  if (!apiKey) {
+    throw new Error('OpenRouter API key not found. Please set VITE_OPENROUTER_API_KEY in your .env file.');
+  }
+
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "deepseek/deepseek-r1-0528-qwen3-8b",  // Or "deepseek/deepseek-chat:free" if you prefer
+        messages: messages  // Pass messages array directly
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`OpenRouter API error: ${error}`);
     }
-    body: JSON.stringify({
-      model: "gpt-3.5-turbo",  // or "gpt-4" if you have access
-      messages
-    })
-  });
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content || "AI did not reply.";
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || "AI did not reply.";
+  } catch (err) {
+    console.error('Error calling OpenRouter AI:', err);
+    return "Sorry, I couldn't reach the AI service.";
+  }
 }

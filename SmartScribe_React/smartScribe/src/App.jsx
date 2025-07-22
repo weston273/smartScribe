@@ -28,6 +28,10 @@ function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+  console.log("OpenAI Key:", apiKey);
+
+
   return (
     <VoiceProvider>
       <Routes>

@@ -16,7 +16,7 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated }) {
     try {
       new URL(string);
       return true;
-    } catch (_) {
+    } catch {
       return false;
     }
   };
@@ -36,46 +36,28 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated }) {
     
     try {
       // In a real implementation, you would use a backend service to scrape the URL
-      // For demo purposes, we'll simulate the process
+      // For demo purposes, we'll simulate the process of fetching content
+      // TODO: Replace this with real content fetching in production
       await new Promise(resolve => setTimeout(resolve, 3000));
 
       // Simulate scraped content
       const simulatedTitle = `Article from ${new URL(url).hostname}`;
-      const simulatedContent = `This is a comprehensive article that discusses various important topics related to the subject matter. The content includes detailed analysis, supporting data, and expert opinions that provide valuable insights into the field.
-
-The article covers:
-- Introduction to the main concepts
-- Detailed explanations with examples  
-- Analysis of current trends and developments
-- Expert opinions and recommendations
-- Conclusions and future outlook
-
-Key takeaways include actionable insights that readers can apply in their own context, along with references to additional resources for further learning.`;
-
-      const simulatedSummary = `Summary of "${simulatedTitle}":
-
-This article provides a comprehensive overview of the topic, covering essential concepts and current developments in the field. The main points include detailed analysis of trends, expert insights, and practical recommendations for implementation.
-
-Key highlights:
-• Introduction to fundamental concepts
-• Current market trends and analysis  
-• Expert opinions and recommendations
-• Actionable insights for practical application
-• Future outlook and predictions
-
-The content serves as a valuable resource for understanding the subject matter and provides readers with both theoretical knowledge and practical guidance.`;
+      const simulatedContent = `This is a comprehensive article that discusses various important topics related to the subject matter. The content includes detailed analysis, supporting data, and expert opinions that provide valuable insights into the field.`;
 
       setTitle(simulatedTitle);
       setContent(simulatedContent);
-      setSummary(simulatedSummary);
+
+      // Use AI to summarize the simulated content
+      const aiSummary = await generateSummary(simulatedContent);
+      setSummary(aiSummary);
       
       // Pass summary to parent component
       if (onSummaryGenerated) {
-        onSummaryGenerated(simulatedSummary);
+        onSummaryGenerated(aiSummary);
       }
 
-    } catch (error) {
-      console.error('Error processing URL:', error);
+    } catch {
+      console.error('Error processing URL');
       alert('Error processing URL. Please try again.');
     } finally {
       setIsProcessing(false);

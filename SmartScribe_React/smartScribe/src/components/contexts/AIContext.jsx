@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
+import { askOpenAI } from '../../utils/ai';
 
 const AIContext = createContext();
 
@@ -19,26 +20,63 @@ export const AIProvider = ({ children }) => {
   };
 
   const generateSummary = async (content, lang = 'en') => {
-    await simulateProcessing();
-    setSummary(`This is a summary of the content in ${lang}: ${content.slice(0, 100)}...`);
+    setIsProcessing(true);
+    try {
+      const messages = [
+        { role: 'system', content: 'Summarize the following content in a concise and clear way.' },
+        { role: 'user', content }
+      ];
+      const summaryText = await askOpenAI(messages);
+      setSummary(summaryText);
+      return summaryText;
+    } catch (err) {
+      setSummary('Error generating summary.');
+      return 'Error generating summary.';
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const generateNotes = async (content, lang = 'en') => {
-    await simulateProcessing();
-    setNotes(`These are notes generated from the content in ${lang}: - ${content.slice(0, 50)}...`);
+    setIsProcessing(true);
+    try {
+      const messages = [
+        { role: 'system', content: 'Extract and organize the following content into clear, structured study notes with bullet points and headings.' },
+        { role: 'user', content }
+      ];
+      const notesText = await askOpenAI(messages);
+      setNotes(notesText);
+      return notesText;
+    } catch (err) {
+      setNotes('Error generating notes.');
+      return 'Error generating notes.';
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const generateQuiz = async (content, lang = 'en') => {
-    await simulateProcessing();
-    setQuiz([
-      {
-        id: 1,
-        question: 'What is the main idea of the content?',
-        options: ['Option A', 'Option B', 'Option C', 'Option D'],
-        correct: 0,
-        explanation: 'The main idea is explained in the first paragraph.',
-      },
-    ]);
+    setIsProcessing(true);
+    try {
+      const messages = [
+        { role: 'system', content: 'Create a short quiz (3-5 questions) with multiple choice answers based on the following content. Format as JSON: [{question, options, correct, explanation}]' },
+        { role: 'user', content }
+      ];
+      const quizText = await askOpenAI(messages);
+      let quizArr = [];
+      try {
+        quizArr = JSON.parse(quizText);
+      } catch {
+        quizArr = [];
+      }
+      setQuiz(quizArr);
+      return quizArr;
+    } catch (err) {
+      setQuiz([]);
+      return [];
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const transcribeAudio = async (audioBlob) => {
@@ -57,42 +95,27 @@ export const AIProvider = ({ children }) => {
   };
 
   const chatWithAI = async (message, context, lang = 'en') => {
-    await simulateProcessing();
-    
-    // Simple AI responses based on message content
-    let response = '';
-    const lowerMessage = message.toLowerCase();
-    
-    if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
-      response = `Hello! I'm your AI assistant. How can I help you today?`;
-    } else if (lowerMessage.includes('summary') || lowerMessage.includes('summarize')) {
-      response = `I can help you create summaries from your notes, PDFs, or URLs. Would you like me to summarize some content for you?`;
-    } else if (lowerMessage.includes('notes') || lowerMessage.includes('note')) {
-      response = `I can help you organize and create structured notes from various sources. What would you like to take notes about?`;
-    } else if (lowerMessage.includes('quiz') || lowerMessage.includes('question')) {
-      response = `I can generate quizzes and questions based on your content to help you study better. What topic would you like a quiz on?`;
-    } else if (lowerMessage.includes('record') || lowerMessage.includes('audio')) {
-      response = `I can help you process audio recordings and convert them to text or notes. Would you like to start a recording?`;
-    } else if (lowerMessage.includes('language')) {
-      response = `I support multiple languages including English, Spanish, French, German, and more. What language would you prefer?`;
-    } else if (lowerMessage.includes('help')) {
-      response = `I can help you with:
-- Creating and organizing notes
-- Generating summaries from text, PDFs, or URLs
-- Processing audio recordings
-- Creating quizzes for studying
-- Multi-language support
-- Voice commands
-
-What would you like to do?`;
-    } else {
-      response = `I understand you're asking about "${message}". I can help you with note-taking, summaries, quizzes, and more. Could you be more specific about what you'd like me to help you with?`;
+    setIsProcessing(true);
+    try {
+      // Build the messages array for OpenAI
+      const messages = [
+        { role: 'system', content: 'You are a helpful assistant for note-taking, summarization, and quizzes.' },
+      ];
+      if (context) {
+        messages.push({ role: 'user', content: `Context: ${context}` });
+      }
+      messages.push({ role: 'user', content: message });
+      const aiResponse = await askOpenAI(messages);
+      const newEntry = { user: message, ai: aiResponse, timestamp: new Date() };
+      setChatHistory((prev) => [...prev, newEntry]);
+      return aiResponse;
+    } catch (err) {
+      const errorMsg = 'Sorry, I could not get a response from the AI.';
+      setChatHistory((prev) => [...prev, { user: message, ai: errorMsg, timestamp: new Date() }]);
+      return errorMsg;
+    } finally {
+      setIsProcessing(false);
     }
-    
-    const aiResponse = `${response}`;
-    const newEntry = { user: message, ai: aiResponse, timestamp: new Date() };
-    setChatHistory((prev) => [...prev, newEntry]);
-    return aiResponse;
   };
 
   return (

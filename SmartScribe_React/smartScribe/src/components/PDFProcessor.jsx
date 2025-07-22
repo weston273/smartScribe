@@ -73,13 +73,8 @@ export default function PDFProcessor({ isOpen, onClose, onNotesGenerated, onSumm
       setExtractedText(text);
 
       // Generate summary and notes using AI
-      await generateSummary(text);
-      await generateNotes(text);
-
-      // Simulate AI processing for demo
-      const generatedSummary = `Summary of ${selectedFile.name}:\n\nThis document contains important information that has been processed and summarized. The key points include the main topics discussed throughout the document, relevant data and statistics, and actionable insights that can be derived from the content.`;
-      
-      const generatedNotes = `# Notes from ${selectedFile.name}\n\n## Key Points:\n- Main topic 1: Important concept discussed\n- Main topic 2: Supporting evidence and data\n- Main topic 3: Conclusions and recommendations\n\n## Action Items:\n- Review key concepts\n- Apply insights to current projects\n- Further research on related topics`;
+      const generatedSummary = await generateSummary(text);
+      const generatedNotes = await generateNotes(text);
 
       setSummary(generatedSummary);
       setNotes(generatedNotes);
