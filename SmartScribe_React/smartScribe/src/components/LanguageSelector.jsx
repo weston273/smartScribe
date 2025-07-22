@@ -19,7 +19,8 @@ export default function LanguageSelector({ isOpen, onClose }) {
     { code: 'ko', name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
     { code: 'zh', name: 'Chinese (Simplified)', nativeName: '中文', flag: '🇨🇳' },
     { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
-    { code: 'hi', name: 'Hindi', nativeName: 'हिंदी', flag: '🇮🇳' }
+    { code: 'hi', name: 'Hindi', nativeName: 'हिंदी', flag: '🇮🇳' },
+    { code: 'sn', name: 'Shona', nativeName: 'ChiShona', flag: '🇿🇼' }
   ];
 
   const handleLanguageSelect = (languageCode) => {

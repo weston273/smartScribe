@@ -141,6 +141,11 @@
   height: 100%;
 }
 
+.chat img {
+  width: 80%;
+  height: 90%;
+  object-fit: contain;
+}
 
 .essentials-notes:hover{
     background-color: #3e3e5aef;

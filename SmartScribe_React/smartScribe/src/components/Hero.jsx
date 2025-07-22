@@ -1,56 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
+import { MessageSquarePlus } from 'lucide-react';
 import './Hero.css';
 
-export default function Hero({ showInput, summary, onSend }) {
-  const [text, setText] = useState('');
-  const [inputValue, setInputValue] = useState('');
-  const inputRef = useRef();
-
-  // Update "chat output" if a PDF summary is passed
-  useEffect(() => {
-    if (summary) {
-      setText(summary);
-      setInputValue(''); // clear input if summary loads
-    }
-  }, [summary]);
-
-  // When showInput toggles on, focus input
-  useEffect(() => {
-    if (showInput && inputRef.current) {
-      inputRef.current.focus();
-      setInputValue(''); // clear previous input
-    }
-  }, [showInput]);
-
-  // Handle Enter key
-  const handleInputKeyDown = (e) => {
-    if (e.key === "Enter" && inputValue.trim()) {
-      setText(inputValue);        // set typed value as output
-      onSend && onSend(inputValue); // optional: notify parent
-      setInputValue('');
-    }
-  };
-
+export default function Hero({ conversation, onNewChat }) {
   return (
     <div className='hero-container'>
-      {/* Only show output text if input is not shown */}
-      {!showInput && (
-        <div className={text ? 'output-text' : 'placeholder-text'}>
-          {text || 'SmartScribe'}
+      {conversation.length === 0 ? (
+        <div className='placeholder-text'>SmartScribe</div>
+      ) : (
+        <div className='chat-messages'>
+          {conversation.map((message, index) => (
+            <div key={index} className={`message ${message.sender}`}>
+              <div className='message-content'>{message.text}</div>
+              <div className='message-time'>{message.timestamp}</div>
+            </div>
+          ))}
         </div>
       )}
-      {/* Show input if toggled */}
-      {showInput && (
-        <input
-          className='hero-input'
-          type="text"
-          ref={inputRef}
-          value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
-          onKeyDown={handleInputKeyDown}
-          placeholder="Type here..."
-        />
-      )}
+
+      {/* This button always shows (as per your request), at the bottom left of hero section */}
+      <button className='new-chat-btn' onClick={onNewChat} title="Start New Chat">
+        <MessageSquarePlus size={20} />
+        <span>New Chat</span>
+      </button>
     </div>
   );
 }
