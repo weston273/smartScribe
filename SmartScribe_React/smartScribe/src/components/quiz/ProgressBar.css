@@ -1,0 +1,21 @@
+.progress-bar {
+  position: relative;
+  height: 18px;
+  background-color: #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progress-bar .filler {
+  height: 100%;
+  background-color: var(--hero-color);
+  transition: width 0.3s ease-in-out;
+}
+
+.progress-bar p {
+  text-align: right;
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: var(--input-text-color);
+}

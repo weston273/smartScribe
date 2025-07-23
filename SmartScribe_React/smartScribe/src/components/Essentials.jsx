@@ -1,47 +1,50 @@
-import React from 'react'
+import React from 'react';
 import './Essentials.css';
-// import AI from './../assets/AI.webp'
-import Notes from './../assets/Notes.png'
-import Pdf from './../assets/pdf.webp'
-import Cloud from '../assets/cloud.webp'
-import {Link} from 'react-router-dom'
+import Notes from './../assets/note_side_bar_icon_light.png';
+import Pdf from './../assets/pdf.webp';
+import Chat from '../assets/chat.png';
+import { Link } from 'react-router-dom';
+import * as pdfjsLib from 'pdfjs-dist';
 
-export default function Essentials({ onNotesClick}) {
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.js',
+  import.meta.url
+).toString();
+
+export default function Essentials({ onNotesClick, onPDFClick }) {
+
   return (
-    
-        <section className='essentials-container' >
-        
-        <span className='essentials notes'>
-          <Link to='/' aria-label="Artificial Intelligence features">
-            <img src={Notes} alt="notes icon" />
-          </Link>
-          </span>
+    <section className='essentials-container'>
+      <span className='essentials notes'>
+        <Link to='/notes' aria-label="Take Notes">
+          <img src={Notes} alt="notes icon" />
+        </Link>
+      </span>
 
-        <span className="essentials" >
-          <Link to='/'aria-label="PDF features" >
-            <img src={Pdf} alt="pdf icon" />
-          </Link>
-        </span>
+      <span className="essentials" onClick={() => {
+  console.log('PDF icon clicked');
+  onPDFClick();
+}}>
+  <img src={Pdf} alt="pdf icon" />
+</span>
+      <span className="essentials-notes" onClick={onNotesClick}>
+        <Link to='' aria-label="Take Notes">
+          <h1>+</h1>
+        </Link>
+      </span>
 
-        <span className="essentials-notes" onClick={onNotesClick} >
-          <Link to='' aria-label="Take Notes">
-            <h1>+</h1>
-          </Link>
-        </span>
+      <span className='essentials' >
+        <Link to='/record'>
+          <p>{'Record'}</p>
+        </Link>
+      </span>
 
-        <span className='essentials' >
-          <Link to='/' aria-label="Recording features">
-            <p>record</p>
-          </Link>
-        </span>
-
-        <span className="essentials" >
-          <Link to='/'>
-            <img src={Cloud} alt="cloud icon" aria-label="Cloud features"/>
-          </Link>
-        </span>
+      <span className="essentials chat" >
+        <Link to='' aria-label="Cloud features">
+          <img src={Chat} alt="cloud icon" />
+        </Link>
+      </span>
     </section>
-  
-    
-  )
+  );
 }

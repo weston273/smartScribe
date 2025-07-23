@@ -1,103 +1,206 @@
-import React from 'react';
-import './SideBar.css'
-import {Link} from 'react-router-dom'
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { 
+  Home, 
+  FileText, 
+  HelpCircle, 
+  Mic, 
+  User, 
+  X, 
+  Bot,
+  Languages,
+  FileUp,
+  Link as LinkIcon,
+  Volume2,
+  Brain,
+  MessageCircle,
+  Camera,
+  Lightbulb
+} from 'lucide-react';
+import AIAssistant from '../AIAssistant';
+import PDFProcessor from '../PDFProcessor';
+import URLProcessor from '../URLProcessor';
+import VoiceCommand from '../VoiceCommand';
+import LanguageSelector from '../LanguageSelector';
+import TopicBreakdown from '../TopicBreakdown';
+import VideoProcessor from '../VideoProcessor';
+import './SideBar.css';
 
-import Sidebar from '../../assets/sidebar.png';
-import LogoNav from '../../assets/logo-nav.png';
-// nav items
-import HomeDark from  '../../assets/home_sideBar_icon.png'
-import HomeLight from '../../assets/home_sideBar_icon_light.png'
-import NotesLight from '../../assets/note_side_bar_icon_light.png'
-import NotesDark from '../../assets/note_side_bar_icon.png'
-import AILight from '../../assets/AI_icon_sideBar_light.png'
-import AIDark from '../../assets/AI_icon_sideBar.png'
-// account image
-import profileLight from '../../assets/profile_dark.png'
-import profileDark from '../../assets/profile.png'
+export default function SideBar({ onClose }) {
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [showPDFProcessor, setShowPDFProcessor] = useState(false);
+  const [showURLProcessor, setShowURLProcessor] = useState(false);
+  const [showVoiceCommand, setShowVoiceCommand] = useState(false);
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
+  const [showTopicBreakdown, setShowTopicBreakdown] = useState(false);
+  const [showVideoProcessor, setShowVideoProcessor] = useState(false);
 
-export default function SideBar({ theme, onClose }) {
-    const HomeIcon = theme === 'dark' ? HomeDark : HomeLight;
-    const NotesIcon = theme === 'dark' ? NotesDark : NotesLight;
-    const AIIcon = theme === 'dark' ? AIDark : AILight;
-    const Profile = theme === 'dark' ? profileDark : profileLight
-
-    return (
-        <div className='sidebar'>
-            <div className='top-sidebar'>
-                <span className='logo-container'>
-                    <img src={LogoNav} alt="logo" />
-                </span>
-                <span className='close-btn-container'>
-                    <button className='close-btn' onClick={onClose}>
-                        <img src={Sidebar} alt="sidebar" />
-                    </button>
-                </span>
-            </div>
-            <div className='horizontal-line'>
-                <hr />
-            </div>
-        <div className='sidebar-content'>
-            <ul>
-                {/* Home Nav item */}
-                <li className='nav-item'>
-                    <Link to='/home' className='nav-link'>
-                        <div className='icon-text icon-home' >
-                        <div className='icon-box'>
-                            <img src={HomeIcon} alt="DashBoard" className='icon'/>
-                        </div>
-                        <span className='link-container'>
-                            <p>Dashboard</p>
-                        </span>
-                    </div>
-                    </Link>
-                    
-                </li>
-                {/* Notes Nav Item */}
-                <li className='nav-item'>
-                    <Link to='#' className='nav-link'>                   
-                        <div className='icon-text'>
-                            <div className='icon-box'>
-                                <img src={NotesIcon} alt="Notes" className='notes-icon'/>
-                            </div>
-                            <span className='link-container'>
-                                <p>Notes</p>
-                            </span>
-                        </div>
-                    </Link>
-                </li>
-                {/* Notes AI Chat */}
-                <li className='nav-item'>
-                    <Link to='#' className='nav-link'>  
-                        <div className='icon-text'>
-                        <div className='icon-box'>
-                            <img src={AIIcon} alt="AI Chat" className='icon'/>
-                        </div>
-                        <span className='link-container'>
-                            <p>AI Chat</p>
-                        </span>
-                     </div>
-                    </Link>
-                    
-                </li>
-            </ul>
+  return (
+    <>
+      <div className="sidebar">
+        <div className="sidebar-header">
+          <h2 className="sidebar-logo">SmartScribe</h2>
+          <button className="sidebar-close" onClick={onClose}>
+            <X size={24} />
+          </button>
         </div>
-            <div className='horizontal-line btm-line'>
-                <hr />
-            </div>
 
-            <div className='account-container'>
-                <Link className='account Link' to='#'>
-                    <div className='image-container'>
-                        <img src={Profile} alt="account image" />
-                    </div>
-                    <div className='account-link-container'>
-                            <p>
-                               Account 
-                            </p>
-                    </div>
-                    
-                </Link>
-            </div>
-        </div>
-    )
+        <nav className="sidebar-nav">
+          {/* Main Navigation */}
+          <div className="nav-section">
+            <h3 className="nav-section-title">Main</h3>
+            <Link to="/home" className="nav-item" onClick={onClose}>
+              <Home size={20} />
+              <span>Dashboard</span>
+            </Link>
+            <Link to="/notes" className="nav-item" onClick={onClose}>
+              <FileText size={20} />
+              <span>Notes</span>
+            </Link>
+            <Link to="/quiz" className="nav-item" onClick={onClose}>
+              <HelpCircle size={20} />
+              <span>Quiz</span>
+            </Link>
+            <Link to="/record" className="nav-item" onClick={onClose}>
+              <Mic size={20} />
+              <span>Record</span>
+            </Link>
+            <Link to="/profile" className="nav-item" onClick={onClose}>
+              <User size={20} />
+              <span>Profile</span>
+            </Link>
+          </div>
+
+          {/* AI Features */}
+          <div className="nav-section">
+            <h3 className="nav-section-title">AI Features</h3>
+            <button 
+              className="nav-item" 
+              onClick={() => setShowAIAssistant(true)}
+            >
+              <Bot size={20} />
+              <span>AI Assistant</span>
+            </button>
+            <button 
+              className="nav-item" 
+              onClick={() => setShowVoiceCommand(true)}
+            >
+              <Volume2 size={20} />
+              <span>Voice Commands</span>
+            </button>
+            <button 
+              className="nav-item" 
+              onClick={() => setShowTopicBreakdown(true)}
+            >
+              <Brain size={20} />
+              <span>Topic Breakdown</span>
+            </button>
+            <button 
+              className="nav-item" 
+              onClick={() => setShowLanguageSelector(true)}
+            >
+              <Languages size={20} />
+              <span>Languages</span>
+            </button>
+          </div>
+
+          {/* Content Processing */}
+          <div className="nav-section">
+            <h3 className="nav-section-title">Content Processing</h3>
+            <button 
+              className="nav-item" 
+              onClick={() => setShowPDFProcessor(true)}
+            >
+              <FileUp size={20} />
+              <span>PDF Upload</span>
+            </button>
+            <button 
+              className="nav-item" 
+              onClick={() => setShowURLProcessor(true)}
+            >
+              <LinkIcon size={20} />
+              <span>Link Summarizer</span>
+            </button>
+            <button 
+              className="nav-item" 
+              onClick={() => setShowVideoProcessor(true)}
+            >
+              <Camera size={20} />
+              <span>Video Processor</span>
+            </button>
+          </div>
+
+          {/* Smart Features */}
+          <div className="nav-section">
+            <h3 className="nav-section-title">Smart Tools</h3>
+            <Link to="/quiz" className="nav-item" onClick={onClose}>
+              <Lightbulb size={20} />
+              <span>Generate Quiz</span>
+            </Link>
+            <button className="nav-item">
+              <MessageCircle size={20} />
+              <span>Smart Chat</span>
+            </button>
+          </div>
+        </nav>
+      </div>
+
+      {/* Modals */}
+      {showAIAssistant && (
+        <AIAssistant
+          isOpen={showAIAssistant}
+          onClose={() => setShowAIAssistant(false)}
+          context="sidebar"
+        />
+      )}
+
+      {showPDFProcessor && (
+        <PDFProcessor
+          isOpen={showPDFProcessor}
+          onClose={() => setShowPDFProcessor(false)}
+          onNotesGenerated={(notes) => console.log('Notes:', notes)}
+          onSummaryGenerated={(summary) => console.log('Summary:', summary)}
+        />
+      )}
+
+      {showURLProcessor && (
+        <URLProcessor
+          isOpen={showURLProcessor}
+          onClose={() => setShowURLProcessor(false)}
+          onSummaryGenerated={(summary) => console.log('Summary:', summary)}
+        />
+      )}
+
+      {showVoiceCommand && (
+        <VoiceCommand
+          isOpen={showVoiceCommand}
+          onClose={() => setShowVoiceCommand(false)}
+        />
+      )}
+
+      {showLanguageSelector && (
+        <LanguageSelector
+          isOpen={showLanguageSelector}
+          onClose={() => setShowLanguageSelector(false)}
+        />
+      )}
+
+      {showTopicBreakdown && (
+        <TopicBreakdown
+          isOpen={showTopicBreakdown}
+          onClose={() => setShowTopicBreakdown(false)}
+        />
+      )}
+
+      {showVideoProcessor && (
+        <VideoProcessor
+          isOpen={showVideoProcessor}
+          onClose={() => setShowVideoProcessor(false)}
+          onNotesGenerated={(notes) => console.log('Notes:', notes)}
+          onSummaryGenerated={(summary) => console.log('Summary:', summary)}
+          onQuizGenerated={(quiz) => console.log('Quiz:', quiz)}
+        />
+      )}
+    </>
+  );
 }

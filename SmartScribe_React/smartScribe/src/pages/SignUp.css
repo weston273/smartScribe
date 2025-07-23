@@ -1,0 +1,141 @@
+.signup-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: var(--background-color);
+}
+
+.signup-card {
+  background-color: var(--essentials-background-color);
+  padding: 3rem;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.signup-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.signup-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-text-color);
+  margin-bottom: 0.5rem;
+}
+
+.signup-header p {
+  color: var(--primary-text-color);
+  opacity: 0.7;
+  margin: 0;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.name-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-input {
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background-color: var(--input-background-color);
+  color: var(--primary-text-color);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--hero-color);
+  box-shadow: 0 0 0 2px rgba(0, 201, 167, 0.2);
+}
+
+.form-input::placeholder {
+  color: var(--input-text-color);
+}
+
+.password-input {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--primary-text-color);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.password-toggle:hover {
+  opacity: 1;
+}
+
+.signup-button {
+  background-color: var(--hero-color);
+  color: var(--background-color);
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.signup-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.signup-footer {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.signup-footer p {
+  color: var(--primary-text-color);
+  opacity: 0.7;
+  margin: 0;
+}
+
+.login-link {
+  color: var(--hero-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.3s ease;
+}
+
+.login-link:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 480px) {
+  .signup-card {
+    padding: 2rem;
+  }
+
+  .signup-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .name-inputs {
+    grid-template-columns: 1fr;
+  }
+}

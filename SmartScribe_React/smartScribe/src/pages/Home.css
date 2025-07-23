@@ -1,3 +1,94 @@
-body, html {
-    background-color: var(--background-color);
+.home-main {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 10rem);
+}
+
+.hero-section {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hero-title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 700;
+  color: var(--hero-color);
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: var(--primary-text-color);
+  opacity: 0.8;
+  margin: 0;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  max-width: 800px;
+  width: 100%;
+}
+
+.feature-card {
+  background-color: var(--essentials-background-color);
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--primary-text-color);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--hero-color);
+  box-shadow: 0 8px 25px rgba(0, 201, 167, 0.2);
+}
+
+.feature-card svg {
+  color: var(--hero-color);
+  margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+  opacity: 0.8;
+  margin: 0;
+}
+
+.create-card {
+  background: linear-gradient(135deg, var(--hero-color), #00a085);
+  color: var(--background-color);
+}
+
+.create-card svg {
+  color: var(--background-color);
+}
+
+@media (max-width: 768px) {
+  .home-main {
+    padding: 1rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .feature-card {
+    padding: 1.5rem;
+  }
 }

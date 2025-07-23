@@ -1,0 +1,19 @@
+.input {
+    border : none;
+    background-color: var(--input-background-color);
+    color : var(--input-text-color);
+    width : 90%;
+    padding : 5%;
+    
+}
+
+.input{
+    margin-top : 10%;
+}
+
+.input::placeholder {
+  color: var(--input-text-color);
+  font-size: 17px;
+  font-weight : bold;
+  padding: 4%;
+}

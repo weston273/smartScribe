@@ -1,34 +1,31 @@
 import React from 'react';
-import './Footer.css';
 import { Link } from 'react-router-dom';
+import './Footer.css'
 
 export default function Footer({ toggleTheme, theme }) {
   return (
-    <footer className="footer">
-      <div className="footer-left-container">
-        <div className="toggle-container">
-          <input
-            type="checkbox"
-            id="theme-radio-btn"
-            className="radiobtn"
-            checked={theme === 'dark'}   // checkbox checked when theme is dark
-            onChange={toggleTheme}        // toggle theme on change
-          />
-          <label htmlFor="theme-radio-btn" className="label-theme">
-            Dark Theme
-          </label>
+    <footer className="app-footer">
+      <div className="footer-content">
+        <div className="footer-left">
+          <div className="theme-toggle">
+            <input
+              type="checkbox"
+              id="theme-radio-btn"
+              className="theme-checkbox"
+              checked={theme === 'dark'}
+              onChange={toggleTheme}
+            />
+            <label htmlFor="theme-radio-btn" className="theme-label">
+              Dark Theme
+            </label>
+          </div>
         </div>
-      </div>
 
-      <div className="footer-right-container">
-        <div className="footer-text-container">
-          <Link to="#" className="footer-text-container" aria-label="Powered by NYANZVI">
+        <div className="footer-right">
+          <Link to="#" className="footer-link">
             powered by NYANZVI
           </Link>
-        </div>
-
-        <div className="footer-text-container">
-          <Link to="#" className="footer-text-container" aria-label="version 1.0.0">
+          <Link to="#" className="footer-link">
             version 1.0.0
           </Link>
         </div>

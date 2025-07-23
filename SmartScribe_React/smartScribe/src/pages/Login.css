@@ -1,0 +1,148 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: var(--background-color);
+}
+
+.login-card {
+  background-color: var(--essentials-background-color);
+  padding: 3rem;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-text-color);
+  margin-bottom: 0.5rem;
+}
+
+.login-header p {
+  color: var(--primary-text-color);
+  opacity: 0.7;
+  margin: 0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-input {
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background-color: var(--input-background-color);
+  color: var(--primary-text-color);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--hero-color);
+  box-shadow: 0 0 0 2px rgba(0, 201, 167, 0.2);
+}
+
+.form-input::placeholder {
+  color: var(--input-text-color);
+}
+
+.password-input {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--primary-text-color);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.password-toggle:hover {
+  opacity: 1;
+}
+
+.forgot-password {
+  color: var(--hero-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+  text-align: right;
+  transition: opacity 0.3s ease;
+}
+
+.forgot-password:hover {
+  opacity: 0.8;
+}
+
+.login-button {
+  background-color: var(--hero-color);
+  color: var(--background-color);
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.login-footer p {
+  color: var(--primary-text-color);
+  opacity: 0.7;
+  margin: 0;
+}
+
+.signup-link {
+  color: var(--hero-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.3s ease;
+}
+
+.signup-link:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 2rem;
+  }
+
+  .login-header h1 {
+    font-size: 1.5rem;
+  }
+}
