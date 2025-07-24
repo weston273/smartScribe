@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { Link as LinkIcon, X, Download, Loader, ExternalLink } from 'lucide-react';
-import { useAI } from './contexts/AIContext';
+import { processURL, generateSummary, generateNotes, generateQuiz } from '../utils/ai';
 import './URLProcessor.css';
 
-export default function URLProcessor({ isOpen, onClose, onSummaryGenerated }) {
+export default function URLProcessor({ isOpen, onClose, onSummaryGenerated, onNotesGenerated }) {
   const [url, setUrl] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [content, setContent] = useState('');
-  const [summary, setSummary] = useState('');
-  const [title, setTitle] = useState('');
-  
-  const { generateSummary } = useAI();
+  const [activeTab, setActiveTab] = useState('summary');
+  const [summaryWordCount, setSummaryWordCount] = useState(150);
+  const [generatedContent, setGeneratedContent] = useState({
+    notes: '',
+    summary: '',
+    quiz: [],
+    title: ''
+  });
 
   const isValidUrl = (string) => {
     try {
@@ -21,7 +24,7 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated }) {
     }
   };
 
-  const processURL = async () => {
+  const processURLContent = async () => {
     if (!url.trim()) {
       alert('Please enter a valid URL');
       return;
@@ -35,29 +38,28 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated }) {
     setIsProcessing(true);
     
     try {
-      // In a real implementation, you would use a backend service to scrape the URL
-      // For demo purposes, we'll simulate the process of fetching content
-      // TODO: Replace this with real content fetching in production
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // Simulate scraped content
-      const simulatedTitle = `Article from ${new URL(url).hostname}`;
-      const simulatedContent = `This is a comprehensive article that discusses various important topics related to the subject matter. The content includes detailed analysis, supporting data, and expert opinions that provide valuable insights into the field.`;
-
-      setTitle(simulatedTitle);
-      setContent(simulatedContent);
-
-      // Use AI to summarize the simulated content
-      const aiSummary = await generateSummary(simulatedContent);
-      setSummary(aiSummary);
+      // Use AI to process the URL content
+      const urlAnalysis = await processURL(url);
+      const title = `Content from ${new URL(url).hostname}`;
       
-      // Pass summary to parent component
-      if (onSummaryGenerated) {
-        onSummaryGenerated(aiSummary);
-      }
+      // Generate different content types
+      const summary = await generateSummary(urlAnalysis, summaryWordCount);
+      const notes = await generateNotes(urlAnalysis);
+      const quiz = await generateQuiz(urlAnalysis, 5, 'intermediate');
 
-    } catch {
-      console.error('Error processing URL');
+      setGeneratedContent({
+        title: title,
+        summary: summary,
+        notes: notes,
+        quiz: quiz
+      });
+
+      // Pass content to parent components
+      if (onSummaryGenerated) onSummaryGenerated(summary);
+      if (onNotesGenerated) onNotesGenerated(notes);
+
+    } catch (error) {
+      console.error('Error processing URL:', error);
       alert('Error processing URL. Please try again.');
     } finally {
       setIsProcessing(false);
@@ -74,10 +76,13 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated }) {
     URL.revokeObjectURL(url);
   };
 
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    alert('Copied to clipboard!');
+  };
+
   const clearResults = () => {
-    setContent('');
-    setSummary('');
-    setTitle('');
+    setGeneratedContent({ notes: '', summary: '', quiz: [], title: '' });
     setUrl('');
   };
 
@@ -87,7 +92,13 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated }) {
     <div className="url-processor-overlay">
       <div className="url-processor-modal">
         <div className="url-processor-header">
-          <h2>URL Summarizer</h2>
+          <div className="header-info">
+            <LinkIcon size={24} />
+            <div>
+              <h2>AI URL Processor</h2>
+              <p>Analyze websites and generate notes, summaries, and quizzes</p>
+            </div>
+          </div>
           <button className="close-btn" onClick={onClose}>
             <X size={20} />
           </button>
@@ -99,34 +110,52 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated }) {
               <LinkIcon size={20} className="url-icon" />
               <input
                 type="text"
-                placeholder="Enter URL to summarize (e.g., https://example.com/article)"
+                placeholder="Enter URL to analyze (e.g., https://example.com/article)"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 className="url-input"
-                onKeyPress={(e) => e.key === 'Enter' && processURL()}
+                onKeyPress={(e) => e.key === 'Enter' && processURLContent()}
               />
             </div>
             
+            {activeTab === 'summary' && (
+              <div className="summary-options">
+                <label htmlFor="wordCount">Summary length (words):</label>
+                <select
+                  id="wordCount"
+                  value={summaryWordCount}
+                  onChange={(e) => setSummaryWordCount(parseInt(e.target.value))}
+                  className="word-count-select"
+                >
+                  <option value={50}>50 words</option>
+                  <option value={100}>100 words</option>
+                  <option value={150}>150 words</option>
+                  <option value={250}>250 words</option>
+                  <option value={500}>500 words</option>
+                </select>
+              </div>
+            )}
+            
             <div className="action-buttons">
               <button
-                onClick={processURL}
+                onClick={processURLContent}
                 disabled={isProcessing || !url.trim()}
                 className="process-btn"
               >
                 {isProcessing ? (
                   <>
                     <Loader className="spinning" size={20} />
-                    Processing...
+                    Analyzing with AI...
                   </>
                 ) : (
                   <>
                     <LinkIcon size={20} />
-                    Summarize URL
+                    Analyze URL with AI
                   </>
                 )}
               </button>
 
-              {(summary || content) && (
+              {generatedContent.summary && (
                 <button onClick={clearResults} className="clear-btn">
                   Clear Results
                 </button>
@@ -134,10 +163,10 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated }) {
             </div>
           </div>
 
-          {summary && (
+          {generatedContent.summary && (
             <div className="results-section">
               <div className="result-header">
-                <h3 className="result-title">{title}</h3>
+                <h3 className="result-title">{generatedContent.title}</h3>
                 {url && (
                   <a 
                     href={url} 
@@ -152,47 +181,115 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated }) {
               </div>
 
               <div className="tabs">
-                <button className="tab active">Summary</button>
-                <button className="tab">Full Content</button>
+                <button 
+                  className={`tab ${activeTab === 'summary' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('summary')}
+                >
+                  📄 AI Summary
+                </button>
+                <button 
+                  className={`tab ${activeTab === 'notes' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('notes')}
+                >
+                  📝 AI Notes
+                </button>
+                <button 
+                  className={`tab ${activeTab === 'quiz' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('quiz')}
+                >
+                  ❓ AI Quiz
+                </button>
               </div>
 
-              <div className="content-section">
-                <div className="content-header">
-                  <h4>AI-Generated Summary</h4>
-                  <button
-                    onClick={() => downloadContent(summary, 'url-summary.txt')}
-                    className="download-btn"
-                  >
-                    <Download size={16} />
-                    Download
-                  </button>
-                </div>
-                <div className="content-text">{summary}</div>
-              </div>
-
-              {content && (
-                <div className="content-section">
-                  <div className="content-header">
-                    <h4>Original Content</h4>
-                    <button
-                      onClick={() => downloadContent(content, 'original-content.txt')}
-                      className="download-btn"
-                    >
-                      <Download size={16} />
-                      Download
-                    </button>
+              <div className="tab-content">
+                {activeTab === 'summary' && (
+                  <div className="content-section">
+                    <div className="content-header">
+                      <h4>AI-Generated Summary ({summaryWordCount} words)</h4>
+                      <div className="action-buttons">
+                        <button onClick={() => copyToClipboard(generatedContent.summary)}>
+                          Copy
+                        </button>
+                        <button onClick={() => downloadContent(generatedContent.summary, 'url-summary.txt')}>
+                          <Download size={16} />
+                          Download
+                        </button>
+                      </div>
+                    </div>
+                    <div className="content-text">{generatedContent.summary}</div>
                   </div>
-                  <div className="content-text original-content">{content}</div>
-                </div>
-              )}
+                )}
+
+                {activeTab === 'notes' && (
+                  <div className="content-section">
+                    <div className="content-header">
+                      <h4>AI-Generated Notes</h4>
+                      <div className="action-buttons">
+                        <button onClick={() => copyToClipboard(generatedContent.notes)}>
+                          Copy
+                        </button>
+                        <button onClick={() => downloadContent(generatedContent.notes, 'url-notes.md')}>
+                          <Download size={16} />
+                          Download
+                        </button>
+                      </div>
+                    </div>
+                    <div className="content-text">{generatedContent.notes}</div>
+                  </div>
+                )}
+
+                {activeTab === 'quiz' && (
+                  <div className="content-section">
+                    <div className="content-header">
+                      <h4>AI-Generated Quiz</h4>
+                      <div className="action-buttons">
+                        <button onClick={() => copyToClipboard(JSON.stringify(generatedContent.quiz, null, 2))}>
+                          Copy JSON
+                        </button>
+                        <button onClick={() => downloadContent(JSON.stringify(generatedContent.quiz, null, 2), 'url-quiz.json')}>
+                          <Download size={16} />
+                          Download
+                        </button>
+                      </div>
+                    </div>
+                    <div className="quiz-questions">
+                      {generatedContent.quiz.map((question, index) => (
+                        <div key={index} className="quiz-question">
+                          <h4>Question {index + 1}: {question.question}</h4>
+                          <div className="options">
+                            {question.options.map((option, optIndex) => (
+                              <div 
+                                key={optIndex} 
+                                className={`option ${optIndex === question.correct ? 'correct' : ''}`}
+                              >
+                                <span className="option-letter">{String.fromCharCode(65 + optIndex)}.</span>
+                                <span className="option-text">{option}</span>
+                                {optIndex === question.correct && (
+                                  <span className="correct-indicator">✓</span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                          {question.explanation && (
+                            <div className="explanation">
+                              <strong>Explanation:</strong> {question.explanation}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
 
               <div className="tips-section">
-                <h4>💡 Tips for Better Results</h4>
+                <h4>💡 AI Analysis Tips</h4>
                 <ul>
-                  <li>Use direct links to articles, blog posts, or documentation</li>
-                  <li>Ensure the URL is accessible and doesn't require login</li>
-                  <li>Works best with text-heavy content rather than multimedia</li>
+                  <li>Works best with articles, blog posts, and educational content</li>
+                  <li>Ensure the URL is publicly accessible</li>
+                  <li>AI analyzes available content and generates educational materials</li>
                   <li>Some websites may block automated access</li>
+                  <li>Results quality depends on content complexity and structure</li>
                 </ul>
               </div>
             </div>

@@ -6,7 +6,6 @@ import Chat from '../assets/chat.png';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 
-
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.js',
   import.meta.url
@@ -23,11 +22,12 @@ export default function Essentials({ onNotesClick, onPDFClick }) {
       </span>
 
       <span className="essentials" onClick={() => {
-  console.log('PDF icon clicked');
-  onPDFClick();
-}}>
-  <img src={Pdf} alt="pdf icon" />
-</span>
+        console.log('PDF icon clicked');
+        onPDFClick();
+      }}>
+        <img src={Pdf} alt="pdf icon" />
+      </span>
+
       <span className="essentials-notes" onClick={onNotesClick}>
         <Link to='' aria-label="Take Notes">
           <h1>+</h1>
@@ -41,8 +41,8 @@ export default function Essentials({ onNotesClick, onPDFClick }) {
       </span>
 
       <span className="essentials chat" >
-        <Link to='' aria-label="Cloud features">
-          <img src={Chat} alt="cloud icon" />
+        <Link to='/smart-chat' aria-label="Smart Chat">
+          <img src={Chat} alt="chat icon" />
         </Link>
       </span>
     </section>

@@ -1,47 +1,93 @@
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Settings, RefreshCw, Brain } from 'lucide-react';
 import NavBar1 from '../components/NavBar1';
 import SideBar from '../components/sidebar/SideBar';
 import Footer from '../components/Footer';
 import AccountDropDown from '../components/account/AccountDropDown';
+import { generateQuiz, generateTopicQuiz } from '../utils/ai';
 import './Quiz.css';
 
-export default function Quiz({ theme }) {
+export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
   const [showSideBar, setShowSideBar] = useState(false);
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+  const [showSettings, setShowSettings] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const questions = [
-    {
-      id: 1,
-      question: "What is the main purpose of SmartScribe?",
-      options: ["Gaming", "Note-taking", "Video editing", "Music production"],
-      correct: 1
-    },
-    {
-      id: 2,
-      question: "Which feature allows you to convert speech to text?",
-      options: ["Quiz", "Record", "Profile", "Settings"],
-      correct: 1
-    },
-    {
-      id: 3,
-      question: "What does AI-powered summarization help with?",
-      options: ["Playing games", "Creating music", "Extracting key points", "Editing photos"],
-      correct: 2
-    }
-  ];
+  // Quiz settings
+  const [quizSettings, setQuizSettings] = useState({
+    numberOfQuestions: 5,
+    difficulty: 'intermediate',
+    topic: '',
+    useNotes: fromNotes
+  });
 
   const toggleSideBar = () => setShowSideBar(prev => !prev);
   const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
   const handleCloseDropdown = () => setShowAccountDropdown(false);
 
-  const handleAnswer = (questionId, answerIndex) => {
+  useEffect(() => {
+    if (fromNotes && notesContent) {
+      setQuizSettings(prev => ({ ...prev, useNotes: true }));
+    }
+  }, [fromNotes, notesContent]);
+
+  const generateQuizQuestions = async () => {
+    setIsGenerating(true);
+    try {
+      let generatedQuestions = [];
+      
+      if (quizSettings.useNotes && notesContent) {
+        generatedQuestions = await generateQuiz(
+          notesContent,
+          quizSettings.numberOfQuestions,
+          quizSettings.difficulty,
+          quizSettings.topic
+        );
+      } else if (quizSettings.topic) {
+        generatedQuestions = await generateTopicQuiz(
+          quizSettings.topic,
+          quizSettings.numberOfQuestions,
+          quizSettings.difficulty
+        );
+      } else {
+        // Default fallback questions
+        generatedQuestions = [
+          {
+            question: "What is the main purpose of SmartScribe?",
+            options: ["Gaming", "Note-taking and AI assistance", "Video editing", "Music production"],
+            correct: 1,
+            explanation: "SmartScribe is designed for intelligent note-taking and AI-powered learning assistance."
+          },
+          {
+            question: "Which AI model does SmartScribe use?",
+            options: ["GPT-4", "DeepSeek", "Claude", "Gemini"],
+            correct: 1,
+            explanation: "SmartScribe uses the DeepSeek model for AI processing and responses."
+          }
+        ];
+      }
+
+      setQuestions(generatedQuestions);
+      setShowSettings(false);
+      setCurrentQuestion(0);
+      setAnswers({});
+      setShowResults(false);
+    } catch (error) {
+      console.error('Error generating quiz:', error);
+      alert('Failed to generate quiz. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleAnswer = (questionIndex, answerIndex) => {
     setAnswers(prev => ({
       ...prev,
-      [questionId]: answerIndex
+      [questionIndex]: answerIndex
     }));
   };
 
@@ -61,8 +107,8 @@ export default function Quiz({ theme }) {
 
   const calculateScore = () => {
     let correct = 0;
-    questions.forEach(q => {
-      if (answers[q.id] === q.correct) {
+    questions.forEach((q, index) => {
+      if (answers[index] === q.correct) {
         correct++;
       }
     });
@@ -73,10 +119,137 @@ export default function Quiz({ theme }) {
     setCurrentQuestion(0);
     setAnswers({});
     setShowResults(false);
+    setShowSettings(true);
   };
+
+  const handleFromNotesChoice = (useNotes) => {
+    setQuizSettings(prev => ({ ...prev, useNotes }));
+    if (!useNotes) {
+      setQuizSettings(prev => ({ ...prev, topic: '' }));
+    }
+  };
+
+  if (showSettings) {
+    return (
+      <div className="page-wrapper">
+        <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
+        
+        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
+        
+        <main className="quiz-main">
+          <div className="quiz-settings">
+            <div className="settings-header">
+              <Brain size={32} className="settings-icon" />
+              <h1>Quiz Generator</h1>
+              <p>Create a personalized quiz with AI</p>
+            </div>
+
+            {fromNotes && (
+              <div className="notes-choice">
+                <h3>Quiz Source</h3>
+                <div className="choice-buttons">
+                  <button 
+                    className={`choice-btn ${quizSettings.useNotes ? 'active' : ''}`}
+                    onClick={() => handleFromNotesChoice(true)}
+                  >
+                    Use My Notes
+                  </button>
+                  <button 
+                    className={`choice-btn ${!quizSettings.useNotes ? 'active' : ''}`}
+                    onClick={() => handleFromNotesChoice(false)}
+                  >
+                    Custom Topic
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="settings-form">
+              <div className="form-group">
+                <label>Number of Questions</label>
+                <select
+                  value={quizSettings.numberOfQuestions}
+                  onChange={(e) => setQuizSettings(prev => ({ 
+                    ...prev, 
+                    numberOfQuestions: parseInt(e.target.value) 
+                  }))}
+                  className="form-select"
+                >
+                  <option value={3}>3 Questions</option>
+                  <option value={5}>5 Questions</option>
+                  <option value={10}>10 Questions</option>
+                  <option value={15}>15 Questions</option>
+                  <option value={20}>20 Questions</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Difficulty Level</label>
+                <select
+                  value={quizSettings.difficulty}
+                  onChange={(e) => setQuizSettings(prev => ({ 
+                    ...prev, 
+                    difficulty: e.target.value 
+                  }))}
+                  className="form-select"
+                >
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+              </div>
+
+              {(!quizSettings.useNotes || !fromNotes) && (
+                <div className="form-group">
+                  <label>Topic (Optional)</label>
+                  <input
+                    type="text"
+                    value={quizSettings.topic}
+                    onChange={(e) => setQuizSettings(prev => ({ 
+                      ...prev, 
+                      topic: e.target.value 
+                    }))}
+                    placeholder="e.g., JavaScript, History, Biology..."
+                    className="form-input"
+                  />
+                  <small>Leave empty for general questions</small>
+                </div>
+              )}
+
+              <button
+                onClick={generateQuizQuestions}
+                disabled={isGenerating}
+                className="generate-btn"
+              >
+                {isGenerating ? (
+                  <>
+                    <RefreshCw className="spinning" size={20} />
+                    Generating Quiz...
+                  </>
+                ) : (
+                  <>
+                    <Brain size={20} />
+                    Generate Quiz
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </main>
+
+        {showAccountDropdown && (
+          <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
+        )}
+
+        <Footer theme={theme} />
+      </div>
+    );
+  }
 
   if (showResults) {
     const score = calculateScore();
+    const percentage = Math.round((score / questions.length) * 100);
+    
     return (
       <div className="page-wrapper">
         <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
@@ -85,15 +258,78 @@ export default function Quiz({ theme }) {
         
         <main className="quiz-main">
           <div className="quiz-results">
-            <h1>Quiz Complete!</h1>
-            <div className="score-display">
-              <span className="score">{score}</span>
-              <span className="total">/ {questions.length}</span>
+            <div className="results-header">
+              <div className="score-circle">
+                <span className="score-percentage">{percentage}%</span>
+                <span className="score-fraction">{score}/{questions.length}</span>
+              </div>
+              <h1>Quiz Complete!</h1>
+              <p className={`performance ${percentage >= 80 ? 'excellent' : percentage >= 60 ? 'good' : 'needs-improvement'}`}>
+                {percentage >= 80 ? 'Excellent work!' : percentage >= 60 ? 'Good job!' : 'Keep practicing!'}
+              </p>
             </div>
-            <p>You scored {score} out of {questions.length} questions correctly!</p>
-            <button onClick={resetQuiz} className="retry-button">
-              Try Again
-            </button>
+
+            <div className="results-breakdown">
+              <h3>Question Review</h3>
+              {questions.map((question, index) => (
+                <div key={index} className="question-review">
+                  <div className="question-header">
+                    <span className="question-number">Q{index + 1}</span>
+                    <span className={`result-indicator ${answers[index] === question.correct ? 'correct' : 'incorrect'}`}>
+                      {answers[index] === question.correct ? '✓' : '✗'}
+                    </span>
+                  </div>
+                  <p className="question-text">{question.question}</p>
+                  <div className="answer-comparison">
+                    <div className="your-answer">
+                      <strong>Your answer:</strong> {question.options[answers[index]] || 'Not answered'}
+                    </div>
+                    <div className="correct-answer">
+                      <strong>Correct answer:</strong> {question.options[question.correct]}
+                    </div>
+                    {question.explanation && (
+                      <div className="explanation">
+                        <strong>Explanation:</strong> {question.explanation}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="results-actions">
+              <button onClick={resetQuiz} className="retry-button">
+                <RefreshCw size={20} />
+                Try Again
+              </button>
+              <button onClick={() => setShowSettings(true)} className="new-quiz-button">
+                <Settings size={20} />
+                New Quiz
+              </button>
+            </div>
+          </div>
+        </main>
+
+        {showAccountDropdown && (
+          <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
+        )}
+
+        <Footer theme={theme} />
+      </div>
+    );
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="page-wrapper">
+        <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
+        
+        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
+        
+        <main className="quiz-main">
+          <div className="loading-state">
+            <RefreshCw className="spinning" size={48} />
+            <h2>Loading Quiz...</h2>
           </div>
         </main>
 
@@ -117,7 +353,23 @@ export default function Quiz({ theme }) {
       <main className="quiz-main">
         <div className="quiz-container">
           <div className="quiz-header">
-            <h1>SmartScribe Quiz</h1>
+            <div className="quiz-info">
+              <h1>AI Generated Quiz</h1>
+              <div className="quiz-meta">
+                <span className="difficulty-badge difficulty-{quizSettings.difficulty}">
+                  {quizSettings.difficulty}
+                </span>
+                {quizSettings.topic && (
+                  <span className="topic-badge">{quizSettings.topic}</span>
+                )}
+              </div>
+            </div>
+            <button onClick={() => setShowSettings(true)} className="settings-btn">
+              <Settings size={20} />
+            </button>
+          </div>
+
+          <div className="progress-section">
             <div className="progress-bar">
               <div 
                 className="progress-fill" 
@@ -136,10 +388,10 @@ export default function Quiz({ theme }) {
                 <label key={index} className="option">
                   <input
                     type="radio"
-                    name={`question-${question.id}`}
+                    name={`question-${currentQuestion}`}
                     value={index}
-                    checked={answers[question.id] === index}
-                    onChange={() => handleAnswer(question.id, index)}
+                    checked={answers[currentQuestion] === index}
+                    onChange={() => handleAnswer(currentQuestion, index)}
                   />
                   <span className="option-text">{option}</span>
                 </label>
@@ -159,7 +411,7 @@ export default function Quiz({ theme }) {
             
             <button 
               onClick={nextQuestion}
-              disabled={answers[question.id] === undefined}
+              disabled={answers[currentQuestion] === undefined}
               className="nav-button next"
             >
               {currentQuestion === questions.length - 1 ? 'Finish' : 'Next'}

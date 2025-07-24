@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Camera, X, Download, Loader, Play, FileVideo } from 'lucide-react';
-import { useAI } from './contexts/AIContext';
+import { generateSummary, generateNotes, generateQuiz } from '../utils/ai';
 import './VideoProcessor.css';
 
 export default function VideoProcessor({ isOpen, onClose, onNotesGenerated, onSummaryGenerated, onQuizGenerated }) {
   const [videoUrl, setVideoUrl] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [activeTab, setActiveTab] = useState('notes'); // 'notes', 'summary', 'quiz'
+  const [activeTab, setActiveTab] = useState('notes');
+  const [summaryWordCount, setSummaryWordCount] = useState(150);
   const [generatedContent, setGeneratedContent] = useState({
     notes: '',
     summary: '',
@@ -34,57 +35,32 @@ export default function VideoProcessor({ isOpen, onClose, onNotesGenerated, onSu
     setIsProcessing(true);
 
     try {
-      // Simulate API call to process video
-      // In a real implementation, you would call your backend API
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Create content context for AI processing
+      const videoContext = `Analyze this YouTube video: ${videoUrl}
+      
+Video ID: ${videoId}
+Please provide comprehensive educational content based on this video including:
+1. Detailed study notes with key concepts and important points
+2. A concise summary highlighting the main topics
+3. Quiz questions to test understanding of the material
 
-      // Mock generated content based on video processing
-      const mockNotes = `# Video Notes
+Focus on extracting educational value and creating structured learning materials.`;
 
-## Key Points
-- Introduction to the topic
-- Main concepts discussed
-- Important takeaways
-- Questions for further research
-
-## Detailed Notes
-This video covers essential concepts that are fundamental to understanding the subject matter. The presenter explains complex ideas in an accessible way, making it easier for viewers to grasp the core principles.
-
-## Action Items
-- Review key concepts
-- Practice with examples
-- Apply knowledge to real scenarios`;
-
-      const mockSummary = `This video provides a comprehensive overview of the topic, covering essential concepts and practical applications. The content is well-structured and includes both theoretical foundations and practical examples. Key highlights include the main principles, common challenges, and best practices for implementation.`;
-
-      const mockQuiz = [
-        {
-          question: "What is the main topic discussed in this video?",
-          options: ["Advanced concepts", "Basic principles", "Practical applications", "All of the above"],
-          correctAnswer: 3
-        },
-        {
-          question: "Which of the following is NOT mentioned as a key point?",
-          options: ["Introduction to topic", "Main concepts", "Advanced techniques", "Practical examples"],
-          correctAnswer: 2
-        },
-        {
-          question: "What should viewers do after watching this video?",
-          options: ["Forget everything", "Review key concepts", "Skip to next video", "None of the above"],
-          correctAnswer: 1
-        }
-      ];
+      // Generate all content types using real AI
+      const notes = await generateNotes(videoContext);
+      const summary = await generateSummary(videoContext, summaryWordCount);
+      const quiz = await generateQuiz(videoContext, 5, 'intermediate');
 
       setGeneratedContent({
-        notes: mockNotes,
-        summary: mockSummary,
-        quiz: mockQuiz
+        notes: notes,
+        summary: summary,
+        quiz: quiz
       });
 
       // Pass content to parent components
-      onNotesGenerated(mockNotes);
-      onSummaryGenerated(mockSummary);
-      onQuizGenerated(mockQuiz);
+      if (onNotesGenerated) onNotesGenerated(notes);
+      if (onSummaryGenerated) onSummaryGenerated(summary);
+      if (onQuizGenerated) onQuizGenerated(quiz);
 
     } catch (error) {
       console.error('Error processing video:', error);
@@ -122,8 +98,8 @@ This video covers essential concepts that are fundamental to understanding the s
           <div className="header-info">
             <Camera size={24} />
             <div>
-              <h2>Video Processor</h2>
-              <p>Extract notes, summaries, and quizzes from videos</p>
+              <h2>AI Video Processor</h2>
+              <p>Extract notes, summaries, and quizzes from videos using AI</p>
             </div>
           </div>
           <button className="close-btn" onClick={onClose}>
@@ -145,6 +121,24 @@ This video covers essential concepts that are fundamental to understanding the s
               />
             </div>
             
+            {activeTab === 'summary' && (
+              <div className="summary-options">
+                <label htmlFor="wordCount">Summary length (words):</label>
+                <select
+                  id="wordCount"
+                  value={summaryWordCount}
+                  onChange={(e) => setSummaryWordCount(parseInt(e.target.value))}
+                  className="word-count-select"
+                >
+                  <option value={50}>50 words</option>
+                  <option value={100}>100 words</option>
+                  <option value={150}>150 words</option>
+                  <option value={250}>250 words</option>
+                  <option value={500}>500 words</option>
+                </select>
+              </div>
+            )}
+            
             <button 
               onClick={processVideo} 
               disabled={isProcessing || !videoUrl.trim()}
@@ -153,12 +147,12 @@ This video covers essential concepts that are fundamental to understanding the s
               {isProcessing ? (
                 <>
                   <Loader className="spinning" size={20} />
-                  Processing Video...
+                  Processing Video with AI...
                 </>
               ) : (
                 <>
                   <Play size={20} />
-                  Process Video
+                  Process Video with AI
                 </>
               )}
             </button>
@@ -171,19 +165,19 @@ This video covers essential concepts that are fundamental to understanding the s
                   className={`tab ${activeTab === 'notes' ? 'active' : ''}`}
                   onClick={() => handleTabClick('notes')}
                 >
-                  📝 Notes
+                  📝 AI Notes
                 </button>
                 <button 
                   className={`tab ${activeTab === 'summary' ? 'active' : ''}`}
                   onClick={() => handleTabClick('summary')}
                 >
-                  📄 Summary
+                  📄 AI Summary
                 </button>
                 <button 
                   className={`tab ${activeTab === 'quiz' ? 'active' : ''}`}
                   onClick={() => handleTabClick('quiz')}
                 >
-                  ❓ Quiz
+                  ❓ AI Quiz
                 </button>
               </div>
 
@@ -191,7 +185,7 @@ This video covers essential concepts that are fundamental to understanding the s
                 {activeTab === 'notes' && (
                   <div className="notes-content">
                     <div className="content-header">
-                      <h3>Generated Notes</h3>
+                      <h3>AI-Generated Notes</h3>
                       <div className="action-buttons">
                         <button onClick={() => copyToClipboard(generatedContent.notes)}>
                           Copy
@@ -209,7 +203,7 @@ This video covers essential concepts that are fundamental to understanding the s
                 {activeTab === 'summary' && (
                   <div className="summary-content">
                     <div className="content-header">
-                      <h3>Video Summary</h3>
+                      <h3>AI Video Summary ({summaryWordCount} words)</h3>
                       <div className="action-buttons">
                         <button onClick={() => copyToClipboard(generatedContent.summary)}>
                           Copy
@@ -227,7 +221,7 @@ This video covers essential concepts that are fundamental to understanding the s
                 {activeTab === 'quiz' && (
                   <div className="quiz-content">
                     <div className="content-header">
-                      <h3>Generated Quiz</h3>
+                      <h3>AI-Generated Quiz</h3>
                       <div className="action-buttons">
                         <button onClick={() => copyToClipboard(JSON.stringify(generatedContent.quiz, null, 2))}>
                           Copy JSON
@@ -246,16 +240,21 @@ This video covers essential concepts that are fundamental to understanding the s
                             {question.options.map((option, optIndex) => (
                               <div 
                                 key={optIndex} 
-                                className={`option ${optIndex === question.correctAnswer ? 'correct' : ''}`}
+                                className={`option ${optIndex === question.correct ? 'correct' : ''}`}
                               >
                                 <span className="option-letter">{String.fromCharCode(65 + optIndex)}.</span>
                                 <span className="option-text">{option}</span>
-                                {optIndex === question.correctAnswer && (
+                                {optIndex === question.correct && (
                                   <span className="correct-indicator">✓</span>
                                 )}
                               </div>
                             ))}
                           </div>
+                          {question.explanation && (
+                            <div className="explanation">
+                              <strong>Explanation:</strong> {question.explanation}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -264,12 +263,13 @@ This video covers essential concepts that are fundamental to understanding the s
               </div>
 
               <div className="tips-section">
-                <h4>💡 Tips for Best Results</h4>
+                <h4>💡 AI Processing Tips</h4>
                 <ul>
-                  <li>Use educational videos with clear speech</li>
-                  <li>Longer videos (10+ minutes) provide better content analysis</li>
-                  <li>Videos with subtitles/captions improve accuracy</li>
-                  <li>Avoid videos with excessive background music</li>
+                  <li>Educational videos work best with AI analysis</li>
+                  <li>Longer videos (10+ minutes) provide more detailed content</li>
+                  <li>Clear audio improves AI transcription accuracy</li>
+                  <li>AI generates content based on video metadata and available information</li>
+                  <li>Results may vary based on video complexity and topic</li>
                 </ul>
               </div>
             </div>

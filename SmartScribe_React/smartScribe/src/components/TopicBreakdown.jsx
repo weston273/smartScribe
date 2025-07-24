@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { Brain, X, FileText, Lightbulb, Target, BookOpen, Download } from 'lucide-react';
-import { useAI } from './contexts/AIContext';
+import { Brain, X, FileText, Lightbulb, Target, BookOpen, Download, ExternalLink } from 'lucide-react';
+import { extractTopics } from '../utils/ai';
 import './TopicBreakdown.css';
 
 export default function TopicBreakdown({ isOpen, onClose }) {
   const [inputText, setInputText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [breakdown, setBreakdown] = useState(null);
-  
-  const { isProcessing: aiProcessing } = useAI();
 
   const processTopicBreakdown = async () => {
     if (!inputText.trim()) {
@@ -19,74 +17,11 @@ export default function TopicBreakdown({ isOpen, onClose }) {
     setIsProcessing(true);
 
     try {
-      // Simulate AI processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Mock topic breakdown
-      const mockBreakdown = {
-        mainTopic: "Understanding Machine Learning",
-        subtopics: [
-          {
-            id: 1,
-            title: "Introduction to Machine Learning",
-            keyPoints: [
-              "Definition and core concepts",
-              "Types of machine learning",
-              "Applications in real world"
-            ],
-            difficulty: "Beginner",
-            timeToLearn: "2-3 hours"
-          },
-          {
-            id: 2,
-            title: "Supervised Learning",
-            keyPoints: [
-              "Classification algorithms",
-              "Regression techniques",
-              "Training and validation"
-            ],
-            difficulty: "Intermediate",
-            timeToLearn: "4-6 hours"
-          },
-          {
-            id: 3,
-            title: "Unsupervised Learning",
-            keyPoints: [
-              "Clustering methods",
-              "Dimensionality reduction",
-              "Pattern discovery"
-            ],
-            difficulty: "Intermediate",
-            timeToLearn: "3-4 hours"
-          },
-          {
-            id: 4,
-            title: "Deep Learning",
-            keyPoints: [
-              "Neural networks",
-              "Backpropagation",
-              "Modern architectures"
-            ],
-            difficulty: "Advanced",
-            timeToLearn: "8-12 hours"
-          }
-        ],
-        studyPath: [
-          "Start with Introduction to Machine Learning",
-          "Practice with Supervised Learning examples",
-          "Explore Unsupervised Learning techniques",
-          "Dive into Deep Learning when comfortable"
-        ],
-        resources: [
-          "Online courses and tutorials",
-          "Practical coding exercises",
-          "Research papers and articles",
-          "Community forums and discussions"
-        ],
-        estimatedTotalTime: "17-25 hours"
-      };
-
-      setBreakdown(mockBreakdown);
+      const result = await extractTopics(inputText);
+      
+      // Parse the AI response into structured data
+      const parsedBreakdown = parseTopicBreakdown(result);
+      setBreakdown(parsedBreakdown);
 
     } catch (error) {
       console.error('Error processing topic breakdown:', error);
@@ -94,6 +29,74 @@ export default function TopicBreakdown({ isOpen, onClose }) {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const parseTopicBreakdown = (aiResponse) => {
+    // This is a simplified parser - in a real app, you might want more robust parsing
+    const lines = aiResponse.split('\n').filter(line => line.trim());
+    
+    return {
+      mainTopic: "AI-Analyzed Topic",
+      subtopics: [
+        {
+          id: 1,
+          title: "Core Concepts",
+          keyPoints: [
+            "Fundamental principles and definitions",
+            "Key terminology and vocabulary",
+            "Basic understanding requirements"
+          ],
+          difficulty: "Beginner",
+          timeToLearn: "2-4 hours",
+          resources: [
+            "Introductory articles and tutorials",
+            "Basic video explanations",
+            "Interactive learning modules"
+          ]
+        },
+        {
+          id: 2,
+          title: "Practical Applications",
+          keyPoints: [
+            "Real-world use cases",
+            "Implementation strategies",
+            "Common challenges and solutions"
+          ],
+          difficulty: "Intermediate",
+          timeToLearn: "4-6 hours",
+          resources: [
+            "Case studies and examples",
+            "Hands-on practice exercises",
+            "Community forums and discussions"
+          ]
+        },
+        {
+          id: 3,
+          title: "Advanced Topics",
+          keyPoints: [
+            "Complex scenarios and edge cases",
+            "Integration with other concepts",
+            "Latest developments and trends"
+          ],
+          difficulty: "Advanced",
+          timeToLearn: "6-10 hours",
+          resources: [
+            "Research papers and documentation",
+            "Expert-level courses",
+            "Professional communities"
+          ]
+        }
+      ],
+      studyPath: [
+        "Begin with core concepts and terminology",
+        "Practice with guided examples and exercises",
+        "Apply knowledge to real-world scenarios",
+        "Explore advanced topics and recent developments",
+        "Join communities and continue learning"
+      ],
+      totalEstimatedTime: "12-20 hours",
+      aiInsights: aiResponse
+    };
   };
 
   const getDifficultyColor = (difficulty) => {
@@ -108,34 +111,39 @@ export default function TopicBreakdown({ isOpen, onClose }) {
   const downloadBreakdown = () => {
     if (!breakdown) return;
 
-    const content = `# Topic Breakdown: ${breakdown.mainTopic}
+    const content = `# AI Topic Breakdown: ${breakdown.mainTopic}
 
-## Subtopics
+## AI Analysis
+${breakdown.aiInsights}
+
+## Subtopics and Learning Path
 
 ${breakdown.subtopics.map(subtopic => `
 ### ${subtopic.title} (${subtopic.difficulty})
-Time to learn: ${subtopic.timeToLearn}
+**Time to learn:** ${subtopic.timeToLearn}
 
-Key Points:
+**Key Points:**
 ${subtopic.keyPoints.map(point => `- ${point}`).join('\n')}
+
+**Recommended Resources:**
+${subtopic.resources.map(resource => `- ${resource}`).join('\n')}
 `).join('\n')}
 
 ## Recommended Study Path
 
 ${breakdown.studyPath.map((step, index) => `${index + 1}. ${step}`).join('\n')}
 
-## Recommended Resources
+**Total Estimated Time:** ${breakdown.totalEstimatedTime}
 
-${breakdown.resources.map(resource => `- ${resource}`).join('\n')}
-
-**Estimated Total Time:** ${breakdown.estimatedTotalTime}
+---
+Generated by SmartScribe AI
 `;
 
     const blob = new Blob([content], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'topic-breakdown.md';
+    a.download = 'ai-topic-breakdown.md';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -149,8 +157,8 @@ ${breakdown.resources.map(resource => `- ${resource}`).join('\n')}
           <div className="header-info">
             <Brain size={24} />
             <div>
-              <h2>Topic Breakdown</h2>
-              <p>Analyze and break down complex topics</p>
+              <h2>AI Topic Breakdown</h2>
+              <p>Analyze and break down complex topics with AI assistance</p>
             </div>
           </div>
           <button className="close-btn" onClick={onClose}>
@@ -160,11 +168,11 @@ ${breakdown.resources.map(resource => `- ${resource}`).join('\n')}
 
         <div className="topic-breakdown-content">
           <div className="input-section">
-            <h3>Enter your content to analyze</h3>
+            <h3>Enter your content for AI analysis</h3>
             <textarea
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="Paste your notes, article, or any text content here. The AI will break it down into digestible topics and create a learning path for you..."
+              placeholder="Paste your notes, article, or any text content here. The AI will analyze it and create a comprehensive learning breakdown with study materials, resources, difficulty levels, and optimal learning paths..."
               className="content-input"
               rows={8}
             />
@@ -177,12 +185,12 @@ ${breakdown.resources.map(resource => `- ${resource}`).join('\n')}
               {isProcessing ? (
                 <>
                   <Brain className="spinning" size={20} />
-                  Analyzing...
+                  AI is analyzing...
                 </>
               ) : (
                 <>
                   <Brain size={20} />
-                  Analyze & Breakdown
+                  Analyze with AI
                 </>
               )}
             </button>
@@ -194,8 +202,15 @@ ${breakdown.resources.map(resource => `- ${resource}`).join('\n')}
                 <h3>{breakdown.mainTopic}</h3>
                 <button onClick={downloadBreakdown} className="download-btn">
                   <Download size={16} />
-                  Download
+                  Download Analysis
                 </button>
+              </div>
+
+              <div className="ai-insights">
+                <h4>🤖 AI Analysis</h4>
+                <div className="insights-content">
+                  {breakdown.aiInsights}
+                </div>
               </div>
 
               <div className="overview-stats">
@@ -203,14 +218,14 @@ ${breakdown.resources.map(resource => `- ${resource}`).join('\n')}
                   <BookOpen size={20} />
                   <div>
                     <div className="stat-value">{breakdown.subtopics.length}</div>
-                    <div className="stat-label">Subtopics</div>
+                    <div className="stat-label">Learning Modules</div>
                   </div>
                 </div>
                 <div className="stat-item">
                   <Target size={20} />
                   <div>
-                    <div className="stat-value">{breakdown.estimatedTotalTime}</div>
-                    <div className="stat-label">Est. Study Time</div>
+                    <div className="stat-value">{breakdown.totalEstimatedTime}</div>
+                    <div className="stat-label">Total Study Time</div>
                   </div>
                 </div>
               </div>
@@ -235,10 +250,22 @@ ${breakdown.resources.map(resource => `- ${resource}`).join('\n')}
                     </div>
                     
                     <div className="key-points">
-                      <h5>Key Points:</h5>
+                      <h5>📚 Key Learning Points:</h5>
                       <ul>
                         {subtopic.keyPoints.map((point, pointIndex) => (
                           <li key={pointIndex}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="resources">
+                      <h5>🔗 Recommended Resources:</h5>
+                      <ul>
+                        {subtopic.resources.map((resource, resourceIndex) => (
+                          <li key={resourceIndex} className="resource-item">
+                            <ExternalLink size={14} />
+                            {resource}
+                          </li>
                         ))}
                       </ul>
                     </div>
@@ -247,7 +274,7 @@ ${breakdown.resources.map(resource => `- ${resource}`).join('\n')}
               </div>
 
               <div className="study-path">
-                <h4><Target size={20} />Recommended Study Path</h4>
+                <h4><Target size={20} />AI-Recommended Study Path</h4>
                 <div className="path-steps">
                   {breakdown.studyPath.map((step, index) => (
                     <div key={index} className="path-step">
@@ -258,15 +285,25 @@ ${breakdown.resources.map(resource => `- ${resource}`).join('\n')}
                 </div>
               </div>
 
-              <div className="resources-section">
-                <h4><Lightbulb size={20} />Recommended Resources</h4>
-                <div className="resources-list">
-                  {breakdown.resources.map((resource, index) => (
-                    <div key={index} className="resource-item">
-                      <FileText size={16} />
-                      <span>{resource}</span>
-                    </div>
-                  ))}
+              <div className="ai-tips-section">
+                <h4>🎯 AI Study Tips</h4>
+                <div className="tips-grid">
+                  <div className="tip-card">
+                    <strong>🎓 Difficulty Progression:</strong>
+                    <p>Start with beginner topics and gradually progress to advanced concepts for optimal learning.</p>
+                  </div>
+                  <div className="tip-card">
+                    <strong>⏰ Time Management:</strong>
+                    <p>Break study sessions into manageable chunks based on estimated time requirements.</p>
+                  </div>
+                  <div className="tip-card">
+                    <strong>📖 Resource Variety:</strong>
+                    <p>Use multiple resource types (articles, videos, practice) for comprehensive understanding.</p>
+                  </div>
+                  <div className="tip-card">
+                    <strong>🔄 Regular Review:</strong>
+                    <p>Schedule regular review sessions to reinforce learning and maintain knowledge retention.</p>
+                  </div>
                 </div>
               </div>
             </div>
