@@ -32,7 +32,7 @@ export async function askOpenAI(messages) {
     return data.choices?.[0]?.message?.content || "AI did not reply.";
   } catch (err) {
     console.error('Error calling AI backend:', err);
-    return "Sorry, I couldn't reach the AI service. Please make sure the backend is running.";
+    return "Sorry, I couldn't reach the AI service. Please try again later or contact support cause you may have run out of tokens.";
   }
 }
 

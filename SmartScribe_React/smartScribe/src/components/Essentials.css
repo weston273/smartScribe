@@ -1,132 +1,106 @@
 .essentials-container {
-    background: var(--essentials-background-color);
-    margin: -4% 5% 2rem;
-    margin: -4% auto 2rem auto;
-    width: clamp(300px, 80%, 800px);
-    height: auto;
-    display: flex;
-    justify-content: space-between;
-    border: 2px solid #2E2E3D;
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 100px;
-    align-items: center;
+  background: var(--essentials-background-color);
+  margin: 2rem auto;
+  width: min(95%, 800px);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border: 2px solid #2E2E3D;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 100px;
+  padding: 1rem 2rem;
 }
 
-
-.essentials {
-  width: 15%;
-  aspect-ratio: 1 / 1; /* keeps height equal to width */
+.essentials,
+.essentials-notes {
   background-color: var(--essentials-items-background-color);
   border-radius: 50%;
-  text-align: center;
+  width: 70px;
+  height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: all 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
   cursor: pointer;
-  overflow: hidden
 }
 
-.essentials:hover {
-    background-color: rgba(77, 74, 74, 0.185);
-}
-
-.essentials a {
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-
-.essentials img {
-    width : 90%;
-    /* max-width: 70%; */
-    height: auto;
-    object-fit: contain;
-}
-
-.essentials p {
-    font-size: small;
-    font-weight: bold ;
-    padding : 30% 20% 20% 20%;
-    text-decoration: none;
-    /* ........................... */
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    text-decoration: none;
-    color: var(--essentials-items-color)
-
-
+.essentials:hover,
+.essentials-notes:hover {
+  background-color: rgba(77, 74, 74, 0.185);
 }
 
 .essentials-notes {
-    background-color: var(--essentials-main-item-background-color);
-    color : var(--essentials-main-item-text-color);
-    width : 10%;
-    height : 80%;
-    aspect-ratio: 1/1;
-    /* background-color: #00C9A7; */
-    border-radius: 50%;
-    text-align: center;
-     /* display: flex; */
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s ease-in-out;
+  background-color: var(--essentials-main-item-background-color);
+  color: var(--essentials-main-item-text-color);
 }
 
+.essentials a,
 .essentials-notes a {
   text-decoration: none;
   color: inherit;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
-}
-.notes img{
-  width : 80%;
-  height : 80%;
-}
-.chat img {
-  width: 80%;
-  height: 90%;
-  object-fit: contain;
 }
 
-.essentials-notes:hover{
-    background-color: #3e3e5aef;
-    color : #00c9a7;
+.essentials svg,
+.essentials-notes h1,
+.essentials img {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+  
 }
 
 .essentials-notes h1 {
-    /* padding : 0% 30% 0% 30%; */
-    font-size: 2.5rem;
-    margin: 0;
-    /* user-select: none;  */
+  font-size: 2rem;
+  margin: 50%;
 }
 
+.essentials p {
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin: 0;
+  color: var(--essentials-items-color);
+}
 
-/* media queries */
+/* Specific targeting for svg icons (like Chat, PDF, Notes) */
+.notes svg,
+.chat svg {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
 
+/* 📱 Mobile responsiveness */
 @media (max-width: 600px) {
   .essentials-container {
-    width: 90%;
-    margin-left: 5%;
+    gap: 0.8rem;
+    padding: 1rem;
+    border-radius: 50px;
   }
-  .essentials {
-    width: 25%;
-  }
+
+  .essentials,
   .essentials-notes {
-    width: 20%;
+    width: 60px;
+    height: 60px;
+  }
+
+  .essentials svg,
+  .essentials-notes h1 {
+    width: 60%;
+    height: 60%;
+  }
+
+  .essentials p {
+    font-size: 0.75rem;
+  }
+
+  .essentials-notes h1 {
+    font-size: 1.8rem;
   }
 }
