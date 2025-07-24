@@ -52,12 +52,6 @@
     object-fit: contain;
 }
 
-.notes img { 
-  width : 90%;
-  height : auto;
-  margin-left: 10%;
-}
-
 .essentials p {
     font-size: small;
     font-weight: bold ;
@@ -100,6 +94,11 @@
   height: 100%;
 }
 
+.chat img {
+  width: 80%;
+  height: 90%;
+  object-fit: contain;
+}
 
 .essentials-notes:hover{
     background-color: #3e3e5aef;
