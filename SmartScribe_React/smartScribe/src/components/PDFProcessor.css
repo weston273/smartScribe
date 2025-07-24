@@ -1,41 +1,116 @@
-.pdf-processor-modal {
-  max-width: 700px;
-  max-height: 90vh;
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
 }
 
+/* Modal Container */
+.pdf-processor-modal {
+  background: var(--essentials-background-color, #202229);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, var(--hero-color, #00c9a7), #00a085);
+  border-radius: 16px 16px 0 0;
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.modal-title {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modal-subtitle {
+  color: white;
+  opacity: 0.85;
+}
+
+.btn.btn-icon.btn-ghost {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn.btn-icon.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Modal Content */
+.modal-content {
+  padding: 2rem;
+}
+
+/* Drop Zone / File Input */
 .drop-zone {
-  border: 2px dashed var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--input-background-color, #242643);
+  border: 2px dashed var(--border-color, rgba(255, 255, 255, 0.15));
   border-radius: 12px;
   padding: 3rem 2rem;
   text-align: center;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.02);
   cursor: pointer;
   position: relative;
+  transition: all 0.3s ease;
+  min-height: 120px;
 }
 
-.drop-zone:hover,
-.drop-zone.drag-over {
-  border-color: var(--hero-color);
+.drop-zone.drag-over,
+.drop-zone:hover {
+  border-color: var(--hero-color, #00c9a7);
   background: rgba(0, 201, 167, 0.1);
   transform: translateY(-2px);
 }
 
 .drop-icon {
-  color: var(--hero-color);
+  color: var(--hero-color, #00c9a7);
   opacity: 0.7;
   margin-bottom: 1rem;
 }
 
 .drop-zone h3 {
-  color: var(--primary-text-color);
+  color: var(--primary-text-color, #f6f6f9);
   margin: 0 0 0.5rem 0;
   font-size: 1.25rem;
   font-weight: 600;
 }
 
 .drop-zone p {
-  color: var(--primary-text-color);
+  color: var(--primary-text-color, #f6f6f9);
   opacity: 0.7;
   margin: 0 0 2rem 0;
 }
@@ -46,6 +121,7 @@
   pointer-events: none;
 }
 
+/* PDF Content & File Info */
 .pdf-content {
   display: flex;
   flex-direction: column;
@@ -70,16 +146,17 @@
   margin: 0 0 0.25rem 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--primary-text-color);
+  color: var(--primary-text-color, #f6f6f9);
 }
 
 .file-size {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--hero-color);
+  color: var(--hero-color, #00c9a7);
   opacity: 0.8;
 }
 
+/* Progress Bar */
 .progress-container {
   margin: 1rem 0;
 }
@@ -95,7 +172,7 @@
 
 .progress-fill {
   height: 100%;
-  background: var(--hero-color);
+  background: var(--hero-color, #00c9a7);
   transition: width 0.3s ease;
   border-radius: 4px;
 }
@@ -103,15 +180,44 @@
 .progress-text {
   text-align: center;
   font-size: 0.875rem;
-  color: var(--hero-color);
+  color: var(--hero-color, #00c9a7);
   margin: 0;
 }
 
-.extracted-content {
-  background: rgba(46, 46, 61, 0.5);
-  border-radius: 12px;
-  padding: 1.5rem;
-  border: 1px solid var(--border-color);
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.tab {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: var(--primary-text-color, #f6f6f9);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  /* user-select: none; */
+}
+
+.tab.active {
+  background: var(--hero-color, #00c9a7);
+  color: var(--background-color, #202229);
+}
+
+.tab:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Tab Content */
+.tab-content {
+  margin-bottom: 2rem;
+}
+
+.content-section {
+  margin-bottom: 2rem;
 }
 
 .content-header {
@@ -122,39 +228,105 @@
 }
 
 .content-header h4 {
+  color: var(--primary-text-color, #f6f6f9);
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--primary-text-color);
-}
-
-.text-preview {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  padding: 1rem;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: var(--primary-text-color);
-  opacity: 0.9;
-  max-height: 200px;
-  overflow-y: auto;
-  margin-bottom: 1rem;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.text-stats {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.875rem;
-  color: var(--primary-text-color);
-  opacity: 0.7;
 }
 
 .action-buttons {
   display: flex;
   gap: 1rem;
+}
+
+.process-btn {
+  flex: 1;
+  background: var(--hero-color, #00c9a7);
+  color: var(--background-color, #202229);
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.process-btn:hover:not(:disabled) {
+  background: #00a085;
+  transform: translateY(-1px);
+}
+
+.process-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.clear-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--primary-text-color, #f6f6f9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Copy/Download Buttons can be normal buttons styled to match */
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.content-text {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: var(--primary-text-color, #f6f6f9);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* You can keep other PDFProcessor specific classes or add them similarly */
+
+/* Tips Section */
+.tips-section {
+  background: rgba(0, 201, 167, 0.1);
+  border-left: 4px solid var(--hero-color, #00c9a7);
+  border-radius: 0 8px 8px 0;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+
+.tips-section h4 {
+  color: var(--hero-color, #00c9a7);
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+}
+
+.tips-section ul {
+  color: var(--primary-text-color, #f6f6f9);
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.tips-section li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
 }
 
 /* Responsive Design */
@@ -164,23 +336,22 @@
     max-width: none;
   }
 
-  .drop-zone {
-    padding: 2rem 1rem;
-  }
-
-  .file-info {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
+  .modal-content {
+    padding: 1rem;
   }
 
   .action-buttons {
     flex-direction: column;
   }
 
-  .modal-footer {
+  .result-header {
     flex-direction: column;
+    align-items: flex-start;
     gap: 1rem;
+  }
+
+  .tabs {
+    flex-wrap: wrap;
   }
 
   .text-preview {
@@ -203,7 +374,13 @@
     font-size: 1.125rem;
   }
 
-  .extracted-content {
+  .file-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .tips-section {
     padding: 1rem;
   }
 
@@ -214,7 +391,11 @@
   }
 }
 
-/* Theme Adjustments */
+/* Light theme adjustments if you use them */
+[data-theme="light"] .pdf-processor-modal {
+  background: #f8f8fc;
+}
+
 [data-theme="light"] .drop-zone {
   background: rgba(0, 0, 0, 0.02);
   border-color: rgba(0, 0, 0, 0.2);
@@ -225,15 +406,12 @@
   background: rgba(0, 201, 167, 0.1);
 }
 
-[data-theme="light"] .extracted-content {
-  background: rgba(245, 245, 245, 0.8);
-}
-
-[data-theme="light"] .text-preview {
-  background: rgba(0, 0, 0, 0.05);
-}
-
 [data-theme="light"] .file-info {
-  background: rgba(0, 201, 167, 0.08);
-  border: 1px solid rgba(0, 201, 167, 0.2);
+  background: rgba(0,201,167,0.08);
+  border: 1px solid rgba(0,201,167,0.2);
+}
+
+[data-theme="light"] .content-text {
+  background: rgba(0, 0, 0, 0.04);
+  color: #242642;
 }
