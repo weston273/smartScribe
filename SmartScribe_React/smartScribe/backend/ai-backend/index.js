@@ -9,9 +9,8 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 const allowedOrigins = [
-  "https://smart-scribe-a665-git-master-westons-projects-06d070f3.vercel.app",
   "http://localhost:5173",
-  "https://smart-scribe-thz3.vercel.app/"
+  "https://smart-scribe-thz3.vercel.app"
 ];
 
 app.use(cors({
