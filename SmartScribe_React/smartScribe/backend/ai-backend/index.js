@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3001;
 
 // ✅ Enable CORS for all origins (or specify your frontend if needed)
 app.use(cors({
-  origin: "*", // or replace with 'https://your-frontend.vercel.app'
+  origin: "https://smart-scribe-a665-git-master-westons-projects-06d070f3.vercel.app", // or replace with 'https://your-frontend.vercel.app'
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
