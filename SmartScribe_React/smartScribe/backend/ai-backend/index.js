@@ -8,17 +8,23 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+// ✅ Enable CORS for all origins (or specify your frontend if needed)
+app.use(cors({
+  origin: "*", // or replace with 'https://your-frontend.vercel.app'
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json());
 
-// Load API keys from environment (comma-separated in .env)
+// ✅ Load API keys from .env
 const apiKeys = process.env.OPENROUTER_KEYS
   ? process.env.OPENROUTER_KEYS.split(",").map(k => k.trim())
   : [];
 
 let currentKeyIndex = 0;
 
-// Ensure model is chosen correctly
+// ✅ Choose model based on task
 function getModel(task = "general") {
   switch (task) {
     case "chat":
@@ -37,16 +43,16 @@ function getModel(task = "general") {
   }
 }
 
-// Rotate through API keys on failure
+// ✅ Try all keys with fallback
 async function fetchWithFallback(messages, task) {
   const model = getModel(task);
 
   for (let i = 0; i < apiKeys.length; i++) {
     const key = apiKeys[currentKeyIndex];
-    console.log(`🧠 Using model: ${model} with key ${currentKeyIndex + 1}`);
+    console.log(`🧠 Trying key #${currentKeyIndex + 1} with model: ${model}`);
 
     try {
-      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${key}`,
@@ -59,47 +65,53 @@ async function fetchWithFallback(messages, task) {
         })
       });
 
-      if (res.status === 429 || res.status === 401) {
-        console.warn(`⚠️ API Key ${currentKeyIndex + 1} failed (rate limit or unauthorized). Trying next...`);
+      if (response.status === 429 || response.status === 401) {
+        console.warn(`⚠️ Key #${currentKeyIndex + 1} failed (rate limit or unauthorized). Switching...`);
         currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
         continue;
       }
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`🚨 Error from OpenRouter: ${errorText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`❌ OpenRouter error: ${errorText}`);
       }
 
-      const data = await res.json();
-      console.log(`✅ Model ${model} responded successfully`);
+      const data = await response.json();
+      console.log("✅ Success:", data);
       return data;
+
     } catch (err) {
-      console.error(`❌ Error with key ${currentKeyIndex + 1}:`, err.message);
+      console.error(`❌ Key #${currentKeyIndex + 1} error:`, err.message);
       currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
     }
   }
 
-  throw new Error("All API keys failed or were exhausted.");
+  throw new Error("🚫 All API keys failed or exhausted.");
 }
 
-// Main AI proxy endpoint
+// ✅ Main AI endpoint
 app.post("/api/chat", async (req, res) => {
   const { messages, task } = req.body;
 
   if (!messages || !Array.isArray(messages)) {
-    return res.status(400).json({ error: "❌ Messages array is required." });
+    return res.status(400).json({ error: "❌ 'messages' must be an array." });
   }
 
   try {
     const data = await fetchWithFallback(messages, task);
-    res.json(data);
+    res.status(200).json(data);
   } catch (error) {
-    console.error("🔥 All keys failed:", error.message);
-    res.status(500).json({ error: "All API keys exhausted or failed." });
+    console.error("🔥 Critical failure:", error.message);
+    res.status(500).json({ error: "All keys failed or exhausted." });
   }
 });
 
-// Start the server
+// ✅ Ping endpoint (optional)
+app.get("/", (req, res) => {
+  res.send("✅ SmartScribe AI backend is running.");
+});
+
+// ✅ Start server
 app.listen(PORT, () => {
-  console.log(`✅ AI backend proxy server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
