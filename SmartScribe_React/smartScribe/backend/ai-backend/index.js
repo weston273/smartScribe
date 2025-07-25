@@ -8,9 +8,22 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// ✅ Enable CORS for all origins (or specify your frontend if needed)
+const allowedOrigins = [
+  "https://smart-scribe-a665-git-master-westons-projects-06d070f3.vercel.app",
+  "http://localhost:5173",
+  "https://smart-scribe-thz3.vercel.app/"
+];
+
 app.use(cors({
-  origin: "https://smart-scribe-a665-git-master-westons-projects-06d070f3.vercel.app", // or replace with 'https://your-frontend.vercel.app'
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
