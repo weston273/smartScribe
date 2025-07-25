@@ -3,8 +3,8 @@
  */
 
 const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://localhost:3001/api/chat' // Replace with your deployed backend URL
-  : 'http://localhost:3001';
+  ? 'https://smartscribe-yjsf.onrender.com/api/chat' // Replace with your deployed backend URL
+  : 'https://smartscribe-yjsf.onrender.com/';
 
 /**
  * Calls the AI backend with given messages.
