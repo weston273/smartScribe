@@ -11,11 +11,14 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Load all API keys from .env (comma-separated)
-const apiKeys = process.env.OPENROUTER_KEYS.split(",").map(k => k.trim());
+// Load API keys from environment (comma-separated in .env)
+const apiKeys = process.env.OPENROUTER_KEYS
+  ? process.env.OPENROUTER_KEYS.split(",").map(k => k.trim())
+  : [];
+
 let currentKeyIndex = 0;
 
-// Select model by task with correct model IDs (no 'openrouter/' prefix)
+// Ensure model is chosen correctly
 function getModel(task = "general") {
   switch (task) {
     case "chat":
@@ -28,13 +31,13 @@ function getModel(task = "general") {
     case "video":
       return "deepseek/deepseek-v3-0324:free";
     case "ultralong":
-      return "openai/gpt-4o"; // or a valid model you have access to
+      return "openai/gpt-4o";
     default:
       return "mistralai/mistral-7b-instruct";
   }
 }
 
-// Fetch with automatic API key rotation on failure or rate limit
+// Rotate through API keys on failure
 async function fetchWithFallback(messages, task) {
   const model = getModel(task);
 
@@ -79,7 +82,7 @@ async function fetchWithFallback(messages, task) {
   throw new Error("All API keys failed or were exhausted.");
 }
 
-// API endpoint
+// Main AI proxy endpoint
 app.post("/api/chat", async (req, res) => {
   const { messages, task } = req.body;
 
@@ -96,6 +99,7 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`✅ AI backend proxy server running on port ${PORT}`);
 });
