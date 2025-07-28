@@ -3,8 +3,8 @@
  */
 
 const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://smartscribe-yjsf.onrender.com/api/chat' // Replace with your deployed backend URL
-  : 'https://smartscribe-yjsf.onrender.com/';
+  ? 'https://smartscribe-yjsf.onrender.com' // Your deployed backend base URL
+  : 'http://localhost:3001'; // Your local backend base URL (change to your local dev server if needed)
 
 /**
  * Calls the AI backend with given messages.
@@ -111,7 +111,6 @@ export async function generateSummary(content, wordCount = 150) {
       content: `Please summarize the following content in about ${wordCount} words:\n\n${content}` 
     }
   ];
-  
   return await askOpenAI(messages);
 }
 
@@ -129,7 +128,6 @@ export async function generateNotes(content) {
       content: `Please create detailed study notes from the following content, using markdown formatting with headings, bullet points, and clear structure:\n\n${content}` 
     }
   ];
-  
   return await askOpenAI(messages);
 }
 
@@ -177,7 +175,6 @@ export async function processURL(url) {
       content: `Please analyze and provide comprehensive information about this URL: ${url}. Include main topics, key concepts, and create structured notes that would be helpful for learning.` 
     }
   ];
-  
   return await askOpenAI(messages);
 }
 
@@ -195,7 +192,6 @@ export async function processVideo(videoUrl, contentType = 'notes') {
       content: `Please process this video URL and create ${contentType}: ${videoUrl}. Provide structured, educational content that would be valuable for learning.` 
     }
   ];
-  
   return await askOpenAI(messages);
 }
 
@@ -221,7 +217,6 @@ export async function extractTopics(content) {
       Content to analyze:\n\n${content}` 
     }
   ];
-  
   return await askOpenAI(messages);
 }
 

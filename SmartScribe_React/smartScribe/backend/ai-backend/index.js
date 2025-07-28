@@ -1,7 +1,12 @@
+//index.js
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import fetch from "node-fetch";
+// For Node 18+, fetch is global. For older Node, uncomment the next line:
+// import fetch from "node-fetch";
+// Optional: rate limiting
+import rateLimit from "express-rate-limit";
 
 dotenv.config();
 
@@ -15,7 +20,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps, curl, etc.)
+    // allow requests with no origin (like curl)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
@@ -29,14 +34,21 @@ app.use(cors({
 
 app.use(express.json());
 
-// ✅ Load API keys from .env
+// Rate limiting: 60 requests/min/IP (adjust as needed)
+app.use(rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 60,
+  message: "Too many requests, please try again after a minute."
+}));
+
+// Load API keys from .env
 const apiKeys = process.env.OPENROUTER_KEYS
   ? process.env.OPENROUTER_KEYS.split(",").map(k => k.trim())
   : [];
 
 let currentKeyIndex = 0;
 
-// ✅ Choose model based on task
+// Model selection
 function getModel(task = "general") {
   switch (task) {
     case "chat":
@@ -55,14 +67,13 @@ function getModel(task = "general") {
   }
 }
 
-// ✅ Try all keys with fallback
+// Cycle through API keys with fallback
 async function fetchWithFallback(messages, task) {
   const model = getModel(task);
 
   for (let i = 0; i < apiKeys.length; i++) {
     const key = apiKeys[currentKeyIndex];
     console.log(`🧠 Trying key #${currentKeyIndex + 1} with model: ${model}`);
-
     try {
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
@@ -89,7 +100,8 @@ async function fetchWithFallback(messages, task) {
       }
 
       const data = await response.json();
-      console.log("✅ Success:", data);
+      // Do NOT log keys, only safe info
+      console.log("✅ Success from OpenRouter for model:", model);
       return data;
 
     } catch (err) {
@@ -101,7 +113,7 @@ async function fetchWithFallback(messages, task) {
   throw new Error("🚫 All API keys failed or exhausted.");
 }
 
-// ✅ Main AI endpoint
+// Main chat endpoint
 app.post("/api/chat", async (req, res) => {
   const { messages, task } = req.body;
 
@@ -111,19 +123,38 @@ app.post("/api/chat", async (req, res) => {
 
   try {
     const data = await fetchWithFallback(messages, task);
-    res.status(200).json(data);
+
+    // --- Normalize response ---
+    let content =
+      data?.choices?.[0]?.message?.content
+      || data?.choices?.[0]?.content
+      || null;
+
+    if (!content) {
+      content = "AI did not reply (malformed response).";
+    }
+
+    res.status(200).json({
+      choices: [
+        { message: { content } }
+      ]
+    });
+
   } catch (error) {
     console.error("🔥 Critical failure:", error.message);
     res.status(500).json({ error: "All keys failed or exhausted." });
   }
 });
 
-// ✅ Ping endpoint (optional)
+// Ping/test endpoint
 app.get("/", (req, res) => {
   res.send("✅ SmartScribe AI backend is running.");
 });
 
-// ✅ Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
+// If running Node <18 and using node-fetch, uncomment below
+// globalThis.fetch = fetch;
+
