@@ -6,6 +6,7 @@
 }
 
 .smart-chat-main {
+  margin-top: 5%;
   flex: 1;
   display: flex;
   flex-direction: column;

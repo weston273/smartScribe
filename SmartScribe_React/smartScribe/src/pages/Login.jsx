@@ -1,22 +1,37 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import { supabase } from '../database/supabaseClient';
 import './Login.css';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
+    email: '',
     password: ''
   });
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simple validation - in real app, you'd authenticate with backend
-    if (formData.username && formData.password) {
-      navigate('/home');
+    const { username, email, password } = formData;
+
+    // Supabase Auth requires email and password only — username not supported for auth
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      alert(error.message);
+      return;
     }
+
+    // Store username entered at login time in localStorage for later use
+    localStorage.setItem('username', username);
+
+    navigate('/home');
   };
 
   const handleChange = (e) => {
@@ -39,8 +54,20 @@ export default function Login() {
             <input
               type="text"
               name="username"
-              placeholder="Username"
+              placeholder="username"
               value={formData.username}
+              onChange={handleChange}
+              className="form-input"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <input
+              type="email"
+              name="email"
+              placeholder="email"
+              value={formData.email}
               onChange={handleChange}
               className="form-input"
               required
@@ -68,13 +95,11 @@ export default function Login() {
             </div>
           </div>
 
-          <Link to="#" className="forgot-password">
+          <Link to="/signup" className="forgot-password">
             Forgot Password?
           </Link>
 
-          <button type="submit" className="login-button">
-            Sign In
-          </button>
+          <button type="submit" className="login-button">Sign In</button>
         </form>
 
         <div className="login-footer">

@@ -136,6 +136,7 @@
   background: rgba(0, 201, 167, 0.1);
   border-radius: 12px;
   border: 1px solid rgba(0, 201, 167, 0.3);
+  flex-wrap: wrap;
 }
 
 .file-details {
@@ -147,6 +148,7 @@
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--primary-text-color, #f6f6f9);
+  word-break: break-word;
 }
 
 .file-size {
@@ -166,7 +168,6 @@
   border-radius: 6px;
   color: #856404;
   margin-bottom: 1rem;
-  /* user-select: none; */
 }
 
 /* Progress Bar */
@@ -226,7 +227,9 @@
   white-space: pre-wrap;
   max-height: 400px;
   overflow-y: auto;
-  font-family: monospace, monospace;
+  font-family: monospace;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .text-stats {
@@ -284,7 +287,6 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Spinning animation */
 .spinning {
   animation: spin 1s linear infinite;
 }
@@ -294,7 +296,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .pdf-processor-modal {
     margin: 1rem;
@@ -320,6 +321,80 @@
   }
 }
 
+.output-section {
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: #f5f7fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  max-height: 80vh;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+  word-break: break-word;
+}
+
+.output-section h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #27ae60;
+}
+
+.ai-output-box {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #dfe2e5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.05rem;
+  color: #2c3e50;
+  line-height: 1.7;
+  max-height: 60vh;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+.ai-output-box p {
+  margin: 0.75rem 0;
+}
+
+.ai-output-box strong {
+  font-weight: 600;
+  color: #2d8659;
+}
+
+.ai-output-box::-webkit-scrollbar {
+  width: 10px;
+}
+
+.ai-output-box::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+  border-radius: 5px;
+}
+
+.ai-output-box::-webkit-scrollbar-thumb:hover {
+  background-color: #999999;
+}
+
+@media screen and (max-width: 768px) {
+  .output-section {
+    padding: 1.25rem;
+  }
+
+  .ai-output-box {
+    font-size: 1rem;
+    max-height: 50vh;
+  }
+
+  .output-section h4 {
+    font-size: 1.15rem;
+  }
+}
+
 @media (max-width: 480px) {
   .drop-zone {
     padding: 1.5rem 0.75rem;
@@ -336,7 +411,6 @@
   }
 }
 
-/* Light theme adjustments */
 [data-theme="light"] .pdf-processor-modal {
   background: #f8f8fc;
 }

@@ -1,10 +1,36 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import { User, Settings, LogOut } from 'lucide-react';
+import { supabase } from './../../database/supabaseClient.js'; 
 import './AccountDropDown.css';
 
 export default function AccountDropDown({ onClose }) {
   const dropdownRef = useRef(null);
+  const [userInfo, setUserInfo] = useState({ name: 'User', email: '' });
+
+  useEffect(() => {
+    const fetchUserEmail = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const user = session?.user;
+
+      // Read username from localStorage (stored at login)
+      const storedUsername = localStorage.getItem('username');
+
+      if (user) {
+        setUserInfo({
+          name: storedUsername || 'User',
+          email: user.email || '',
+        });
+      } else {
+        setUserInfo({
+          name: storedUsername || 'User',
+          email: '',
+        });
+      }
+    };
+
+    fetchUserEmail();
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -26,8 +52,8 @@ export default function AccountDropDown({ onClose }) {
             <User size={32} />
           </div>
           <div className="account-info">
-            <h3>Weston N Sululu</h3>
-            <p>sululuweston@gmail.com</p>
+            <h3>{userInfo.name}</h3>
+            {userInfo.email && <p>{userInfo.email}</p>}
           </div>
         </div>
         

@@ -74,6 +74,7 @@
   }
   
   .voice-btn {
+    
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -82,7 +83,7 @@
     border: 2px solid var(--hero-color);
     color: var(--hero-color);
     border-radius: 12px;
-    padding: 1.5rem;
+    padding: 2.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 600;

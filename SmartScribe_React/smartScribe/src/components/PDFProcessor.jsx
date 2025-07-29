@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react';
+// PDFProcessor.jsx
+import React, { useState, useCallback, useRef } from 'react';
 import { UploadIcon, PDFIcon, CloseIcon, DownloadIcon } from './icons/Icons';
-import { useAI } from './contexts/AIContext';
-import { useLanguage } from './contexts/LanguageContext';
+import { generateSummary, generateNotes } from '../utils/ai';
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 import './PDFProcessor.css';
@@ -11,32 +11,28 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url
 ).toString();
 
-export default function PDFProcessor({ isOpen, onClose, onSummaryGenerated, onNotesGenerated }) {
+export default function PDFProcessor({ isOpen, onClose }) {
   const [file, setFile] = useState(null);
   const [extractedText, setExtractedText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [extractionProgress, setExtractionProgress] = useState(0);
-  const { generateSummary, generateNotes } = useAI();
-  const { t } = useLanguage();
+  const [output, setOutput] = useState('');
+  const fileInputRef = useRef();
 
   const handleDragOver = useCallback((e) => {
     e.preventDefault();
-    e.stopPropagation();
     setIsDragOver(true);
   }, []);
 
   const handleDragLeave = useCallback((e) => {
     e.preventDefault();
-    e.stopPropagation();
     setIsDragOver(false);
   }, []);
 
   const handleDrop = useCallback((e) => {
     e.preventDefault();
-    e.stopPropagation();
     setIsDragOver(false);
-
     const droppedFile = Array.from(e.dataTransfer.files)[0];
     if (droppedFile) {
       setFile(droppedFile);
@@ -49,6 +45,12 @@ export default function PDFProcessor({ isOpen, onClose, onSummaryGenerated, onNo
     if (selectedFile) {
       setFile(selectedFile);
       extractText(selectedFile);
+    }
+  };
+
+  const handleOpenFileDialog = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
@@ -69,11 +71,11 @@ export default function PDFProcessor({ isOpen, onClose, onSummaryGenerated, onNo
         reader.onload = () => setExtractedText(reader.result.trim());
         reader.readAsText(selectedFile);
       } else {
-        alert(t('pdf.invalidFile') || 'Unsupported file type. Please upload a PDF, DOCX, or TXT file.');
+        alert('Unsupported file type. Please upload a PDF, DOCX, or TXT file.');
       }
     } catch (error) {
       console.error('Error extracting text:', error);
-      alert(t('pdf.extractionError') || 'Error extracting text. Please try again.');
+      alert('Error extracting text. Please try again.');
     } finally {
       setIsProcessing(false);
       setExtractionProgress(0);
@@ -83,9 +85,10 @@ export default function PDFProcessor({ isOpen, onClose, onSummaryGenerated, onNo
   const extractTextFromPDF = async (pdfFile) => {
     try {
       const arrayBuffer = await pdfFile.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let fullText = '';
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+      const pdf = await loadingTask.promise;
 
+      let fullText = '';
       const totalPages = pdf.numPages;
 
       for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
@@ -98,7 +101,8 @@ export default function PDFProcessor({ isOpen, onClose, onSummaryGenerated, onNo
 
       setExtractedText(fullText.trim());
     } catch (error) {
-      throw error;
+      console.error('PDF extraction failed:', error);
+      alert('Failed to extract text from PDF.');
     }
   };
 
@@ -107,11 +111,9 @@ export default function PDFProcessor({ isOpen, onClose, onSummaryGenerated, onNo
     setIsProcessing(true);
     try {
       const summary = await generateSummary(extractedText);
-      onSummaryGenerated(summary);
-      onClose();
-    } catch (error) {
-      console.error('Error generating summary:', error);
-      alert(t('pdf.summaryError') || 'Error generating summary. Please try again.');
+      setOutput(summary);
+    } catch (err) {
+      alert('Failed to generate summary.');
     } finally {
       setIsProcessing(false);
     }
@@ -122,11 +124,9 @@ export default function PDFProcessor({ isOpen, onClose, onSummaryGenerated, onNo
     setIsProcessing(true);
     try {
       const notes = await generateNotes(extractedText);
-      onNotesGenerated(notes);
-      onClose();
-    } catch (error) {
-      console.error('Error generating notes:', error);
-      alert(t('pdf.notesError') || 'Error generating notes. Please try again.');
+      setOutput(notes);
+    } catch (err) {
+      alert('Failed to generate notes.');
     } finally {
       setIsProcessing(false);
     }
@@ -134,12 +134,11 @@ export default function PDFProcessor({ isOpen, onClose, onSummaryGenerated, onNo
 
   const handleDownloadText = () => {
     if (!extractedText) return;
-
     const blob = new Blob([extractedText], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${file.name.replace(/\.[^/.]+$/, '')}-extracted-text.txt`;
+    a.download = `${file.name.replace(/\.[^/.]+$/, '')}-extracted.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -147,6 +146,7 @@ export default function PDFProcessor({ isOpen, onClose, onSummaryGenerated, onNo
   const reset = () => {
     setFile(null);
     setExtractedText('');
+    setOutput('');
     setIsProcessing(false);
     setExtractionProgress(0);
   };
@@ -157,13 +157,7 @@ export default function PDFProcessor({ isOpen, onClose, onSummaryGenerated, onNo
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal pdf-processor-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <div className="header-info">
-            <PDFIcon size={24} />
-            <div>
-              <h2 className="modal-title">{t('pdf.title') || 'Document Processor'}</h2>
-              <p className="modal-subtitle">{t('pdf.subtitle') || 'Extract text and generate AI summaries from documents'}</p>
-            </div>
-          </div>
+          <h2>Smart Document Processor</h2>
           <button onClick={onClose} className="btn btn-icon btn-ghost">
             <CloseIcon size={20} />
           </button>
@@ -173,100 +167,70 @@ export default function PDFProcessor({ isOpen, onClose, onSummaryGenerated, onNo
           {!file ? (
             <div
               className={`drop-zone ${isDragOver ? 'drag-over' : ''}`}
+              onClick={handleOpenFileDialog}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              <PDFIcon size={64} className="drop-icon" />
-              <h3>{t('pdf.dropTitle') || 'Drop your document here'}</h3>
-              <p>{t('pdf.dropDesc') || 'or click to browse files'}</p>
+              <PDFIcon size={64} />
+              <h3>Drop your document here or click to upload</h3>
               <input
+                ref={fileInputRef}
                 type="file"
-                accept=".pdf,.txt,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                accept=".pdf,.docx,.txt"
                 onChange={handleFileInput}
                 className="file-input"
-                id="doc-input"
+                style={{ display: 'none' }}
               />
-              <label htmlFor="doc-input" className="btn btn-primary">
-                <UploadIcon size={20} />
-                {t('pdf.selectFile') || 'Select Document'}
-              </label>
+              <button className="btn btn-primary" onClick={handleOpenFileDialog}>
+                <UploadIcon size={20} /> Select Document
+              </button>
             </div>
           ) : (
             <div className="pdf-content">
               <div className="file-info">
                 <PDFIcon size={32} />
-                <div className="file-details">
-                  <h3 className="file-name">{file.name}</h3>
-                  <p className="file-size">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                <div>
+                  <h4>{file.name}</h4>
+                  <p>{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                 </div>
                 <button onClick={reset} className="btn btn-icon btn-ghost">
                   <CloseIcon size={16} />
                 </button>
               </div>
 
-              {isProcessing && extractionProgress > 0 && (
-                <div className="progress-container">
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: `${extractionProgress}%` }} />
+              {extractedText && (
+                <div className="extracted-content">
+                  <h4>Extracted Preview:</h4>
+                  <div className="text-preview">
+                    {extractedText.substring(0, 300)}...
                   </div>
-                  <p className="progress-text">
-                    {t('pdf.extracting') || 'Extracting text...'} {extractionProgress}%
-                  </p>
                 </div>
               )}
 
-              {extractedText && (
-                <div className="extracted-content">
-                  <div className="content-header">
-                    <h4>{t('pdf.extractedText') || 'Extracted Text'}</h4>
-                    <button
-                      onClick={handleDownloadText}
-                      className="btn btn-icon btn-ghost btn-sm"
-                      title={t('pdf.downloadText') || 'Download text'}
-                    >
-                      <DownloadIcon size={16} />
-                    </button>
-                  </div>
-                  <div className="text-preview">
-                    {extractedText.substring(0, 500)}
-                    {extractedText.length > 500 && '...'}
-                  </div>
-                  <div className="text-stats">
-                    <span>{extractedText.length} {t('pdf.characters') || 'characters'}</span>
-                    <span>{extractedText.split(/\s+/).length} {t('pdf.words') || 'words'}</span>
+              {output && (
+                <div className="output-section">
+                  <h4>AI Output:</h4>
+                  <div className="ai-output-box">
+                    <pre className="ai-output">{output}</pre>
                   </div>
                 </div>
               )}
+
+              <div className="action-buttons">
+                <button onClick={handleGenerateSummary} disabled={isProcessing} className="btn btn-secondary">
+                  📋 Generate Summary
+                </button>
+                <button onClick={handleGenerateNotes} disabled={isProcessing} className="btn btn-primary">
+                  📝 Generate Notes
+                </button>
+                <button onClick={handleDownloadText} disabled={!extractedText} className="btn btn-ghost">
+                  <DownloadIcon size={16} /> Download Extracted Text
+                </button>
+              </div>
             </div>
           )}
         </div>
-
-        {extractedText && (
-          <div className="modal-footer">
-            <button onClick={reset} className="btn btn-ghost">
-              {t('pdf.selectAnother') || 'Select Another'}
-            </button>
-            <div className="action-buttons">
-              <button
-                onClick={handleGenerateSummary}
-                disabled={isProcessing}
-                className="btn btn-secondary"
-              >
-                {isProcessing ? <span className="spinning">🧠</span> : '📋'}
-                {t('pdf.generateSummary') || 'Generate Summary'}
-              </button>
-              <button
-                onClick={handleGenerateNotes}
-                disabled={isProcessing}
-                className="btn btn-primary"
-              >
-                {isProcessing ? <span className="spinning">🧠</span> : '📝'}
-                {t('pdf.generateNotes') || 'Generate Notes'}
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
