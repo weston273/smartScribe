@@ -6,6 +6,7 @@ import './Login.css';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -15,35 +16,36 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     const { username, email, password } = formData;
 
-    // Supabase Auth requires email and password only — username not supported for auth
     const { error } = await supabase.auth.signInWithPassword({
       email,
-      password
+      password,
     });
+
+    setLoading(false);
 
     if (error) {
       alert(error.message);
       return;
     }
 
-    // Store username entered at login time in localStorage for later use
     localStorage.setItem('username', username);
-
     navigate('/home');
   };
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   return (
     <div className="login-container">
-      <div className="login-card">
+      <div className="login-card fade-in">
         <div className="login-header">
           <h1>Welcome Back</h1>
           <p>Sign in to your SmartScribe account</p>
@@ -99,7 +101,9 @@ export default function Login() {
             Forgot Password?
           </Link>
 
-          <button type="submit" className="login-button">Sign In</button>
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? <div className="spinner"></div> : 'Sign In'}
+          </button>
         </form>
 
         <div className="login-footer">
