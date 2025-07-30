@@ -1,5 +1,13 @@
 import React, { createContext, useState, useContext } from 'react';
-import { askOpenAI } from '../../utils/ai';
+import { 
+  askOpenAI, 
+  generateSummary as utilGenerateSummary,
+  generateNotes as utilGenerateNotes,
+  generateQuiz as utilGenerateQuiz,
+  chatWithAI as utilChatWithAI,
+  processURL as utilProcessURL,
+  extractTopics as utilExtractTopics
+} from '../../utils/ai';
 
 const AIContext = createContext();
 
@@ -13,25 +21,17 @@ export const AIProvider = ({ children }) => {
   const [language, setLanguage] = useState('en');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const simulateProcessing = async (ms = 1000) => {
-    setIsProcessing(true);
-    await new Promise((resolve) => setTimeout(resolve, ms));
-    setIsProcessing(false);
-  };
-
   const generateSummary = async (content, lang = 'en') => {
     setIsProcessing(true);
     try {
-      const messages = [
-        { role: 'system', content: 'Summarize the following content in a concise and clear way.' },
-        { role: 'user', content }
-      ];
-      const summaryText = await askOpenAI(messages);
+      const summaryText = await utilGenerateSummary(content);
       setSummary(summaryText);
       return summaryText;
     } catch (err) {
-      setSummary('Error generating summary.');
-      return 'Error generating summary.';
+      console.error('Error generating summary:', err);
+      const errorMsg = 'Error generating summary. Please try again.';
+      setSummary(errorMsg);
+      return errorMsg;
     } finally {
       setIsProcessing(false);
     }
@@ -40,38 +40,27 @@ export const AIProvider = ({ children }) => {
   const generateNotes = async (content, lang = 'en') => {
     setIsProcessing(true);
     try {
-      const messages = [
-        { role: 'system', content: 'Extract and organize the following content into clear, structured study notes with bullet points and headings.' },
-        { role: 'user', content }
-      ];
-      const notesText = await askOpenAI(messages);
+      const notesText = await utilGenerateNotes(content);
       setNotes(notesText);
       return notesText;
     } catch (err) {
-      setNotes('Error generating notes.');
-      return 'Error generating notes.';
+      console.error('Error generating notes:', err);
+      const errorMsg = 'Error generating notes. Please try again.';
+      setNotes(errorMsg);
+      return errorMsg;
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const generateQuiz = async (content, lang = 'en') => {
+  const generateQuiz = async (content, numberOfQuestions = 5, lang = 'en') => {
     setIsProcessing(true);
     try {
-      const messages = [
-        { role: 'system', content: 'Create a short quiz (3-5 questions) with multiple choice answers based on the following content. Format as JSON: [{question, options, correct, explanation}]' },
-        { role: 'user', content }
-      ];
-      const quizText = await askOpenAI(messages);
-      let quizArr = [];
-      try {
-        quizArr = JSON.parse(quizText);
-      } catch {
-        quizArr = [];
-      }
-      setQuiz(quizArr);
-      return quizArr;
+      const quizArray = await utilGenerateQuiz(content, numberOfQuestions);
+      setQuiz(quizArray);
+      return quizArray;
     } catch (err) {
+      console.error('Error generating quiz:', err);
       setQuiz([]);
       return [];
     } finally {
@@ -80,36 +69,68 @@ export const AIProvider = ({ children }) => {
   };
 
   const transcribeAudio = async (audioBlob) => {
-    await simulateProcessing();
-    return 'Transcribed text from audio.';
+    setIsProcessing(true);
+    try {
+      // For now, return a placeholder. In production, you'd implement actual transcription
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return 'Audio transcription feature will be implemented with a speech-to-text service.';
+    } catch (error) {
+      console.error('Error transcribing audio:', error);
+      return 'Error transcribing audio. Please try again.';
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
-  const processPDF = async (pdfFile) => {
-    await simulateProcessing();
-    return 'Extracted text from PDF.';
+  const processPDF = async (pdfText) => {
+    setIsProcessing(true);
+    try {
+      const summary = await generateSummary(pdfText);
+      const notes = await generateNotes(pdfText);
+      return { summary, notes };
+    } catch (error) {
+      console.error('Error processing PDF:', error);
+      return { summary: 'Error processing PDF', notes: 'Error processing PDF' };
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const processURL = async (url) => {
-    await simulateProcessing();
-    return `Fetched and processed content from ${url}`;
+    setIsProcessing(true);
+    try {
+      const result = await utilProcessURL(url);
+      return result;
+    } catch (error) {
+      console.error('Error processing URL:', error);
+      return 'Error processing URL. Please try again.';
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const extractTopics = async (content) => {
+    setIsProcessing(true);
+    try {
+      const topics = await utilExtractTopics(content);
+      return topics;
+    } catch (error) {
+      console.error('Error extracting topics:', error);
+      return 'Error extracting topics. Please try again.';
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const chatWithAI = async (message, context, lang = 'en') => {
     setIsProcessing(true);
     try {
-      // Build the messages array for OpenAI
-      const messages = [
-        { role: 'system', content: 'You are a helpful assistant for note-taking, summarization, and quizzes.' },
-      ];
-      if (context) {
-        messages.push({ role: 'user', content: `Context: ${context}` });
-      }
-      messages.push({ role: 'user', content: message });
-      const aiResponse = await askOpenAI(messages);
+      const aiResponse = await utilChatWithAI(message, context);
       const newEntry = { user: message, ai: aiResponse, timestamp: new Date() };
       setChatHistory((prev) => [...prev, newEntry]);
       return aiResponse;
     } catch (err) {
+      console.error('Error in AI chat:', err);
       const errorMsg = 'Sorry, I could not get a response from the AI.';
       setChatHistory((prev) => [...prev, { user: message, ai: errorMsg, timestamp: new Date() }]);
       return errorMsg;
@@ -134,6 +155,7 @@ export const AIProvider = ({ children }) => {
         transcribeAudio,
         processPDF,
         processURL,
+        extractTopics,
         chatWithAI,
       }}
     >

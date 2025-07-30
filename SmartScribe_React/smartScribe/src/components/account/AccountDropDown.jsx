@@ -13,7 +13,6 @@ export default function AccountDropDown({ onClose }) {
       const { data: { session } } = await supabase.auth.getSession();
       const user = session?.user;
 
-      // Read username from localStorage (stored at login)
       const storedUsername = localStorage.getItem('username');
 
       if (user) {
@@ -23,7 +22,7 @@ export default function AccountDropDown({ onClose }) {
         });
       } else {
         setUserInfo({
-          name: storedUsername || 'User',
+          name: 'User',
           email: '',
         });
       }
@@ -66,9 +65,13 @@ export default function AccountDropDown({ onClose }) {
             <Settings size={18} />
             <span>Settings</span>
           </Link>
-          <Link to="/login" className="menu-item" onClick={onClose}>
+          <Link
+            to="/login"
+            className="menu-item"
+            onClick={onClose}
+          >
             <LogOut size={18} />
-            <span>Sign Out</span>
+            <span>{userInfo.name === 'User' ? 'Sign In' : 'Sign Out'}</span>
           </Link>
         </div>
       </div>
