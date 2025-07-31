@@ -27,7 +27,11 @@ export default function SignUp() {
     });
 
     if (signUpError) {
-      alert("Sign-up failed: " + signUpError.message);
+      if (signUpError.message.includes('already registered')) {
+        alert("This email is already in use. Please try logging in or check your inbox to confirm your email.");
+      } else {
+        alert("Sign-up failed: " + signUpError.message);
+      }
       setLoading(false);
       return;
     }
@@ -35,7 +39,7 @@ export default function SignUp() {
     const userId = signUpData?.user?.id;
 
     if (!userId) {
-      alert("Signup succeeded, but user ID is missing. This might be due to pending email confirmation.");
+      alert("Signup was initiated, but user ID is missing — this often means email confirmation is still pending. Please check your inbox.");
       setLoading(false);
       return;
     }
@@ -56,6 +60,7 @@ export default function SignUp() {
       return;
     }
 
+    alert("Account created! Please verify your email before logging in.");
     setLoading(false);
     navigate('/login');
   };
