@@ -27,20 +27,34 @@ export default function SignUp() {
     });
 
     if (signUpError) {
-      alert(signUpError.message);
+      alert("Sign-up failed: " + signUpError.message);
       setLoading(false);
       return;
     }
 
-    await supabase.from('profiles').insert([
+    const userId = signUpData?.user?.id;
+
+    if (!userId) {
+      alert("Signup succeeded, but user ID is missing. This might be due to pending email confirmation.");
+      setLoading(false);
+      return;
+    }
+
+    const { error: insertError } = await supabase.from('profiles').insert([
       {
-        id: signUpData.user.id,
+        user_id: userId,
         email,
         username,
-        first_name: firstName,
-        last_name: lastName,
+        firstname: firstName,
+        lastname: lastName,
       },
     ]);
+
+    if (insertError) {
+      alert("Error saving profile data: " + insertError.message);
+      setLoading(false);
+      return;
+    }
 
     setLoading(false);
     navigate('/login');

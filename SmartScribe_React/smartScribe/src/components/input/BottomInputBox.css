@@ -6,7 +6,7 @@
   border: 2px solid #2E2E3D;
   border-radius: 25px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  padding: 0.75rem 1rem;
+  padding: 0.01rem 0.75rem;
   transition: all 0.3s ease;
 }
 
@@ -30,7 +30,7 @@
   border: none;
   outline: none;
   font-size: 1rem;
-  line-height: 1.5;
+  /* line-height: 1.5; */
   resize: none;
   max-height: 120px;
   min-height: 24px;

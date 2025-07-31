@@ -39,7 +39,6 @@
   padding: 3rem;
   background: linear-gradient(135deg, rgba(46, 46, 61, 0.3), rgba(0, 201, 167, 0.1));
   border-radius: 20px;
-  /* backdrop-filter: blur(10px); */
 }
 
 .recording-visualizer {
@@ -277,15 +276,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
-.action-btn:hover {
+.action-btn:hover:not(:disabled) {
   transform: scale(1.1);
+}
+
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .play-btn:hover {
   background-color: var(--hero-color);
   color: var(--background-color);
+}
+
+.ai-btn:hover:not(:disabled) {
+  background-color: #9b59b6;
+  color: white;
 }
 
 .download-btn:hover {
@@ -296,6 +306,17 @@
 .delete-btn:hover {
   background-color: #ff4757;
   color: white;
+}
+
+/* AI Processing Spinner */
+.spinner {
+  animation: spin 1s linear infinite;
+  font-size: 18px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* AI Features */

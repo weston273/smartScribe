@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Mic, MicOff, Play, Pause, Square, Download, Trash2, Volume2 } from 'lucide-react';
+import { Mic, MicOff, Play, Pause, Square, Download, Trash2, Volume2, Bot, FileText } from 'lucide-react';
+import { convertAudioToNotes } from '../utils/ai';
 import NavBar1 from '../components/NavBar1';
 import SideBar from '../components/sidebar/SideBar.jsx';
 import Footer from '../components/Footer';
@@ -14,11 +15,13 @@ export default function Record({ theme, toggleTheme }) {
   const [recordingTime, setRecordingTime] = useState(0);
   const [recordings, setRecordings] = useState([]);
   const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
+  const [processingAI, setProcessingAI] = useState(null);
   
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const timerRef = useRef(null);
   const streamRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   const toggleSideBar = () => setShowSideBar(prev => !prev);
   const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
@@ -123,6 +126,72 @@ export default function Record({ theme, toggleTheme }) {
     setRecordings(prev => prev.filter(r => r.id !== recordingId));
   };
 
+  const convertToNote = async (recording) => {
+    setProcessingAI(recording.id);
+    
+    try {
+      // Use AI backend to convert audio to structured notes
+      const structuredNotes = await convertAudioToNotes(recording.blob, recording.name);
+      
+      // Save the AI-generated notes
+      saveToNotes(recording.name, structuredNotes);
+      
+      // Show success message
+      alert('Recording successfully converted to structured notes using AI! You can find it in your Notes section.');
+
+    } catch (error) {
+      console.error('Error converting to note:', error);
+      alert(error.message || 'Failed to convert recording to note. Please try again.');
+    } finally {
+      setProcessingAI(null);
+    }
+  };
+
+  const saveToNotes = (recordingName, aiGeneratedContent) => {
+    try {
+      // Get existing notes
+      const existingNotes = JSON.parse(localStorage.getItem('smartscribe-notes') || '[]');
+      
+      // Create enhanced content with metadata
+      const enhancedContent = `# ${recordingName} - AI Voice Note
+
+*Generated on: ${new Date().toLocaleString()}*
+*Source: Voice Recording converted by AI*
+
+---
+
+${aiGeneratedContent}
+
+---
+
+## Recording Information
+- **Original Recording:** ${recordingName}
+- **Conversion Method:** AI-powered transcription and structuring
+- **Generated:** ${new Date().toLocaleString()}
+- **Type:** Voice-to-Notes Conversion`;
+
+      // Create new note
+      const newNote = {
+        id: Date.now(),
+        title: `${recordingName} - AI Voice Note`,
+        content: enhancedContent,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        tags: ['voice-note', 'ai-generated', 'transcription', 'audio-conversion']
+      };
+      
+      // Add to beginning of notes array
+      const updatedNotes = [newNote, ...existingNotes];
+      
+      // Save to localStorage
+      localStorage.setItem('smartscribe-notes', JSON.stringify(updatedNotes));
+      
+    } catch (error) {
+      console.error('Error saving note:', error);
+      alert('Failed to save note. Please try again.');
+    }
+  };
+
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -217,18 +286,33 @@ export default function Record({ theme, toggleTheme }) {
                       <button 
                         className="action-btn play-btn"
                         onClick={() => playRecording(recording)}
+                        title="Play recording"
                       >
                         {currentlyPlaying === recording.id ? <Volume2 size={18} /> : <Play size={18} />}
                       </button>
                       <button 
+                        className="action-btn ai-btn"
+                        onClick={() => convertToNote(recording)}
+                        disabled={processingAI === recording.id}
+                        title="Convert to AI note"
+                      >
+                        {processingAI === recording.id ? (
+                          <div className="spinner">🧠</div>
+                        ) : (
+                          <Bot size={18} />
+                        )}
+                      </button>
+                      <button 
                         className="action-btn download-btn"
                         onClick={() => downloadRecording(recording)}
+                        title="Download recording"
                       >
                         <Download size={18} />
                       </button>
                       <button 
                         className="action-btn delete-btn"
                         onClick={() => deleteRecording(recording.id)}
+                        title="Delete recording"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -246,17 +330,22 @@ export default function Record({ theme, toggleTheme }) {
               <div className="feature-card">
                 <div className="feature-icon">🎯</div>
                 <h4>Smart Transcription</h4>
-                <p>Convert speech to text with high accuracy</p>
+                <p>Convert speech to text with high accuracy using our AI backend</p>
               </div>
               <div className="feature-card">
                 <div className="feature-icon">📝</div>
-                <h4>Auto Summarization</h4>
-                <p>Get key points from your recordings</p>
+                <h4>AI Note Generation</h4>
+                <p>Transform recordings into structured, educational notes with key insights</p>
               </div>
               <div className="feature-card">
                 <div className="feature-icon">🏷️</div>
                 <h4>Smart Tagging</h4>
-                <p>Automatically categorize your recordings</p>
+                <p>Automatically categorize and tag your AI-generated voice notes</p>
+              </div>
+              <div className="feature-card">
+                <div className="feature-icon">🤖</div>
+                <h4>Advanced AI Processing</h4>
+                <p>Extract key points, create summaries, and structure information intelligently</p>
               </div>
             </div>
           </div>

@@ -1,12 +1,9 @@
-//index.js
-
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-// For Node 18+, fetch is global. For older Node, uncomment the next line:
-// import fetch from "node-fetch";
-// Optional: rate limiting
+import multer from "multer";
 import rateLimit from "express-rate-limit";
+import fetch from "node-fetch"; // Use only if your Node.js version < 18 (optional)
 
 dotenv.config();
 
@@ -18,9 +15,9 @@ const allowedOrigins = [
   "https://smart-scribe-thz3.vercel.app"
 ];
 
+// CORS middleware
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like curl)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
@@ -34,21 +31,24 @@ app.use(cors({
 
 app.use(express.json());
 
-// Rate limiting: 60 requests/min/IP (adjust as needed)
+// Rate limiting: 60 requests per minute per IP
 app.use(rateLimit({
   windowMs: 1 * 60 * 1000,
   max: 60,
   message: "Too many requests, please try again after a minute."
 }));
 
-// Load API keys from .env
+// Multer middleware for file upload handling (multipart/form-data)
+const upload = multer();
+
+// Load OpenRouter API keys from environment variables
 const apiKeys = process.env.OPENROUTER_KEYS
   ? process.env.OPENROUTER_KEYS.split(",").map(k => k.trim())
   : [];
 
 let currentKeyIndex = 0;
 
-// Model selection
+// Function to select model based on task
 function getModel(task = "general") {
   switch (task) {
     case "chat":
@@ -67,7 +67,7 @@ function getModel(task = "general") {
   }
 }
 
-// Cycle through API keys with fallback
+// Cycle through API keys with fallback for OpenRouter
 async function fetchWithFallback(messages, task) {
   const model = getModel(task);
 
@@ -100,7 +100,6 @@ async function fetchWithFallback(messages, task) {
       }
 
       const data = await response.json();
-      // Do NOT log keys, only safe info
       console.log("✅ Success from OpenRouter for model:", model);
       return data;
 
@@ -124,7 +123,7 @@ app.post("/api/chat", async (req, res) => {
   try {
     const data = await fetchWithFallback(messages, task);
 
-    // --- Normalize response ---
+    // Normalize AI response content
     let content =
       data?.choices?.[0]?.message?.content
       || data?.choices?.[0]?.content
@@ -146,7 +145,47 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-// Ping/test endpoint
+// --- New Deepgram transcription endpoint ---
+
+app.post("/api/transcribe", upload.single("audio"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No audio file uploaded" });
+    }
+
+    const deepgramApiKey = process.env.DEEPGRAM_API_KEY;
+    if (!deepgramApiKey) {
+      return res.status(500).json({ error: "Missing Deepgram API key." });
+    }
+
+    // Send audio buffer directly to Deepgram's REST API
+    const response = await fetch("https://api.deepgram.com/v1/listen", {
+      method: "POST",
+      headers: {
+        "Authorization": `Token ${deepgramApiKey}`,
+        "Content-Type": "audio/webm" // assuming your frontend sends webm audio format
+      },
+      body: req.file.buffer
+    });
+
+    if (!response.ok) {
+      const errorMsg = await response.text();
+      return res.status(500).json({ error: errorMsg });
+    }
+
+    const data = await response.json();
+    // Extract transcript from Deepgram response structure
+    const transcription = data?.results?.channels?.[0]?.alternatives?.[0]?.transcript || "";
+
+    return res.json({ transcription });
+
+  } catch (err) {
+    console.error("Transcription error:", err);
+    res.status(500).json({ error: "Transcription failed." });
+  }
+});
+
+// Simple health check / root endpoint
 app.get("/", (req, res) => {
   res.send("✅ SmartScribe AI backend is running.");
 });
@@ -154,7 +193,3 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
-
-// If running Node <18 and using node-fetch, uncomment below
-// globalThis.fetch = fetch;
-

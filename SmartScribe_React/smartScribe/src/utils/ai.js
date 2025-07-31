@@ -4,7 +4,7 @@
 
 const API_BASE_URL = import.meta.env.PROD 
   ? 'https://smartscribe-yjsf.onrender.com' // Your deployed backend base URL
-  : 'http://localhost:3001'; // Your local backend base URL (change to your local dev server if needed)
+  : 'http://localhost:3001'; // Your local backend base URL (change as needed)
 
 /**
  * Calls the AI backend with given messages.
@@ -32,7 +32,7 @@ export async function askOpenAI(messages) {
     return data.choices?.[0]?.message?.content || "AI did not reply.";
   } catch (err) {
     console.error('Error calling AI backend:', err);
-    return "Sorry, I couldn't reach the AI service. Please try again later or contact support cause you may have run out of tokens.";
+    return "Sorry, I couldn't reach the AI service. Please try again later or contact support because you may have run out of tokens.";
   }
 }
 
@@ -267,5 +267,66 @@ export async function generateTopicQuiz(topic, numberOfQuestions = 5, difficulty
   } catch (error) {
     console.error('Error parsing quiz JSON:', error);
     return [];
+  }
+}
+
+/**
+ * Convert audio recording to structured notes using AI.
+ * Uploads audioBlob to backend for transcription,
+ * then sends transcription to AI to generate structured notes.
+ */
+export async function convertAudioToNotes(audioBlob, recordingName) {
+  try {
+    // Upload the audio blob to backend transcription endpoint
+    const formData = new FormData();
+    formData.append('audio', audioBlob, recordingName + '.webm');
+
+    const transcriptionResponse = await fetch(`${API_BASE_URL}/api/transcribe`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!transcriptionResponse.ok) {
+      const errText = await transcriptionResponse.text();
+      throw new Error('Failed to transcribe audio: ' + errText);
+    }
+
+    const { transcription } = await transcriptionResponse.json();
+
+    if (!transcription || typeof transcription !== "string") {
+      throw new Error("No transcription received from backend.");
+    }
+
+    // Send transcription to AI for structuring notes
+    const messages = [
+      {
+        role: 'system',
+        content: `You are a helpful assistant that converts voice recordings into well-structured study notes.
+Create comprehensive notes with clear headings, bullet points, key concepts, and actionable insights.
+Use markdown formatting for readability. Include a summary section and highlight important points.`
+      },
+      {
+        role: 'user',
+        content: `Please convert this voice recording transcription into structured study notes:
+
+Recording: ${recordingName}
+Transcription: ${transcription}
+
+Create organized notes with:
+1. Main topics and key points
+2. Important concepts highlighted
+3. Summary section
+4. Action items (if any)
+5. Use clear markdown formatting`
+      }
+    ];
+
+    const structuredNotes = await askOpenAI(messages);
+
+    return structuredNotes;
+
+  } catch (error) {
+    console.error('Error converting audio to notes:', error);
+    throw new Error(error.message || 'Failed to convert recording to notes. Please try again.');
   }
 }
