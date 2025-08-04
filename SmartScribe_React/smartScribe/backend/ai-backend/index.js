@@ -56,10 +56,10 @@ function getModel(task = "general") {
       return "mistralai/mistral-7b-instruct";
     case "summarize":
     case "recap":
-      return "deepseek/deepseek-r1";
+      return "z-ai/glm-4.5-air:free";
     case "quiz":
     case "video":
-      return "deepseek/deepseek-v3-0324:free";
+      return "z-ai/glm-4.5-air:free";
     case "ultralong":
       return "openai/gpt-4o";
     default:

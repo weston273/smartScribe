@@ -137,10 +137,10 @@ export default function SideBar({ onClose }) {
               <Lightbulb size={20} />
               <span>Generate Quiz</span>
             </Link>
-            <Link to="/smart-chat" className="nav-item" onClick={onClose}>
+            {/* <Link to="/smart-chat" className="nav-item" onClick={onClose}>
               <MessageCircle size={20} />
               <span>Smart Chat</span>
-            </Link>
+            </Link> */}
           </div>
         </nav>
       </div>

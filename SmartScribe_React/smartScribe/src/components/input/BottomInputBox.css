@@ -12,11 +12,11 @@
 
 .input-row:focus-within {
   border-color: var(--hero-color);
-  box-shadow: 0 4px 20px rgba(0, 201, 167, 0.2);
+  box-shadow: 0 4px 5px rgba(0, 201, 167, 0.2);
 }
 
 .input-container {
-  margin-top: 2%;
+  margin-top: 1em;
   display: flex;
   align-items: flex-end;
   gap: 0.75rem;
@@ -29,11 +29,11 @@
   color: var(--primary-text-color);
   border: none;
   outline: none;
-  font-size: 1rem;
+  font-size: 1em;
   /* line-height: 1.5; */
   resize: none;
-  max-height: 120px;
-  min-height: 24px;
+  /* max-height: 50px; */
+  /* min-height: 24px; */
   font-family: inherit;
 }
 
@@ -53,8 +53,8 @@
   border: 1px solid var(--hero-color);
   color: var(--hero-color);
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 2px;
+  height: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -126,8 +126,8 @@
   }
   
   .voice-btn {
-    width: 32px;
-    height: 32px;
+    width: 1em;
+    height: 1em;
   }
   
   .send-btn {

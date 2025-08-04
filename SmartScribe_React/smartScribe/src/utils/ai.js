@@ -11,7 +11,7 @@ const API_BASE_URL = import.meta.env.PROD
  * @param {Array} messages - Array of message objects: [{ role: 'user'|'assistant'|'system', content: string }]
  * @returns {Promise<string>} AI response text
  */
-export async function askOpenAI(messages) {
+export async function askOpenAI(messages, task="general" ) {
   try {
     const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: "POST",
@@ -19,7 +19,8 @@ export async function askOpenAI(messages) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        messages: messages
+        messages: messages,
+        task : task
       })
     });
 
@@ -104,14 +105,14 @@ export async function generateSummary(content, wordCount = 150) {
   const messages = [
     { 
       role: 'system', 
-      content: `You are a helpful assistant that creates concise, well-structured summaries. Create a summary in approximately ${wordCount} words. Focus on the main points and key information.` 
+      content: `You are a helpful assistant called SmartScribe AI that creates concise, well-structured summaries. Create a summary in approximately ${wordCount} words. Focus on the main points and key information.` 
     },
     { 
       role: 'user', 
       content: `Please summarize the following content in about ${wordCount} words:\n\n${content}` 
     }
   ];
-  return await askOpenAI(messages);
+  return await askOpenAI(messages,"summarize");
 }
 
 /**
@@ -121,14 +122,14 @@ export async function generateNotes(content) {
   const messages = [
     { 
       role: 'system', 
-      content: 'You are a helpful assistant that creates well-structured study notes with clear headings, bullet points, and organized information using markdown formatting.' 
+      content: 'You are a helpful assistant called SmartScribe AI that creates well-structured study notes with clear headings, bullet points, and organized information using markdown formatting.' 
     },
     { 
       role: 'user', 
       content: `Please create detailed study notes from the following content, using markdown formatting with headings, bullet points, and clear structure:\n\n${content}` 
     }
   ];
-  return await askOpenAI(messages);
+  return await askOpenAI(messages, "notes");
 }
 
 /**
@@ -144,7 +145,7 @@ export async function generateQuiz(content, numberOfQuestions = 5, difficulty = 
   const messages = [
     { 
       role: 'system', 
-      content: `You are a helpful assistant that creates engaging quiz questions. Create ${numberOfQuestions} multiple choice questions at ${difficulty} level focusing on ${difficultyPrompt[difficulty]}. ${topic ? `Focus specifically on the topic: ${topic}.` : ''} Return the response as a valid JSON array of objects with the format: [{"question": "...", "options": ["a", "b", "c", "d"], "correct": 0, "explanation": "..."}] where correct is the index of the correct answer.` 
+      content: `You are a helpful assistant called SmartScribe AI that creates engaging quiz questions. Create ${numberOfQuestions} multiple choice questions at ${difficulty} level focusing on ${difficultyPrompt[difficulty]}. ${topic ? `Focus specifically on the topic: ${topic}.` : ''} Return the response as a valid JSON array of objects with the format: [{"question": "...", "options": ["a", "b", "c", "d"], "correct": 0, "explanation": "..."}] where correct is the index of the correct answer.` 
     },
     { 
       role: 'user', 
@@ -153,7 +154,7 @@ export async function generateQuiz(content, numberOfQuestions = 5, difficulty = 
   ];
   
   try {
-    const response = await askOpenAI(messages);
+    const response = await askOpenAI(messages, "quiz");
     return JSON.parse(response);
   } catch (error) {
     console.error('Error parsing quiz JSON:', error);
@@ -168,14 +169,14 @@ export async function processURL(url) {
   const messages = [
     { 
       role: 'system', 
-      content: 'You are a helpful assistant that can analyze and provide comprehensive information about web content. Provide a detailed analysis including main topics, key points, and actionable insights.' 
+      content: 'You are a helpful assistant called SmartScribe AI that can analyze and provide comprehensive information about web content. Provide a detailed analysis including main topics, key points, and actionable insights.' 
     },
     { 
       role: 'user', 
-      content: `Please analyze and provide comprehensive information about this URL: ${url}. Include main topics, key concepts, and create structured notes that would be helpful for learning.` 
+      content: `Please analyze and provide comprehensive information about this URL: ${url.trim()}. Include main topics, key concepts, and create structured notes that would be helpful for learning.` 
     }
   ];
-  return await askOpenAI(messages);
+  return await askOpenAI(messages, "notes");
 }
 
 /**
@@ -185,14 +186,14 @@ export async function processVideo(videoUrl, contentType = 'notes') {
   const messages = [
     { 
       role: 'system', 
-      content: `You are a helpful assistant that processes video content. Based on the video URL and any available information, provide comprehensive ${contentType === 'notes' ? 'study notes' : contentType === 'summary' ? 'summary' : 'analysis'}.` 
+      content: `You are a helpful assistant called SmartScribe AI that processes youtube video content. Based on the video URL and any available information, provide comprehensive ${contentType === 'notes' ? 'study notes' : contentType === 'summary' ? 'summary' : 'analysis'}. Focus more on Youtube videos and provide actual notes of ${contentType} in the response.` 
     },
     { 
       role: 'user', 
-      content: `Please process this video URL and create ${contentType}: ${videoUrl}. Provide structured, educational content that would be valuable for learning.` 
+      content: `Please process this youtube video URL and create ${contentType}: ${videoUrl.trim()}. Provide structured, educational content that would be valuable for learning. Provide actaual notes of ${contentType} in the response.` 
     }
   ];
-  return await askOpenAI(messages);
+  return await askOpenAI(messages, "video");
 }
 
 /**
@@ -202,7 +203,7 @@ export async function extractTopics(content) {
   const messages = [
     { 
       role: 'system', 
-      content: 'You are a helpful assistant that identifies key topics and creates structured learning paths. Organize information into main topics, subtopics, learning objectives, study materials, and provide difficulty levels and time estimates.' 
+      content: 'You are a helpful assistant called SmartScribe that identifies key topics and creates structured learning paths. Organize information into main topics, subtopics, learning objectives, study materials, and provide difficulty levels and time estimates.' 
     },
     { 
       role: 'user', 
@@ -217,7 +218,7 @@ export async function extractTopics(content) {
       Content to analyze:\n\n${content}` 
     }
   ];
-  return await askOpenAI(messages);
+  return await askOpenAI(messages, "notes");
 }
 
 /**
@@ -227,7 +228,7 @@ export async function chatWithAI(userMessage, context = '') {
   const messages = [
     { 
       role: 'system', 
-      content: 'You are SmartScribe AI, a helpful assistant specialized in note-taking, studying, and educational content. You help users organize information, create summaries, generate quizzes, and provide study assistance. Be conversational, helpful, and educational.' 
+      content: 'You are SmartScribe AI, a helpful assistant specialized in note-taking, studying, and educational content. You also are a great at conversations whereyou ae motivating and engaged in the conversation making the user feel heard. You help users organize information, create summaries, generate quizzes, and provide study assistance. Be conversational, helpful, motivational, educational and the one who created SmartScribe AI is Weston N Sululu.' 
     }
   ];
   
@@ -243,7 +244,7 @@ export async function chatWithAI(userMessage, context = '') {
     content: userMessage 
   });
   
-  return await askOpenAI(messages);
+  return await askOpenAI(messages, "chat");
 }
 
 /**
@@ -253,7 +254,7 @@ export async function generateTopicQuiz(topic, numberOfQuestions = 5, difficulty
   const messages = [
     { 
       role: 'system', 
-      content: `You are a helpful assistant that creates educational quiz questions. Create ${numberOfQuestions} multiple choice questions about ${topic} at ${difficulty} level. Return as valid JSON array: [{"question": "...", "options": ["a", "b", "c", "d"], "correct": 0, "explanation": "..."}]` 
+      content: `You are a helpful assistant called SmartScribe AI that creates educational quiz questions. Create ${numberOfQuestions} multiple choice questions about ${topic} at ${difficulty} level. Return as valid JSON array: [{"question": "...", "options": ["a", "b", "c", "d"], "correct": 0, "explanation": "..."}]` 
     },
     { 
       role: 'user', 
@@ -262,7 +263,7 @@ export async function generateTopicQuiz(topic, numberOfQuestions = 5, difficulty
   ];
   
   try {
-    const response = await askOpenAI(messages);
+    const response = await askOpenAI(messages, "quiz");
     return JSON.parse(response);
   } catch (error) {
     console.error('Error parsing quiz JSON:', error);
