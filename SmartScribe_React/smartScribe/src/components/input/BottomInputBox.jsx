@@ -5,12 +5,19 @@ import './BottomInputBox.css';
 const BottomInputBox = forwardRef(({ onSend }, ref) => {
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
   const inputRef = useRef();
   const recognitionRef = useRef(null);
+  const touchStartRef = useRef(null);
 
   useEffect(() => {
+    // Detect mobile screen
+    const handleResize = () => setIsMobile(window.innerWidth < 600);
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
     inputRef.current && inputRef.current.focus();
-    
+
     // Setup speech recognition
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
@@ -25,19 +32,39 @@ const BottomInputBox = forwardRef(({ onSend }, ref) => {
         setIsListening(false);
       };
 
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-      };
-
-      recognitionRef.current.onerror = () => {
-        setIsListening(false);
-      };
+      recognitionRef.current.onend = () => setIsListening(false);
+      recognitionRef.current.onerror = () => setIsListening(false);
     }
 
     return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
+      window.removeEventListener('resize', handleResize);
+      if (recognitionRef.current) recognitionRef.current.stop();
+    };
+  }, []);
+
+  // Swipe gesture
+  useEffect(() => {
+    const handleTouchStart = (e) => {
+      touchStartRef.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e) => {
+      const endX = e.changedTouches[0].clientX;
+      const diffX = touchStartRef.current - endX;
+
+      if (Math.abs(diffX) > 50) {
+        const swipeDirection = diffX > 0 ? 'left' : 'right';
+        console.log(`Swiped ${swipeDirection}`);
+        // Toggle chat/input visibility logic can be added here if needed
       }
+    };
+
+    window.addEventListener('touchstart', handleTouchStart);
+    window.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
     };
   }, []);
 
@@ -83,7 +110,7 @@ const BottomInputBox = forwardRef(({ onSend }, ref) => {
         <div className="input-actions">
           {recognitionRef.current && (
             <button 
-              className={`voicee-btn ${isListening ? 'listening' : ''}`} 
+              className={`voicee-btn ${isListening ? 'listening' : ''} ${isMobile ? 'expanded-mobile' : ''}`} 
               onClick={toggleVoiceInput}
               title={isListening ? "Stop listening" : "Start voice input"}
             >
@@ -106,5 +133,4 @@ const BottomInputBox = forwardRef(({ onSend }, ref) => {
 });
 
 BottomInputBox.displayName = 'BottomInputBox';
-
 export default BottomInputBox;

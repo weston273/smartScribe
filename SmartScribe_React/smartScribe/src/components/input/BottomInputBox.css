@@ -109,6 +109,15 @@
   transform: scale(0.95);
 }
 
+/* Make mic button larger and more visible on mobile */
+.voicee-btn.expanded-mobile {
+  padding: 10px;
+  font-size: 1.2rem;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  transform: scale(1.1);
+}
+
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
