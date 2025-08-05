@@ -83,11 +83,11 @@ const BottomInputBox = forwardRef(({ onSend }, ref) => {
         <div className="input-actions">
           {recognitionRef.current && (
             <button 
-              className={`voice-btn ${isListening ? 'listening' : ''}`} 
+              className={`voicee-btn ${isListening ? 'listening' : ''}`} 
               onClick={toggleVoiceInput}
               title={isListening ? "Stop listening" : "Start voice input"}
             >
-              {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+              {isListening ? <MicOff size={20} /> : <Mic size={20} />}
             </button>
           )}
           

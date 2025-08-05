@@ -48,13 +48,13 @@
   gap: 0.5rem;
 }
 
-.voice-btn {
+.voicee-btn {
   background: rgba(0, 201, 167, 0.1);
   border: 1px solid var(--hero-color);
   color: var(--hero-color);
-  border-radius: 50%;
-  width: 2px;
-  height: 2px;
+  border-radius: 100%;
+  width: 43px;
+  height: 43px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,7 +62,14 @@
   transition: all 0.3s ease;
 }
 
-.voice-btn:hover {
+/* .voicee-btn button {
+  width: 2px;
+  height : 2px;
+} */
+
+
+
+.voicee-btn:hover {
   background: rgba(0, 201, 167, 0.2);
   transform: scale(1.05);
 }
