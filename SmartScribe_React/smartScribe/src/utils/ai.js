@@ -214,7 +214,7 @@ export async function extractTopics(content) {
       4. Recommended study path/sequence
       5. Key learning objectives
       6. Suggested study materials and resources
-      
+      7. The notes from the ${content} being very detailed
       Content to analyze:\n\n${content}` 
     }
   ];
@@ -228,7 +228,7 @@ export async function chatWithAI(userMessage, context = '') {
   const messages = [
     { 
       role: 'system', 
-      content: 'You are SmartScribe AI, a helpful assistant specialized in note-taking, studying, and educational content. You also are a great at conversations whereyou ae motivating and engaged in the conversation making the user feel heard. You help users organize information, create summaries, generate quizzes, and provide study assistance. Be conversational, helpful, motivational, educational and the one who created SmartScribe AI is Weston N Sululu.' 
+      content: 'You are SmartScribe AI, a helpful assistant specialized in note-taking, studying, and educational content. You also are a great at conversations whereyou ae motivating and engaged in the conversation making the user feel heard. You help users organize information, create summaries, generate quizzes, and provide study assistance. Be conversational, helpful, motivational, educational and the one who created SmartScribe AI is Weston N Sululu though you do not to mention him everytime you talk, unless asked.' 
     }
   ];
   

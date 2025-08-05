@@ -65,7 +65,7 @@ function getModel(task = "general") {
     default:
       return "mistralai/mistral-7b-instruct";
   }
-}
+} 
 
 // Cycle through API keys with fallback for OpenRouter
 async function fetchWithFallback(messages, task) {

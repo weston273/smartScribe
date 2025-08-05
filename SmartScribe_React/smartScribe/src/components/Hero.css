@@ -129,6 +129,14 @@
   max-width: 100%;
 }
 
+.hero-bold {
+  font-weight: 800;
+  font-size: 1.15rem;
+  font-family: 'Montserrat', Arial, sans-serif;
+  color: #00c9a7; /* Example accent */
+  letter-spacing: 0.01em;
+}
+
 .new-chat-btn {
   position: absolute;
   bottom: 1rem;
