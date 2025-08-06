@@ -163,6 +163,8 @@
     line-height: 1.7;
     color: var(--primary-text-color);
   }
+
+  
   
   /* Markdown styling */
   .md-h1 {
@@ -212,6 +214,8 @@
     overflow-x: auto;
     color: var(--hero-color);
   }
+
+  
   
   .note-footer {
     padding: 1rem 2rem;
@@ -352,3 +356,169 @@
     background: rgba(245, 245, 245, 0.5);
     border-top: 1px solid rgba(0, 0, 0, 0.1);
   }
+
+  /* Styling for note text content to support rich formatting */
+
+/* Container for note text */
+.content-display {
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.7;
+  color: var(--primary-text-color);
+  word-wrap: break-word;
+  white-space: pre-wrap; /* Preserve line breaks */
+}
+
+/* Paragraph text */
+.md-p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin: 1rem 0;
+  color: var(--primary-text-color);
+}
+
+/* Bold text inside paragraphs
+.md-p b {
+  font-weight: 800;
+  font-family: 'Montserrat', Arial, sans-serif;
+  color: var(--hero-color);
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+} */
+
+/* Headers */
+.md-h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--hero-color);
+  margin: 2rem 0 1rem 0;
+  border-bottom: 2px solid var(--hero-color);
+  padding-bottom: 0.5rem;
+}
+
+.md-h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--primary-text-color);
+  margin: 1.5rem 0 1rem 0;
+}
+
+.md-h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-text-color);
+  margin: 1.25rem 0 0.75rem 0;
+}
+
+/* List items */
+.md-li {
+  margin: 0.5rem 0 0.5rem 2rem;
+  font-size: 1.1rem;
+  list-style-type: disc;
+  color: var(--primary-text-color);
+}
+
+/* Code blocks */
+.md-code-block {
+  background: rgba(46, 46, 61, 0.8);
+  border: 1px solid rgba(0, 201, 167, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  color: var(--hero-color);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.md-bold {
+  font-weight: 800;
+  font-size: 1.15rem;
+  font-family: 'Montserrat', Arial, sans-serif;
+  color: #00c9a7; /* Example accent */
+  letter-spacing: 0.01em;
+}
+
+/* .................................................... */
+.noteview-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.left-column {
+  flex: 0 0 260px;
+  border-right: 1px solid #e0e0e0;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.top-bar {
+  padding: 12px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.content-container {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+  background-color: #ffffff;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  font-family: 'Montserrat', sans-serif;
+  color: var(--hero-color);
+}
+
+.date {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 1.25rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ✅ This is your BOLD override to match hero.css */
+.md-bold {
+  font-weight: 800;
+  font-size: 1.15rem;
+  font-family: 'Montserrat', Arial, sans-serif;
+  color: var(--hero-color);
+  letter-spacing: 0.01em;
+}
+
+/* ✅ Optional: general markdown paragraph style */
+.md-p {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: #333;
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* 🚫 REMOVE or DO NOT USE this anymore: causes conflict
+.md-p b {
+  font-weight: 800;
+  font-family: 'Montserrat', Arial, sans-serif;
+  color: var(--hero-color);
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+}
+*/
+
+
