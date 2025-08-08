@@ -1,193 +1,152 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import multer from "multer";
-import rateLimit from "express-rate-limit";
-import fetch from "node-fetch"; // Use only if your Node.js version < 18 (optional)
+import fetch from "node-fetch";
+import { Deepgram } from "@deepgram/sdk";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
-
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://smart-scribe-thz3.vercel.app"
-];
-
-// CORS middleware
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
+app.use(cors());
 app.use(express.json());
 
-// Rate limiting: 60 requests per minute per IP
-app.use(rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 60,
-  message: "Too many requests, please try again after a minute."
-}));
+const PORT = process.env.PORT || 3001;
 
-// Multer middleware for file upload handling (multipart/form-data)
-const upload = multer();
-
-// Load OpenRouter API keys from environment variables
-const apiKeys = process.env.OPENROUTER_KEYS
-  ? process.env.OPENROUTER_KEYS.split(",").map(k => k.trim())
-  : [];
-
+// Streaming keys (e.g., from OpenRouter)
+const apiKeys = process.env.OPENROUTER_KEYS?.split(",") || [];
 let currentKeyIndex = 0;
 
-// Function to select model based on task
-function getModel(task = "general") {
-  switch (task) {
-    case "chat":
-    case "notes":
-      return "mistralai/mistral-7b-instruct";
-    case "summarize":
-    case "recap":
-      return "deepseek/deepseek-r1";
-    case "quiz":
-    case "video":
-      return "deepseek/deepseek-v3-0324:free";
-    case "ultralong":
-      return "openai/gpt-4o";
-    default:
-      return "mistralai/mistral-7b-instruct";
-  }
+function rotateKey() {
+  currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
 }
 
-// Cycle through API keys with fallback for OpenRouter
-async function fetchWithFallback(messages, task) {
-  const model = getModel(task);
+function getModel(task = "chat") {
+  if (task === "summarize") return "openrouter/mistral-7b-instruct";
+  return "openrouter/openchat-3.5-1210"; // default chat model
+}
+
+async function fetchWithFallback(messages, task = "chat") {
+  const url = "https://openrouter.ai/api/v1/chat/completions";
 
   for (let i = 0; i < apiKeys.length; i++) {
     const key = apiKeys[currentKeyIndex];
-    console.log(`🧠 Trying key #${currentKeyIndex + 1} with model: ${model}`);
     try {
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${key}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model,
+          model: getModel(task),
           messages,
-          temperature: 0.7
-        })
+          temperature: 0.7,
+          stream: false,
+        }),
       });
 
-      if (response.status === 429 || response.status === 401) {
-        console.warn(`⚠️ Key #${currentKeyIndex + 1} failed (rate limit or unauthorized). Switching...`);
-        currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
-        continue;
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      } else {
+        rotateKey();
       }
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`❌ OpenRouter error: ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log("✅ Success from OpenRouter for model:", model);
-      return data;
-
     } catch (err) {
-      console.error(`❌ Key #${currentKeyIndex + 1} error:`, err.message);
-      currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
+      console.error(`Key ${currentKeyIndex + 1} failed:`, err.message);
+      rotateKey();
     }
   }
 
-  throw new Error("🚫 All API keys failed or exhausted.");
+  throw new Error("All API keys failed.");
 }
 
-// Main chat endpoint
+// ✅ Main chat endpoint (handles streaming and non-streaming)
 app.post("/api/chat", async (req, res) => {
-  const { messages, task } = req.body;
+  const { messages, stream = false, task = "chat" } = req.body;
 
   if (!messages || !Array.isArray(messages)) {
-    return res.status(400).json({ error: "❌ 'messages' must be an array." });
+    return res.status(400).json({ error: "'messages' must be an array." });
   }
 
-  try {
-    const data = await fetchWithFallback(messages, task);
+  const model = getModel(task);
+  const key = apiKeys[currentKeyIndex];
+  const url = "https://openrouter.ai/api/v1/chat/completions";
 
-    // Normalize AI response content
-    let content =
-      data?.choices?.[0]?.message?.content
-      || data?.choices?.[0]?.content
-      || null;
-
-    if (!content) {
-      content = "AI did not reply (malformed response).";
+  if (!stream) {
+    try {
+      const data = await fetchWithFallback(messages, task);
+      const content = data?.choices?.[0]?.message?.content || "AI did not reply.";
+      return res.json({ choices: [{ message: { content } }] });
+    } catch (err) {
+      return res.status(500).json({ error: "All keys failed or exhausted." });
     }
-
-    res.status(200).json({
-      choices: [
-        { message: { content } }
-      ]
-    });
-
-  } catch (error) {
-    console.error("🔥 Critical failure:", error.message);
-    res.status(500).json({ error: "All keys failed or exhausted." });
   }
-});
 
-// --- New Deepgram transcription endpoint ---
-
-app.post("/api/transcribe", upload.single("audio"), async (req, res) => {
+  // Streaming mode
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: "No audio file uploaded" });
-    }
-
-    const deepgramApiKey = process.env.DEEPGRAM_API_KEY;
-    if (!deepgramApiKey) {
-      return res.status(500).json({ error: "Missing Deepgram API key." });
-    }
-
-    // Send audio buffer directly to Deepgram's REST API
-    const response = await fetch("https://api.deepgram.com/v1/listen", {
+    const response = await fetch(url, {
       method: "POST",
       headers: {
-        "Authorization": `Token ${deepgramApiKey}`,
-        "Content-Type": "audio/webm" // assuming your frontend sends webm audio format
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json"
       },
-      body: req.file.buffer
+      body: JSON.stringify({
+        model,
+        messages,
+        temperature: 0.7,
+        stream: true
+      })
     });
 
-    if (!response.ok) {
-      const errorMsg = await response.text();
-      return res.status(500).json({ error: errorMsg });
+    if (!response.ok || !response.body) {
+      throw new Error("Streaming failed to start.");
     }
 
-    const data = await response.json();
-    // Extract transcript from Deepgram response structure
-    const transcription = data?.results?.channels?.[0]?.alternatives?.[0]?.transcript || "";
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
 
-    return res.json({ transcription });
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value);
+      res.write(chunk);
+    }
+
+    res.write("data: [DONE]\n\n");
+    res.end();
 
   } catch (err) {
-    console.error("Transcription error:", err);
-    res.status(500).json({ error: "Transcription failed." });
+    console.error("Streaming error:", err.message);
+    res.status(500).send("data: [DONE]\n\n");
   }
 });
 
-// Simple health check / root endpoint
-app.get("/", (req, res) => {
-  res.send("✅ SmartScribe AI backend is running.");
+// ✅ Transcription via Deepgram
+app.post("/api/transcribe", async (req, res) => {
+  const { audioUrl } = req.body;
+
+  if (!audioUrl) {
+    return res.status(400).json({ error: "Missing audioUrl" });
+  }
+
+  try {
+    const deepgram = new Deepgram(process.env.DEEPGRAM_API_KEY);
+    const response = await deepgram.transcription.preRecorded(
+      { url: audioUrl },
+      { punctuate: true }
+    );
+
+    const transcript = response.results?.channels?.[0]?.alternatives?.[0]?.transcript || "";
+    res.json({ transcript });
+  } catch (err) {
+    console.error("Transcription error:", err.message);
+    res.status(500).json({ error: "Transcription failed" });
+  }
 });
 
 app.listen(PORT, () => {
