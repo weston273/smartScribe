@@ -20,8 +20,30 @@ export default function Hero({ conversation, onNewChat }) {
                     return <h2 key={lineIndex} className="hero-h2">{line.substring(3)}</h2>;
                   } else if (line.startsWith('### ')) {
                     return <h3 key={lineIndex} className="hero-h3">{line.substring(4)}</h3>;
-                  } else if (line.startsWith('**') && line.endsWith('**')) {
-                    return <strong key={lineIndex} className="hero-bold">{line.slice(2, -2)}</strong>;
+                  }else if (line.includes('**')) {
+                      // Split line on bold words and replace each as needed
+                      const boldRegex = /\*\*(.*?)\*\*/g;
+                      // parts will be: ["This is a ", "bold", " word."]
+                      const parts = [];
+                      let lastIndex = 0;
+                      let match;
+                      let keyCount = 0;
+                      while ((match = boldRegex.exec(line)) !== null) {
+                        if (match.index > lastIndex) {
+                          parts.push(line.slice(lastIndex, match.index));
+                        }
+                        // Add styled bolded word
+                        parts.push(
+                          <span key={`${lineIndex}-b${keyCount++}`} className="hero-bold">
+                            {match[1]}
+                          </span>
+                        );
+                        lastIndex = match.index + match[0].length;
+                      }
+                      if (lastIndex < line.length) {
+                        parts.push(line.slice(lastIndex));
+                      }
+                      return <div key={lineIndex} className="hero-text">{parts}</div>;
                   } else if (line.startsWith('- ') || line.startsWith('* ')) {
                     return <div key={lineIndex} className="hero-bullet">• {line.substring(2)}</div>;
                   } else if (line.includes('```')) {

@@ -304,6 +304,24 @@ export default function NoteEdit({ theme, toggleTheme }) {
                       return <div key={index} className="md-code-block">{line}</div>;
                     } else if (line.trim() === '') {
                       return <br key={index} />;
+                    } else if (line.includes('**')) {
+                        const boldRegex = /\*\*(.*?)\*\*/g;
+                        let lastIndex = 0;
+                        let match;
+                        let parts = [];
+                        let boldKey = 0;
+                        while ((match = boldRegex.exec(line)) !== null) {
+                          if (match.index > lastIndex) {
+                            parts.push(line.slice(lastIndex, match.index));
+                          } 
+                          parts.push(<span key={`${index}-b${boldKey++}`} className='md-bold'>{match[1]}</span>);
+                          lastIndex = boldRegex.lastIndex;
+                        }
+                        // Add any remaining text after the last match
+                        if (lastIndex < line.length) {
+                          parts.push(line.slice(lastIndex));
+                        }
+                        return <p key={index} className="md-p">{parts}</p>;
                     } else {
                       return <p key={index} className="md-p">{line}</p>;
                     }

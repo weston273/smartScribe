@@ -16,17 +16,28 @@ const PORT = process.env.PORT || 3001;
 const apiKeys = process.env.OPENROUTER_KEYS?.split(",") || [];
 let currentKeyIndex = 0;
 
-function rotateKey() {
-  currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
-}
+// Function to select model based on task
+function getModel(task = "general") {
+  switch (task) {
+    case "chat":
+    case "notes":
+      return "mistralai/mistral-7b-instruct";
+    case "summarize":
+    case "recap":
+      return "z-ai/glm-4.5-air:free";
+    case "quiz":
+    case "video":
+      return "z-ai/glm-4.5-air:free";
+    case "ultralong":
+      return "openai/gpt-4o";
+    default:
+      return "mistralai/mistral-7b-instruct";
+  }
+} 
 
-function getModel(task = "chat") {
-  if (task === "summarize") return "openrouter/mistral-7b-instruct";
-  return "openrouter/openchat-3.5-1210"; // default chat model
-}
-
-async function fetchWithFallback(messages, task = "chat") {
-  const url = "https://openrouter.ai/api/v1/chat/completions";
+// Cycle through API keys with fallback for OpenRouter
+async function fetchWithFallback(messages, task) {
+  const model = getModel(task);
 
   for (let i = 0; i < apiKeys.length; i++) {
     const key = apiKeys[currentKeyIndex];

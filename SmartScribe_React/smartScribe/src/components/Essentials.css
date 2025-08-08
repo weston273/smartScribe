@@ -1,6 +1,6 @@
 .essentials-container {
   background: var(--essentials-background-color);
-  margin: 2rem auto;
+  margin: 0.5rem auto;
   width: min(95%, 800px);
   display: flex;
   justify-content: space-around;

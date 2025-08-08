@@ -7,6 +7,69 @@ import Footer from '../components/Footer';
 import AccountDropDown from '../components/account/AccountDropDown.jsx';
 import './NoteView.css';
 
+// === Markdown-style renderer (uses your md-* classNames) ===
+function renderNoteContent(content) {
+  let inCodeBlock = false;
+  return content.split('\n').map((line, index) => {
+    // Code blocks (```
+    if (line.trim().startsWith('```')) {
+      inCodeBlock = !inCodeBlock;
+      // Open or close block
+      if (inCodeBlock) {
+        return <div key={index} className="md-code-block"> {/* opening tag only, code lines follow */} </div>;
+      } else {
+        // closing tag; nothing to return (code lines in-between handled below)
+        return null;
+      }
+    }
+    if (inCodeBlock) {
+      // Inside code block - show as pre/code inside md-code-block
+      return <pre key={index} className="md-code-block" style={{margin:0, background: 'none', padding: 0}}><code>{line}</code></pre>;
+    }
+
+    // Markdown headers
+    if (line.startsWith('### ')) {
+      return <h3 key={index} className="md-h3">{line.substring(4)}</h3>;
+    }
+    if (line.startsWith('## ')) {
+      return <h2 key={index} className="md-h2">{line.substring(3)}</h2>;
+    }
+    if (line.startsWith('# ')) {
+      return <h1 key={index} className="md-h1">{line.substring(2)}</h1>;
+    }
+    // List items
+    if (line.startsWith('- ') || line.startsWith('* ')) {
+      return <li key={index} className="md-li">{line.substring(2)}</li>;
+    }
+    // Multiple bold segments per paragraph ( **like this** and **that** )
+    if (line.includes('**')) {
+      const boldRegex = /\*\*(.*?)\*\*/g;
+      let lastIndex = 0;
+      let match;
+      let parts = [];
+      let boldKey = 0;
+      while ((match = boldRegex.exec(line)) !== null) {
+        if (match.index > lastIndex) {
+          parts.push(line.slice(lastIndex, match.index));
+        }
+        // matched phrase is match[1]
+        parts.push(<span key={`${index}-b${boldKey++}`} className="md-bold">{match[1]}</span>
+        );
+        lastIndex = match.index + match[0].length;
+      }
+      if (lastIndex < line.length) {
+        parts.push(line.slice(lastIndex));
+      }
+      return <p key={index} className="md-p">{parts}</p>;
+    }
+    if (line.trim() === '') {
+      return <br key={index} />;
+    }
+    // Plain paragraph
+    return <p key={index} className="md-p">{line}</p>;
+  });
+}
+
 export default function NoteView({ theme, toggleTheme }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -20,175 +83,37 @@ export default function NoteView({ theme, toggleTheme }) {
   const handleCloseDropdown = () => setShowAccountDropdown(false);
 
   useEffect(() => {
-    // Mock note data - in real app, fetch from API
-    const mockNotes = [
-      {
-        id: 1,
-        title: 'JavaScript Fundamentals',
-        content: `# JavaScript Fundamentals
-
-## Introduction
-JavaScript is a high-level, interpreted programming language that is widely used for web development. It was initially created to make web pages interactive, but it has evolved to become a versatile language used for both frontend and backend development.
-
-## Key Concepts
-
-### Variables
-JavaScript supports different types of variables:
-- **let**: Block-scoped variable declaration
-- **const**: Block-scoped constant declaration
-- **var**: Function-scoped variable declaration (legacy)
-
-### Functions
-Functions are first-class citizens in JavaScript:
-\`\`\`javascript
-function greet(name) {
-  return "Hello, " + name + "!";
-}
-
-const greetArrow = (name) => \`Hello, \${name}!\`;
-\`\`\`
-
-### Objects and Arrays
-JavaScript objects and arrays are fundamental data structures:
-- Objects store key-value pairs
-- Arrays store ordered lists of values
-- Both are reference types
-
-## Modern JavaScript (ES6+)
-Modern JavaScript introduced many powerful features:
-- Arrow functions
-- Template literals
-- Destructuring
-- Promises and async/await
-- Modules (import/export)
-- Classes
-
-## Best Practices
-1. Use meaningful variable names
-2. Write modular, reusable code
-3. Handle errors appropriately
-4. Follow consistent coding style
-5. Use modern JavaScript features when appropriate`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
-      {
-        id: 2,
-        title: 'React Components',
-        content: `# React Components
-
-## Overview
-React components are the building blocks of React applications. They encapsulate the logic and UI of a part of your application into reusable pieces.
-
-## Types of Components
-
-### Functional Components
-Modern React development primarily uses functional components with hooks:
-
-\`\`\`jsx
-import React, { useState, useEffect } from 'react';
-
-function MyComponent() {
-  const [count, setCount] = useState(0);
-  
-  useEffect(() => {
-    document.title = \`Count: \${count}\`;
-  }, [count]);
-  
-  return (
-    <div>
-      <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button>
-    </div>
-  );
-}
-\`\`\`
-
-### Class Components (Legacy)
-While still supported, class components are less commonly used:
-
-\`\`\`jsx
-class MyComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { count: 0 };
-  }
-  
-  render() {
-    return (
-      <div>
-        <p>You clicked {this.state.count} times</p>
-        <button onClick={() => this.setState({ count: this.state.count + 1 })}>
-          Click me
-        </button>
-      </div>
-    );
-  }
-}
-\`\`\`
-
-## Key Hooks
-
-### useState
-Manages component state:
-\`\`\`jsx
-const [state, setState] = useState(initialValue);
-\`\`\`
-
-### useEffect
-Handles side effects:
-\`\`\`jsx
-useEffect(() => {
-  // Effect logic
-  return () => {
-    // Cleanup logic
-  };
-}, [dependencies]);
-\`\`\`
-
-### useContext
-Consumes context values:
-\`\`\`jsx
-const value = useContext(MyContext);
-\`\`\`
-
-## Component Best Practices
-1. Keep components small and focused
-2. Use descriptive names
-3. Extract reusable logic into custom hooks
-4. Handle loading and error states
-5. Optimize with React.memo when needed`,
-        createdAt: new Date(Date.now() - 86400000).toISOString(),
-        updatedAt: new Date(Date.now() - 86400000).toISOString()
-      }
-    ];
-
-    const foundNote = mockNotes.find(n => n.id === parseInt(id));
+    // Read notes from localStorage
+    const savedNotes = JSON.parse(localStorage.getItem('smartscribe-notes') || '[]');
+    const foundNote = savedNotes.find(n => String(n.id) === String(id));
     setNote(foundNote);
   }, [id]);
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this note?')) {
       // In real app, call API to delete
+      const savedNotes = JSON.parse(localStorage.getItem('smartscribe-notes') || '[]');
+      const filteredNotes = savedNotes.filter(n => String(n.id) !== String(id));
+      localStorage.setItem('smartscribe-notes', JSON.stringify(filteredNotes));
       navigate('/notes');
     }
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(note.content);
-    // Could add a toast notification here
+    if (note && note.content)
+      navigator.clipboard.writeText(note.content);
   };
 
   const handleDownload = () => {
-    const blob = new Blob([note.content], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${note.title}.md`;
-    a.click();
-    URL.revokeObjectURL(url);
+    if (note && note.content) {
+      const blob = new Blob([note.content], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${note.title}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
   };
 
   const handleGenerateQuiz = () => {
@@ -237,8 +162,8 @@ const value = useContext(MyContext);
               <div className="note-meta">
                 <h1 className="note-title">{note.title}</h1>
                 <div className="note-timestamps">
-                  <span>Created: {new Date(note.createdAt).toLocaleDateString()}</span>
-                  <span>Modified: {new Date(note.updatedAt).toLocaleDateString()}</span>
+                  <span>Created: {note.createdAt ? new Date(note.createdAt).toLocaleDateString() : ''}</span>
+                  <span>Modified: {note.updatedAt ? new Date(note.updatedAt).toLocaleDateString() : ''}</span>
                 </div>
               </div>
             </div>
@@ -281,31 +206,14 @@ const value = useContext(MyContext);
 
           <div className="note-content">
             <div className="content-display">
-              {note.content.split('\n').map((line, index) => {
-                // Simple markdown rendering
-                if (line.startsWith('# ')) {
-                  return <h1 key={index} className="md-h1">{line.substring(2)}</h1>;
-                } else if (line.startsWith('## ')) {
-                  return <h2 key={index} className="md-h2">{line.substring(3)}</h2>;
-                } else if (line.startsWith('### ')) {
-                  return <h3 key={index} className="md-h3">{line.substring(4)}</h3>;
-                } else if (line.startsWith('- ') || line.startsWith('* ')) {
-                  return <li key={index} className="md-li">{line.substring(2)}</li>;
-                } else if (line.startsWith('```')) {
-                  return <div key={index} className="md-code-block">{line}</div>;
-                } else if (line.trim() === '') {
-                  return <br key={index} />;
-                } else {
-                  return <p key={index} className="md-p">{line}</p>;
-                }
-              })}
+              {renderNoteContent(note.content)}
             </div>
           </div>
 
           <div className="note-footer">
             <div className="note-stats">
               <span>{note.content.length} characters</span>
-              <span>{note.content.split(' ').length} words</span>
+              <span>{note.content.split(' ').filter(Boolean).length} words</span>
               <span>{note.content.split('\n').length} lines</span>
             </div>
           </div>

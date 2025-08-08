@@ -16,9 +16,17 @@ const Home = ({ theme, toggleTheme }) => {
   const [showPDFModal, setShowPDFModal] = useState(false);
   const [conversation, setConversation] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
 
   const inputBoxRef = useRef();
   const { chatWithAI } = useAI();
+
+  // Resize listener
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 600);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Toggle handlers
   const toggleSideBar = () => setShowSideBar(prev => !prev);
@@ -63,9 +71,9 @@ const Home = ({ theme, toggleTheme }) => {
     setConversation(prev => [...prev, summaryMessage]);
   };
 
-  // Close input box when clicking outside or pressing Escape
+  // Optional UX improvement: disable outside-click-close on mobile
   useEffect(() => {
-    if (!showInput) return;
+    if (!showInput || isMobile) return;
 
     const handleClick = (e) => {
       if (inputBoxRef.current && !inputBoxRef.current.contains(e.target)) {
@@ -86,7 +94,31 @@ const Home = ({ theme, toggleTheme }) => {
       window.removeEventListener('mousedown', handleClick);
       window.removeEventListener('keydown', handleEsc);
     };
-  }, [showInput]);
+  }, [showInput, isMobile]);
+
+  // Swipe gestures
+  useEffect(() => {
+    let startX = 0;
+
+    const handleTouchStart = (e) => {
+      startX = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e) => {
+      const endX = e.changedTouches[0].clientX;
+      const diffX = endX - startX;
+
+      if (diffX > 75 && !isMobile) setShowInput(true); // swipe right
+      if (diffX < -75 && !isMobile) setShowInput(false); // swipe left
+    };
+
+    window.addEventListener('touchstart', handleTouchStart);
+    window.addEventListener('touchend', handleTouchEnd);
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isMobile]);
 
   return (
     <div className="home-wrapper">
@@ -116,8 +148,8 @@ const Home = ({ theme, toggleTheme }) => {
           </div>
         )}
 
-        {showInput ? (
-          <BottomInputBox onSend={handleHeroSend} ref={inputBoxRef} />
+        {(showInput || isMobile) ? (
+          <BottomInputBox onSend={handleHeroSend} ref={inputBoxRef} isMobile={isMobile} />
         ) : (
           <Essentials
             onNotesClick={() => setShowInput(true)}
