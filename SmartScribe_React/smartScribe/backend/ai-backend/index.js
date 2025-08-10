@@ -56,10 +56,10 @@ function getModel(task = "general") {
       return "mistralai/mistral-7b-instruct";
     case "summarize":
     case "recap":
-      return "z-ai/glm-4.5-air:free";
+      return "openai/gpt-oss-20b:free";
     case "quiz":
     case "video":
-      return "z-ai/glm-4.5-air:free";
+      return "openai/gpt-oss-20b:free";
     case "ultralong":
       return "openai/gpt-4o";
     default:
