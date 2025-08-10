@@ -397,9 +397,9 @@ useEffect(() => {
             )}
 
             {/* Quick Actions Sidebar */}
-            <div className="quick-actions">
-              <h3 className="quick-actions-title">{t('notes.quickActions') || 'Quick Actions'}</h3>
-              <div className="action-items">
+            {/* <div className="quick-actions">
+              <h3 className="quick-actions-title">{t('notes.quickActions') || 'Quick Actions'}</h3> */}
+              {/* <div className="action-items">
                 <button className="action-item" onClick={handleGeneralQuiz}>
                   <QuestionIcon size={20} />
                   <span>{t('notes.generateQuiz') || 'Generate Quiz'}</span>
@@ -409,11 +409,11 @@ useEffect(() => {
                   <span>{t('notes.askAI') || 'Ask AI'}</span>
                 </Link>
                 <Link to="/record" className="action-item">
-                  {/* <MicIcon size={20} /> */}
+                   <MicIcon size={20} /> 
                   <span>{t('notes.voiceNote') || 'Voice Note'}</span>
                 </Link>
-              </div>
-            </div>
+              </div> */}
+            {/* </div> */}
           </div>
         </main>
       </div>

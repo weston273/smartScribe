@@ -203,6 +203,10 @@
   gap: 1.5rem;
 }
 
+.note-link:hover{
+  text-decoration: underline;
+}
+
 .note-card {
   background-color: rgba(46, 46, 61, 0.8);
   border-radius: 12px;
@@ -300,6 +304,7 @@
   gap: 0.5rem;
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--border-color);
+  /* color : var(--hero-color); */
   background: rgba(0, 0, 0, 0.1);
   justify-content: flex-end;
 }
@@ -608,3 +613,60 @@
 [data-theme="light"] .note-actions {
   background: rgba(0, 0, 0, 0.05);
 }
+
+[data-theme="light"] .note-actions .btn-ghost {
+  color: #444; /* dark enough for good contrast */
+  background-color: transparent;
+  border: none;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+[data-theme="light"] .note-actions .btn-ghost:hover,
+[data-theme="light"] .note-actions .btn-ghost:focus {
+  color: #000;
+  background-color: rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+[data-theme="light"] .note-card {
+  color: #222; /* darker text for readability */
+  border: 1px solid #ccc; /* lighter border */
+}
+
+[data-theme="light"] .note-card .note-title,
+[data-theme="light"] .note-card .note-preview,
+[data-theme="light"] .note-card .note-meta {
+  color: #222; /* dark text */
+  opacity: 0.9;
+}
+
+[data-theme="light"] .note-card .note-tags .note-tag {
+  background: rgba(0, 201, 167, 0.15);
+  color: #009977;
+}
+
+[data-theme="light"] .note-card .note-tags .note-tag.more {
+  background: rgba(0, 0, 0, 0.05);
+  color: #666;
+}
+
+[data-theme="light"] .note-card .note-actions {
+  background: rgba(0, 0, 0, 0.05);
+  border-top: 1px solid #ddd;
+}
+
+[data-theme="light"] .note-card.list .note-actions {
+  border-left: 1px solid #ddd;
+  background: transparent;
+}
+
+[data-theme="light"] .note-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+[data-theme="light"] .note-link:hover {
+  text-decoration: underline;
+}
+
+
