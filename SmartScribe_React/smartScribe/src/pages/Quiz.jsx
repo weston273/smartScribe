@@ -18,7 +18,6 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Quiz settings
   const [quizSettings, setQuizSettings] = useState({
     numberOfQuestions: 5,
     difficulty: 'intermediate',
@@ -41,25 +40,36 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     setErrorMessage('');
     try {
       let generatedQuestions = [];
+      const batchSize = 10;
+      const totalBatches = Math.ceil(quizSettings.numberOfQuestions / batchSize);
 
-      if (quizSettings.useNotes && notesContent) {
-        generatedQuestions = await generateQuiz(
-          notesContent,
-          quizSettings.numberOfQuestions,
-          quizSettings.difficulty,
-          quizSettings.topic
-        );
-      } else if (quizSettings.topic) {
-        generatedQuestions = await generateTopicQuiz(
-          quizSettings.topic,
-          quizSettings.numberOfQuestions,
-          quizSettings.difficulty
-        );
+      for (let i = 0; i < totalBatches; i++) {
+        const batchCount = Math.min(batchSize, quizSettings.numberOfQuestions - generatedQuestions.length);
+        let batchQuestions = [];
+
+        if (quizSettings.useNotes && notesContent) {
+          batchQuestions = await generateQuiz(
+            notesContent,
+            batchCount,
+            quizSettings.difficulty,
+            quizSettings.topic
+          );
+        } else if (quizSettings.topic) {
+          batchQuestions = await generateTopicQuiz(
+            quizSettings.topic,
+            batchCount,
+            quizSettings.difficulty
+          );
+        }
+
+        if (batchQuestions && batchQuestions.length > 0) {
+          generatedQuestions = [...generatedQuestions, ...batchQuestions];
+        }
       }
 
-      if (!generatedQuestions || generatedQuestions.length === 0) {
+      if (generatedQuestions.length === 0) {
         setErrorMessage(
-          'Failed to create quiz, check your internet connection or you may have ran out of tokens... If the problem persists after 24 hours please contact the developer, the site may be down or under maintenance.'
+          'Failed to create quiz, check your internet connection or tokens. Contact the developer if the problem persists.'
         );
         return;
       }
@@ -72,7 +82,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     } catch (error) {
       console.error('Error generating quiz:', error);
       setErrorMessage(
-        'Failed to create quiz, check your internet connection or you may have ran out of tokens... If the problem persists after 24 hours please contact the developer, the site may be down or under maintenance.'
+        'Failed to create quiz, check your internet connection or tokens. Contact the developer if the problem persists.'
       );
     } finally {
       setIsGenerating(false);
@@ -101,13 +111,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
   };
 
   const calculateScore = () => {
-    let correct = 0;
-    questions.forEach((q, index) => {
-      if (answers[index] === q.correct) {
-        correct++;
-      }
-    });
-    return correct;
+    return questions.reduce((acc, q, index) => (answers[index] === q.correct ? acc + 1 : acc), 0);
   };
 
   const resetQuiz = () => {
@@ -120,25 +124,19 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
 
   const handleFromNotesChoice = (useNotes) => {
     setQuizSettings(prev => ({ ...prev, useNotes }));
-    if (!useNotes) {
-      setQuizSettings(prev => ({ ...prev, topic: '' }));
-    }
+    if (!useNotes) setQuizSettings(prev => ({ ...prev, topic: '' }));
   };
 
-  // ✅ Show settings screen
+  // ✅ SETTINGS SCREEN
   if (showSettings) {
     return (
       <div className="page-wrapper">
         <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-        
         {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
-        
         <main className="quiz-main">
           <div className="quiz-settings">
             <div className="settings-header">
-              <div className="icon-wrapper">
-                <Brain size={48} className="settings-icon" />
-              </div>
+              <div className="icon-wrapper"><Brain size={48} className="settings-icon" /></div>
               <h1>Quiz Generator</h1>
               <p>Create a personalized quiz with AI</p>
             </div>
@@ -155,18 +153,8 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
               <div className="notes-choice">
                 <h3>Quiz Source</h3>
                 <div className="choice-buttons">
-                  <button 
-                    className={`choice-btn ${quizSettings.useNotes ? 'active' : ''}`}
-                    onClick={() => handleFromNotesChoice(true)}
-                  >
-                    Use My Notes
-                  </button>
-                  <button 
-                    className={`choice-btn ${!quizSettings.useNotes ? 'active' : ''}`}
-                    onClick={() => handleFromNotesChoice(false)}
-                  >
-                    Custom Topic
-                  </button>
+                  <button className={`choice-btn ${quizSettings.useNotes ? 'active' : ''}`} onClick={() => handleFromNotesChoice(true)}>Use My Notes</button>
+                  <button className={`choice-btn ${!quizSettings.useNotes ? 'active' : ''}`} onClick={() => handleFromNotesChoice(false)}>Custom Topic</button>
                 </div>
               </div>
             )}
@@ -176,17 +164,10 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
                 <label>Number of Questions</label>
                 <select
                   value={quizSettings.numberOfQuestions}
-                  onChange={(e) => setQuizSettings(prev => ({ 
-                    ...prev, 
-                    numberOfQuestions: parseInt(e.target.value) 
-                  }))}
+                  onChange={(e) => setQuizSettings(prev => ({ ...prev, numberOfQuestions: parseInt(e.target.value) }))}
                   className="form-select"
                 >
-                  <option value={3}>3 Questions</option>
-                  <option value={5}>5 Questions</option>
-                  <option value={10}>10 Questions</option>
-                  <option value={15}>15 Questions</option>
-                  <option value={20}>20 Questions</option>
+                  {[3,5,10,15,20].map(n => <option key={n} value={n}>{n} Questions</option>)}
                 </select>
               </div>
 
@@ -194,15 +175,10 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
                 <label>Difficulty Level</label>
                 <select
                   value={quizSettings.difficulty}
-                  onChange={(e) => setQuizSettings(prev => ({ 
-                    ...prev, 
-                    difficulty: e.target.value 
-                  }))}
+                  onChange={(e) => setQuizSettings(prev => ({ ...prev, difficulty: e.target.value }))}
                   className="form-select"
                 >
-                  <option value="beginner">Beginner</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="advanced">Advanced</option>
+                  {['beginner','intermediate','advanced'].map(d => <option key={d} value={d}>{d.charAt(0).toUpperCase()+d.slice(1)}</option>)}
                 </select>
               </div>
 
@@ -212,10 +188,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
                   <input
                     type="text"
                     value={quizSettings.topic}
-                    onChange={(e) => setQuizSettings(prev => ({ 
-                      ...prev, 
-                      topic: e.target.value 
-                    }))}
+                    onChange={(e) => setQuizSettings(prev => ({ ...prev, topic: e.target.value }))}
                     placeholder="e.g., JavaScript, History, Biology..."
                     className="form-input"
                   />
@@ -223,45 +196,25 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
                 </div>
               )}
 
-              <button
-                onClick={generateQuizQuestions}
-                disabled={isGenerating}
-                className="generate-btn"
-              >
-                {isGenerating ? (
-                  <>
-                    <RefreshCw className="spinning" size={20} />
-                    Generating Quiz...
-                  </>
-                ) : (
-                  <>
-                    <Brain size={20} />
-                    Generate Quiz
-                  </>
-                )}
+              <button onClick={generateQuizQuestions} disabled={isGenerating} className="generate-btn">
+                {isGenerating ? <><RefreshCw className="spinning" size={20}/> Generating Quiz...</> : <><Brain size={20}/> Generate Quiz</>}
               </button>
             </div>
           </div>
         </main>
-
-        {showAccountDropdown && (
-          <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
-        )}
-
+        {showAccountDropdown && <AccountDropDown theme={theme} onClose={handleCloseDropdown} />}
         <Footer theme={theme} />
       </div>
     );
   }
 
-  // ✅ Show generating/loading state
+  // ✅ LOADING SCREEN
   if (isGenerating) {
     return (
       <div className="page-wrapper">
         <main className="quiz-main">
           <div className="loading-state">
-            <div className="loading-spinner">
-              <RefreshCw className="spinning" size={48} />
-            </div>
+            <div className="loading-spinner"><RefreshCw className="spinning" size={48}/></div>
             <h2>Generating Quiz...</h2>
             <p>Please wait while we prepare your questions</p>
           </div>
@@ -270,7 +223,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     );
   }
 
-  // ✅ Handle case where nothing came back
+  // ✅ NO QUESTIONS FALLBACK
   if (!isGenerating && questions.length === 0 && !errorMessage) {
     return (
       <div className="page-wrapper">
@@ -278,26 +231,22 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
           <div className="loading-state">
             <h2>No questions generated</h2>
             <p>Try again with different settings</p>
-            <button onClick={resetQuiz} className="retry-button">
-              <RefreshCw size={20} /> Back to Settings
-            </button>
+            <button onClick={resetQuiz} className="retry-button"><RefreshCw size={20}/> Back to Settings</button>
           </div>
         </main>
       </div>
     );
   }
 
-  // ✅ Show results screen
+  // ✅ RESULTS SCREEN
   if (showResults) {
     const score = calculateScore();
     const percentage = Math.round((score / questions.length) * 100);
-    
+
     return (
       <div className="page-wrapper">
-        <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-        
-        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
-        
+        <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown}/>
+        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar}/>}
         <main className="quiz-main">
           <div className="quiz-results">
             <div className="results-header">
@@ -318,103 +267,66 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
               {questions.map((question, index) => (
                 <div key={index} className="question-review">
                   <div className="question-header">
-                    <span className="question-number">Q{index + 1}</span>
+                    <span className="question-number">Q{index+1}</span>
                     <span className={`result-indicator ${answers[index] === question.correct ? 'correct' : 'incorrect'}`}>
                       {answers[index] === question.correct ? '✓' : '✗'}
                     </span>
                   </div>
                   <p className="question-text">{question.question}</p>
                   <div className="answer-comparison">
-                    <div className="your-answer">
-                      <strong>Your answer:</strong> {question.options[answers[index]] || 'Not answered'}
-                    </div>
-                    <div className="correct-answer">
-                      <strong>Correct answer:</strong> {question.options[question.correct]}
-                    </div>
-                    {question.explanation && (
-                      <div className="explanation">
-                        <strong>Explanation:</strong> {question.explanation}
-                      </div>
-                    )}
+                    <div className="your-answer"><strong>Your answer:</strong> {question.options[answers[index]] || 'Not answered'}</div>
+                    <div className="correct-answer"><strong>Correct answer:</strong> {question.options[question.correct]}</div>
+                    {question.explanation && <div className="explanation"><strong>Explanation:</strong> {question.explanation}</div>}
                   </div>
                 </div>
               ))}
             </div>
 
             <div className="results-actions">
-              <button onClick={resetQuiz} className="retry-button">
-                <RefreshCw size={20} />
-                Try Again
-              </button>
-              <button onClick={() => setShowSettings(true)} className="new-quiz-button">
-                <Settings size={20} />
-                New Quiz
-              </button>
+              <button onClick={resetQuiz} className="retry-button"><RefreshCw size={20}/> Try Again</button>
+              <button onClick={() => setShowSettings(true)} className="new-quiz-button"><Settings size={20}/> New Quiz</button>
             </div>
           </div>
         </main>
-
-        {showAccountDropdown && (
-          <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
-        )}
-
-        <Footer theme={theme} />
+        {showAccountDropdown && <AccountDropDown theme={theme} onClose={handleCloseDropdown}/>}
+        <Footer theme={theme}/>
       </div>
     );
   }
 
-  // ✅ Show quiz screen
+  // ✅ QUIZ SCREEN
   const question = questions[currentQuestion];
 
   return (
     <div className="page-wrapper">
-      <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-      
-      {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
-      
+      <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown}/>
+      {showSideBar && <SideBar theme={theme} onClose={toggleSideBar}/>}
       <main className="quiz-main">
         <div className="quiz-container">
           <div className="quiz-header">
             <div className="quiz-info">
               <h1>AI Generated Quiz</h1>
               <div className="quiz-meta">
-                <span className={`difficulty-badge difficulty-${quizSettings.difficulty}`}>
-                  {quizSettings.difficulty}
-                </span>
-                {quizSettings.topic && (
-                  <span className="topic-badge">{quizSettings.topic}</span>
-                )}
+                <span className={`difficulty-badge difficulty-${quizSettings.difficulty}`}>{quizSettings.difficulty}</span>
+                {quizSettings.topic && <span className="topic-badge">{quizSettings.topic}</span>}
               </div>
             </div>
-            <button onClick={() => setShowSettings(true)} className="settings-btn">
-              <Settings size={20} />
-            </button>
+            <button onClick={() => setShowSettings(true)} className="settings-btn"><Settings size={20}/></button>
           </div>
 
           <div className="progress-section">
             <div className="progress-bar">
-              <div 
-                className="progress-fill" 
-                style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
-              ></div>
+              <div className="progress-fill" style={{width: `${((currentQuestion+1)/questions.length)*100}%`}}></div>
             </div>
-            <p className="question-counter">
-              Question {currentQuestion + 1} of {questions.length}
-            </p>
+            <p className="question-counter">Question {currentQuestion+1} of {questions.length}</p>
           </div>
 
           <div className="question-card">
             <h2>{question.question}</h2>
             <div className="options">
-              {question.options.map((option, index) => (
+              {question.options.map((option,index)=>(
                 <label key={index} className="option">
-                  <input
-                    type="radio"
-                    name={`question-${currentQuestion}`}
-                    value={index}
-                    checked={answers[currentQuestion] === index}
-                    onChange={() => handleAnswer(currentQuestion, index)}
-                  />
+                  <input type="radio" name={`question-${currentQuestion}`} value={index} checked={answers[currentQuestion]===index} onChange={()=>handleAnswer(currentQuestion,index)}/>
                   <span className="option-text">{option}</span>
                   <div className="option-indicator"></div>
                 </label>
@@ -423,32 +335,15 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
           </div>
 
           <div className="quiz-navigation">
-            <button 
-              onClick={prevQuestion} 
-              disabled={currentQuestion === 0}
-              className="nav-button prev"
-            >
-              <ChevronLeft size={20} />
-              Previous
-            </button>
-            
-            <button 
-              onClick={nextQuestion}
-              disabled={answers[currentQuestion] === undefined}
-              className="nav-button next"
-            >
-              {currentQuestion === questions.length - 1 ? 'Finish' : 'Next'}
-              <ChevronRight size={20} />
-            </button>
+            <button onClick={prevQuestion} disabled={currentQuestion===0} className="nav-button prev"><ChevronLeft size={20}/> Previous</button>
+            <button onClick={nextQuestion} disabled={answers[currentQuestion]===undefined} className="nav-button next">{currentQuestion===questions.length-1?'Finish':'Next'} <ChevronRight size={20}/></button>
           </div>
         </div>
       </main>
-
-      {showAccountDropdown && (
-        <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
-      )}
-
-      <Footer theme={theme} />
+      {showAccountDropdown && <AccountDropDown theme={theme} onClose={handleCloseDropdown}/>}
+      <Footer theme={theme}/>
     </div>
   );
 }
+
+
