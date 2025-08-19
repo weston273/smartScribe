@@ -39,7 +39,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     setIsGenerating(true);
     try {
       let generatedQuestions = [];
-      
+
       if (quizSettings.useNotes && notesContent) {
         generatedQuestions = await generateQuiz(
           notesContent,
@@ -53,8 +53,10 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
           quizSettings.numberOfQuestions,
           quizSettings.difficulty
         );
-      } else {
-        // Default fallback questions
+      }
+
+      // fallback if nothing was returned
+      if (!generatedQuestions || generatedQuestions.length === 0) {
         generatedQuestions = [
           {
             question: "What is the main purpose of SmartScribe?",
@@ -64,13 +66,14 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
           },
           {
             question: "Which AI model does SmartScribe use?",
-            options: ["GPT-4", "DeepSeek", "Claude", "Gemini"],
+            options: ["mistral AI", "DeepSeek", "Claude", "Gemini"],
             correct: 1,
-            explanation: "SmartScribe uses the DeepSeek model for AI processing and responses."
+            explanation: "SmartScribe uses the DeepSeek AI model for AI processing and responses."
           }
         ];
       }
 
+      console.log("Generated questions:", generatedQuestions);
       setQuestions(generatedQuestions);
       setShowSettings(false);
       setCurrentQuestion(0);
@@ -129,6 +132,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     }
   };
 
+  // ✅ Show settings screen
   if (showSettings) {
     return (
       <div className="page-wrapper">
@@ -248,6 +252,41 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     );
   }
 
+  // ✅ Show generating/loading state
+  if (isGenerating) {
+    return (
+      <div className="page-wrapper">
+        <main className="quiz-main">
+          <div className="loading-state">
+            <div className="loading-spinner">
+              <RefreshCw className="spinning" size={48} />
+            </div>
+            <h2>Generating Quiz...</h2>
+            <p>Please wait while we prepare your questions</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // ✅ Handle case where nothing came back
+  if (!isGenerating && questions.length === 0) {
+    return (
+      <div className="page-wrapper">
+        <main className="quiz-main">
+          <div className="loading-state">
+            <h2>No questions generated</h2>
+            <p>Try again with different settings</p>
+            <button onClick={resetQuiz} className="retry-button">
+              <RefreshCw size={20} /> Back to Settings
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // ✅ Show results screen
   if (showResults) {
     const score = calculateScore();
     const percentage = Math.round((score / questions.length) * 100);
@@ -323,32 +362,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     );
   }
 
-  if (questions.length === 0) {
-    return (
-      <div className="page-wrapper">
-        <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-        
-        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
-        
-        <main className="quiz-main">
-          <div className="loading-state">
-            <div className="loading-spinner">
-              <RefreshCw className="spinning" size={48} />
-            </div>
-            <h2>Loading Quiz...</h2>
-            <p>Please wait while we prepare your questions</p>
-          </div>
-        </main>
-
-        {showAccountDropdown && (
-          <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
-        )}
-
-        <Footer theme={theme} />
-      </div>
-    );
-  }
-
+  // ✅ Show quiz screen
   const question = questions[currentQuestion];
 
   return (
