@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Settings, RefreshCw, Brain } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Settings, RefreshCw, Brain, XCircle } from 'lucide-react';
 import NavBar1 from '../components/NavBar1';
 import SideBar from '../components/sidebar/SideBar';
 import Footer from '../components/Footer';
@@ -16,6 +16,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
   const [showResults, setShowResults] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Quiz settings
   const [quizSettings, setQuizSettings] = useState({
@@ -37,6 +38,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
 
   const generateQuizQuestions = async () => {
     setIsGenerating(true);
+    setErrorMessage('');
     try {
       let generatedQuestions = [];
 
@@ -55,25 +57,13 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
         );
       }
 
-      // fallback if nothing was returned
       if (!generatedQuestions || generatedQuestions.length === 0) {
-        generatedQuestions = [
-          {
-            question: "What is the main purpose of SmartScribe?",
-            options: ["Gaming", "Note-taking and AI assistance", "Video editing", "Music production"],
-            correct: 1,
-            explanation: "SmartScribe is designed for intelligent note-taking and AI-powered learning assistance."
-          },
-          {
-            question: "Which AI model does SmartScribe use?",
-            options: ["mistral AI", "DeepSeek", "Claude", "Gemini"],
-            correct: 1,
-            explanation: "SmartScribe uses the DeepSeek AI model for AI processing and responses."
-          }
-        ];
+        setErrorMessage(
+          'Failed to create quiz, check your internet connection or you may have ran out of tokens... If the problem persists after 24 hours please contact the developer, the site may be down or under maintenance.'
+        );
+        return;
       }
 
-      console.log("Generated questions:", generatedQuestions);
       setQuestions(generatedQuestions);
       setShowSettings(false);
       setCurrentQuestion(0);
@@ -81,7 +71,9 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
       setShowResults(false);
     } catch (error) {
       console.error('Error generating quiz:', error);
-      alert('Failed to generate quiz. Please try again.');
+      setErrorMessage(
+        'Failed to create quiz, check your internet connection or you may have ran out of tokens... If the problem persists after 24 hours please contact the developer, the site may be down or under maintenance.'
+      );
     } finally {
       setIsGenerating(false);
     }
@@ -123,6 +115,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     setAnswers({});
     setShowResults(false);
     setShowSettings(true);
+    setErrorMessage('');
   };
 
   const handleFromNotesChoice = (useNotes) => {
@@ -149,6 +142,14 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
               <h1>Quiz Generator</h1>
               <p>Create a personalized quiz with AI</p>
             </div>
+
+            {errorMessage && (
+              <div className="warning-box">
+                <XCircle size={20} className="warning-icon" />
+                <span>{errorMessage}</span>
+                <button className="dismiss-btn" onClick={() => setErrorMessage('')}>×</button>
+              </div>
+            )}
 
             {fromNotes && (
               <div className="notes-choice">
@@ -270,7 +271,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
   }
 
   // ✅ Handle case where nothing came back
-  if (!isGenerating && questions.length === 0) {
+  if (!isGenerating && questions.length === 0 && !errorMessage) {
     return (
       <div className="page-wrapper">
         <main className="quiz-main">
