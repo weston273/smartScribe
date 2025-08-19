@@ -139,7 +139,9 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
         <main className="quiz-main">
           <div className="quiz-settings">
             <div className="settings-header">
-              <Brain size={32} className="settings-icon" />
+              <div className="icon-wrapper">
+                <Brain size={48} className="settings-icon" />
+              </div>
               <h1>Quiz Generator</h1>
               <p>Create a personalized quiz with AI</p>
             </div>
@@ -260,8 +262,10 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
           <div className="quiz-results">
             <div className="results-header">
               <div className="score-circle">
-                <span className="score-percentage">{percentage}%</span>
-                <span className="score-fraction">{score}/{questions.length}</span>
+                <div className="score-inner">
+                  <span className="score-percentage">{percentage}%</span>
+                  <span className="score-fraction">{score}/{questions.length}</span>
+                </div>
               </div>
               <h1>Quiz Complete!</h1>
               <p className={`performance ${percentage >= 80 ? 'excellent' : percentage >= 60 ? 'good' : 'needs-improvement'}`}>
@@ -328,8 +332,11 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
         
         <main className="quiz-main">
           <div className="loading-state">
-            <RefreshCw className="spinning" size={48} />
+            <div className="loading-spinner">
+              <RefreshCw className="spinning" size={48} />
+            </div>
             <h2>Loading Quiz...</h2>
+            <p>Please wait while we prepare your questions</p>
           </div>
         </main>
 
@@ -356,7 +363,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
             <div className="quiz-info">
               <h1>AI Generated Quiz</h1>
               <div className="quiz-meta">
-                <span className="difficulty-badge difficulty-{quizSettings.difficulty}">
+                <span className={`difficulty-badge difficulty-${quizSettings.difficulty}`}>
                   {quizSettings.difficulty}
                 </span>
                 {quizSettings.topic && (
@@ -394,6 +401,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
                     onChange={() => handleAnswer(currentQuestion, index)}
                   />
                   <span className="option-text">{option}</span>
+                  <div className="option-indicator"></div>
                 </label>
               ))}
             </div>
