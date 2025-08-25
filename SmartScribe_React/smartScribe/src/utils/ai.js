@@ -118,14 +118,29 @@ export async function generateNotes(content) {
 }
 
 /**
- * Safe JSON parse utility
+ * Safe JSON parse utility with fixes for common AI formatting issues
  */
 function safeJSONParse(str) {
   try {
     return JSON.parse(str);
-  } catch {
-    console.warn('AI returned invalid JSON:', str);
-    return [];
+  } catch (err) {
+    console.warn('AI returned invalid JSON, attempting fix...', str);
+
+    // Attempt quick repairs
+    let fixed = str
+      .replace(/```json/g, '')   // remove markdown fences
+      .replace(/```/g, '')
+      .replace(/,\s*]/g, ']')    // remove trailing commas
+      .replace(/,\s*}/g, '}')    // remove trailing commas in objects
+      .replace(/\s+/g, ' ')      // normalize whitespace
+      .trim();
+
+    try {
+      return JSON.parse(fixed);
+    } catch (e2) {
+      console.error("❌ Could not repair JSON:", e2.message);
+      return [];
+    }
   }
 }
 
@@ -158,7 +173,10 @@ export async function generateQuiz(content, numberOfQuestions = 5, difficulty = 
 
     const response = await askOpenAI(messages, "quiz");
     const parsed = safeJSONParse(response);
-    allQuestions = allQuestions.concat(parsed);
+
+    if (Array.isArray(parsed)) {
+      allQuestions = allQuestions.concat(parsed);
+    }
   }
 
   return allQuestions;

@@ -35,36 +35,42 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     }
   }, [fromNotes, notesContent]);
 
+  // ✅ Load from local quiz.json if you want to bypass AI (dev/test mode)
+  // const loadLocalQuiz = async () => {
+  //   try {
+  //     const res = await fetch('/quiz.json'); // must exist in /public
+  //     if (!res.ok) throw new Error('Failed to fetch local quiz.json');
+  //     const data = await res.json();
+  //     setQuestions(data);
+  //     setShowSettings(false);
+  //     setCurrentQuestion(0);
+  //     setAnswers({});
+  //     setShowResults(false);
+  //   } catch (err) {
+  //     console.error('Error loading local quiz:', err);
+  //     setErrorMessage('Could not load local quiz.json');
+  //   }
+  // };
+
   const generateQuizQuestions = async () => {
     setIsGenerating(true);
     setErrorMessage('');
     try {
       let generatedQuestions = [];
-      const batchSize = 10;
-      const totalBatches = Math.ceil(quizSettings.numberOfQuestions / batchSize);
 
-      for (let i = 0; i < totalBatches; i++) {
-        const batchCount = Math.min(batchSize, quizSettings.numberOfQuestions - generatedQuestions.length);
-        let batchQuestions = [];
-
-        if (quizSettings.useNotes && notesContent) {
-          batchQuestions = await generateQuiz(
-            notesContent,
-            batchCount,
-            quizSettings.difficulty,
-            quizSettings.topic
-          );
-        } else if (quizSettings.topic) {
-          batchQuestions = await generateTopicQuiz(
-            quizSettings.topic,
-            batchCount,
-            quizSettings.difficulty
-          );
-        }
-
-        if (batchQuestions && batchQuestions.length > 0) {
-          generatedQuestions = [...generatedQuestions, ...batchQuestions];
-        }
+      if (quizSettings.useNotes && notesContent) {
+        generatedQuestions = await generateQuiz(
+          notesContent,
+          quizSettings.numberOfQuestions,
+          quizSettings.difficulty,
+          quizSettings.topic
+        );
+      } else if (quizSettings.topic) {
+        generatedQuestions = await generateTopicQuiz(
+          quizSettings.topic,
+          quizSettings.numberOfQuestions,
+          quizSettings.difficulty
+        );
       }
 
       if (generatedQuestions.length === 0) {
@@ -199,6 +205,11 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
               <button onClick={generateQuizQuestions} disabled={isGenerating} className="generate-btn">
                 {isGenerating ? <><RefreshCw className="spinning" size={20}/> Generating Quiz...</> : <><Brain size={20}/> Generate Quiz</>}
               </button>
+
+              {/* ✅ Dev-only button to load local quiz.json */}
+              {/* <button onClick={loadLocalQuiz} className="generate-btn secondary"> */}
+                {/* Load Local Quiz (quiz.json) */}
+              {/* </button> */}
             </div>
           </div>
         </main>
@@ -345,5 +356,3 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     </div>
   );
 }
-
-
