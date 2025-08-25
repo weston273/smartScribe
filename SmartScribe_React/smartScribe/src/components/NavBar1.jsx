@@ -15,7 +15,7 @@ export default function NavBar1({ theme, onSideBarToggle, onProfileClick }) {
             <MenuIcon size={24} />
           </button>
           
-          <Link to="/home" className="navbar-brand">
+          <Link to="#" className="navbar-brand">
             <PenIcon onClick={onSideBarToggle} size={28} className="brand-icon" />
             <span className="brand-text">SmartScribe</span>
           </Link>
