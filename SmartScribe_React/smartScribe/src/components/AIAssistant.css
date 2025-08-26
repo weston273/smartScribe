@@ -17,7 +17,8 @@
     border-radius: 16px;
     width: 100%;
     max-width: 600px;
-    height: 70vh;
+    height: 80vh;
+    max-height: 700px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -28,9 +29,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem;
+    padding: 1rem 1.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     background: linear-gradient(135deg, var(--hero-color), #00a085);
+    flex-shrink: 0;
   }
   
   .assistant-info {
@@ -140,6 +142,7 @@
     border-radius: 4px;
     transition: all 0.3s ease;
     flex-shrink: 0;
+    height : 3px;
   }
   
   .speak-btn:hover {
@@ -208,7 +211,7 @@
     align-items: flex-end;
   }
   
-  .voice-btn {
+  .ai-voice-btn {
     background: var(--input-background-color);
     border: 1px solid var(--hero-color);
     color: var(--hero-color);
@@ -223,12 +226,12 @@
     flex-shrink: 0;
   }
   
-  .voice-btn:hover {
+  .ai-voice-btn:hover {
     background: var(--hero-color);
     color: var(--background-color);
   }
   
-  .voice-btn.listening {
+  .ai-voice-btn.listening {
     background: var(--hero-color);
     color: var(--background-color);
     animation: pulse 2s infinite;

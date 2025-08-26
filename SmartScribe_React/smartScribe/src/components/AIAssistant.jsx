@@ -177,7 +177,7 @@ export default function AIAssistant({ isOpen, onClose, context }) {
 
           <div className="input-row">
             <button
-              className={`voice-btn ${isListening ? 'listening' : ''}`}
+              className={`ai-voice-btn ${isListening ? 'listening' : ''}`}
               onClick={handleVoiceToggle}
               title={isListening ? 'Stop listening' : 'Start voice input'}
             >
