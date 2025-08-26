@@ -17,6 +17,7 @@ export default function AIAssistant({ isOpen, onClose, context }) {
 
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [messageAnimations, setMessageAnimations] = useState({});
   const messagesEndRef = useRef(null);
 
   const { chatWithAI, isProcessing } = useAI();
@@ -44,6 +45,23 @@ export default function AIAssistant({ isOpen, onClose, context }) {
       setInputMessage(transcript);
     }
   }, [transcript]);
+
+  // Initialize animations for new messages
+  useEffect(() => {
+    const newAnimations = {};
+    messages.forEach((message, index) => {
+      if (!messageAnimations[message.id]) {
+        newAnimations[message.id] = {
+          shouldAnimate: true,
+          delay: index * 100
+        };
+      }
+    });
+    
+    if (Object.keys(newAnimations).length > 0) {
+      setMessageAnimations(prev => ({ ...prev, ...newAnimations }));
+    }
+  }, [messages]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isProcessing) return;
@@ -115,33 +133,81 @@ export default function AIAssistant({ isOpen, onClose, context }) {
       <div className="ai-assistant-container">
         <div className="ai-assistant-header">
           <div className="assistant-info">
+            <div className="assistant-icon-wrapper">
             <Bot className="assistant-icon" size={24} />
-            <div>
+              <div className="icon-glow"></div>
+              <div className="icon-particles">
+                <div className="particle"></div>
+                <div className="particle"></div>
+                <div className="particle"></div>
+                <div className="particle"></div>
+              </div>
+            </div>
+            <div className="assistant-details">
               <h3>AI Assistant</h3>
               <p className={`status ${isProcessing ? 'processing' : 'ready'}`}>
-                {isProcessing ? 'Thinking...' : 'Ready to help'}
+                {isProcessing ? (
+                  <span>
+                    <span className="status-dot processing"></span>
+                    <span className="status-text">Thinking</span>
+                    <span className="thinking-dots">
+                      <span>.</span>
+                      <span>.</span>
+                      <span>.</span>
+                    </span>
+                  </span>
+                ) : (
+                  <span>
+                    <span className="status-dot ready"></span>
+                    <span className="status-text">Ready to help</span>
+                  </span>
+                )}
               </p>
             </div>
           </div>
           <button className="close-btn" onClick={onClose}>
             <X size={20} />
+            <div className="button-ripple"></div>
+            <div className="close-hover-effect"></div>
           </button>
         </div>
 
         <div className="messages-container">
-          {messages.map((message) => (
-            <div key={message.id} className={`message ${message.sender}`}>
+          <div className="messages-background">
+            <div className="floating-orb orb-1"></div>
+            <div className="floating-orb orb-2"></div>
+            <div className="floating-orb orb-3"></div>
+          </div>
+          
+          {messages.map((message, index) => (
+            <div 
+              key={message.id} 
+              className={`message ${message.sender} message-enter`}
+              style={{
+                animationDelay: `${index * 0.1}s`,
+                opacity: 1
+              }}
+            >
               <div className="message-content">
+                <div className="message-bubble">
                 <p>{message.text}</p>
                 {message.sender === 'ai' && (
                   <button
-                    className="speak-btn"
+                      className={`speak-btn ${isSpeaking ? 'speaking' : ''}`}
                     onClick={() => handleSpeak(message.text)}
                     title="Read aloud"
                   >
                     {isSpeaking ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                      <div className="button-ripple"></div>
+                      {isSpeaking && <div className="sound-waves">
+                        <div className="wave"></div>
+                        <div className="wave"></div>
+                        <div className="wave"></div>
+                      </div>}
                   </button>
                 )}
+                </div>
+                <div className="message-glow"></div>
               </div>
               <span className="message-time">
                 {message.timestamp.toLocaleTimeString([], {
@@ -153,13 +219,17 @@ export default function AIAssistant({ isOpen, onClose, context }) {
           ))}
 
           {isTyping && (
-            <div className="message ai">
-              <div className="message-content typing">
+            <div className="message ai message-enter typing-message">
+              <div className="message-content">
+                <div className="message-bubble typing">
                 <div className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
+                    <div className="typing-dot"></div>
+                    <div className="typing-dot"></div>
+                    <div className="typing-dot"></div>
+                  </div>
+                  <div className="ai-thinking-text">AI is crafting a response...</div>
                 </div>
+                <div className="message-glow typing-glow"></div>
               </div>
             </div>
           )}
@@ -167,23 +237,40 @@ export default function AIAssistant({ isOpen, onClose, context }) {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="input-container">
+        <div className="ai-input-containers">
           {isListening && (
             <div className="listening-indicator">
               <div className="pulse-dot"></div>
-              <span>Listening...</span>
+              <span className="listening-text">Listening for your voice...</span>
+              <div className="voice-visualizer">
+                <div className="voice-bar"></div>
+                <div className="voice-bar"></div>
+                <div className="voice-bar"></div>
+                <div className="voice-bar"></div>
+                <div className="voice-bar"></div>
+              </div>
             </div>
           )}
 
           <div className="input-row">
             <button
-              className={`ai-voice-btn ${isListening ? 'listening' : ''}`}
+              className={`ai-voice-btn ${isListening ? 'listening' : ''} ${isSpeaking ? 'speaking' : ''}`}
               onClick={handleVoiceToggle}
               title={isListening ? 'Stop listening' : 'Start voice input'}
             >
               {isListening ? <MicOff size={20} /> : <Mic size={20} />}
+              <div className="button-ripple"></div>
+              {isListening && (
+                <>
+                  <div className="listening-ring ring-1"></div>
+                  <div className="listening-ring ring-2"></div>
+                  <div className="listening-ring ring-3"></div>
+                </>
+              )}
+              <div className="button-glow"></div>
             </button>
 
+            <div className="input-wrapper">
             <textarea
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
@@ -193,14 +280,25 @@ export default function AIAssistant({ isOpen, onClose, context }) {
               rows={1}
               disabled={isProcessing}
             />
+              <div className="input-glow"></div>
+              <div className="input-border-animation"></div>
+            </div>
 
             <button
-              className="send-btn"
+              className={`send-btn ${inputMessage.trim() ? 'has-content' : ''} ${isProcessing ? 'processing' : ''}`}
               onClick={handleSendMessage}
               disabled={!inputMessage.trim() || isProcessing}
               title="Send message"
             >
+              {isProcessing ? (
+                <div className="loading-spinner">
+                  <div className="spinner-ring"></div>
+                </div>
+              ) : (
               <Send size={20} />
+              )}
+              <div className="button-ripple"></div>
+              <div className="send-glow"></div>
             </button>
           </div>
         </div>
