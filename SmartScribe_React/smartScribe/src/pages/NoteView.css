@@ -507,7 +507,7 @@
 .md-p {
   font-size: 1.05rem;
   line-height: 1.65;
-  color: #333;
+  color: var(--primary-text-color);
   font-family: 'Open Sans', sans-serif;
 }
 
