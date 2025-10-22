@@ -44,21 +44,12 @@ export default function SignUp() {
       return;
     }
 
-    const { error: insertError } = await supabase.from('profiles').insert([
-      {
-        user_id: userId,
-        email,
-        username,
-        firstname: firstName,
-        lastname: lastName,
-      },
-    ]);
-
-    if (insertError) {
-      alert("Error saving profile data: " + insertError.message);
-      setLoading(false);
-      return;
-    }
+    // Store pending profile info locally to complete on first login
+    localStorage.setItem('pendingProfile', JSON.stringify({
+      firstName,
+      lastName,
+      username,
+    }));
 
     alert("Account created! Please verify your email before logging in.");
     setLoading(false);

@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import { VoiceProvider } from './components/contexts/VoiceContext';
 import { AIProvider } from './components/contexts/AIContext';
 import { LanguageProvider } from './components/contexts/LanguageContext';
+import { AuthProvider } from './components/contexts/AuthContext';
 
 import SplashScreen from './pages/SplashScreen.jsx';
 import Home from './pages/Home.jsx';
@@ -17,6 +18,9 @@ import NoteEdit from './pages/NoteEdit.jsx';
 import SmartChat from './pages/SmartChat.jsx';
 import Settings from './pages/Settings.jsx';
 import Profile from './pages/Profile.jsx';
+
+import { supabase } from './database/supabaseClient.js';
+
 
 function App() {
   const [theme, setTheme] = useState(() =>
@@ -32,26 +36,39 @@ function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  useEffect(() => {
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        localStorage.setItem('supabaseSession', JSON.stringify(session));
+      } else {
+        localStorage.removeItem('supabaseSession');
+      }
+    });
+  }, []);
+  
+
   return (
     <div className="app-container">
       <LanguageProvider>
         <AIProvider>
           <VoiceProvider>
-            <Routes>
-              <Route path="/" element={<SplashScreen />} />
-              <Route path="/login" element={<Login theme={theme} toggleTheme={toggleTheme} />} />
-              <Route path="/signup" element={<SignUp theme={theme} toggleTheme={toggleTheme} />} />
-              <Route path="/record" element={<Record theme={theme} toggleTheme={toggleTheme} />} />
-              <Route path="/notes" element={<Notes theme={theme} toggleTheme={toggleTheme} />} />
-              <Route path="/notes/new" element={<NoteEdit theme={theme} toggleTheme={toggleTheme} />} />
-              <Route path="/notes/:id" element={<NoteView theme={theme} toggleTheme={toggleTheme} />} />
-              <Route path="/notes/:id/edit" element={<NoteEdit theme={theme} toggleTheme={toggleTheme} />} />
-              <Route path="/smart-chat" element={<SmartChat theme={theme} toggleTheme={toggleTheme} />} />
-              <Route path="/settings" element={<Settings theme={theme} toggleTheme={toggleTheme} />} />
-              <Route path="/profile" element={<Profile theme={theme} toggleTheme={toggleTheme} />} />
-              <Route path="/quiz" element={<Quiz theme={theme} />} />
-              <Route path="/home" element={<Home theme={theme} toggleTheme={toggleTheme} />} />
-            </Routes>
+            <AuthProvider>
+             <Routes>
+               <Route path="/" element={<SplashScreen />} />
+               <Route path="/login" element={<Login theme={theme} toggleTheme={toggleTheme} />} />
+               <Route path="/signup" element={<SignUp theme={theme} toggleTheme={toggleTheme} />} />
+               <Route path="/record" element={<Record theme={theme} toggleTheme={toggleTheme} />} />
+               <Route path="/notes" element={<Notes theme={theme} toggleTheme={toggleTheme} />} />
+               <Route path="/notes/new" element={<NoteEdit theme={theme} toggleTheme={toggleTheme} />} />
+               <Route path="/notes/:id" element={<NoteView theme={theme} toggleTheme={toggleTheme} />} />
+               <Route path="/notes/:id/edit" element={<NoteEdit theme={theme} toggleTheme={toggleTheme} />} />
+               <Route path="/smart-chat" element={<SmartChat theme={theme} toggleTheme={toggleTheme} />} />
+               <Route path="/settings" element={<Settings theme={theme} toggleTheme={toggleTheme} />} />
+               <Route path="/profile" element={<Profile theme={theme} toggleTheme={toggleTheme} />} />
+               <Route path="/quiz" element={<Quiz theme={theme} />} />
+               <Route path="/home" element={<Home theme={theme} toggleTheme={toggleTheme} />} />
+             </Routes>
+            </AuthProvider>
           </VoiceProvider>
         </AIProvider>
       </LanguageProvider>

@@ -6,9 +6,11 @@ import SideBar from '../components/sidebar/SideBar';
 import Footer from '../components/Footer';
 import AccountDropDown from '../components/account/AccountDropDown';
 import { useAI } from '../components/contexts/AIContext';
+
 import './NoteEditor.css';
 
 export default function NoteEditor({ theme, toggleTheme }) {
+  
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = id && id !== 'new';

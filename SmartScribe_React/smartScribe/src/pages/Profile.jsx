@@ -16,7 +16,7 @@ import NavBar1 from "../components/NavBar1";
 import SideBar from "../components/sidebar/SideBar.jsx";
 import Footer from "../components/Footer";
 import AccountDropDown from "../components/account/AccountDropDown.jsx";
-import { supabase } from './../database/supabaseClient.js'; // ✅ Make sure you have this
+import { supabase } from './../database/supabaseClient.js';
 import "./Profile.css";
 
 export default function Profile({ theme, toggleTheme }) {
@@ -24,15 +24,16 @@ export default function Profile({ theme, toggleTheme }) {
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
-    name: "",
+    firstname: "",
+    lastname: "",
     email: "",
     phone: "",
     location: "",
-    joinDate: "",
     bio: "",
+    joinDate: "",
   });
 
-  // ✅ Fetch user profile data when component mounts
+  // ✅ Fetch profile data
   useEffect(() => {
     const fetchProfile = async () => {
       const {
@@ -44,38 +45,41 @@ export default function Profile({ theme, toggleTheme }) {
         return;
       }
 
-      // Fetch profile data from Supabase
       const { data, error } = await supabase
         .from("profiles_page")
         .select("*")
         .eq("user_id", user.id)
         .single();
 
-      if (error && error.code !== "PGRST116") {
+      // If profile doesn't exist yet, create one using sign-up metadata
+      if (error && error.code === "PGRST116") {
+        const meta = user.user_metadata || {};
+        const firstname = meta.firstname || "";
+        const lastname = meta.lastname || "";
+        const fullName = `${firstname} ${lastname}`.trim();
+
+        const { error: insertError } = await supabase.from("profiles_page").insert([
+          {
+            user_id: user.id,
+            name: fullName,
+            email: user.email,
+            created_at: new Date(),
+          },
+        ]);
+
+        if (insertError) console.error("Error creating new profile:", insertError);
+        else console.log("Profile created for new user");
+      } else if (error) {
         console.error("Error fetching profile:", error.message);
         return;
       }
 
-      // If no row exists yet, create one for this user
-      if (!data) {
-        const { error: insertError } = await supabase
-          .from("profiles_page")
-          .insert([
-            {
-              user_id: user.id,
-              name: user.user_metadata?.full_name || "",
-              email: user.email,
-              created_at: new Date(),
-            },
-          ]);
-
-        if (insertError) console.error("Error creating new profile:", insertError);
-      }
-
-      // Update local state
+      // ✅ Update UI state
       if (data) {
+        const [firstname, lastname] = (data.name || "").split(" ");
         setUserInfo({
-          name: data.name || "",
+          firstname: firstname || "",
+          lastname: lastname || "",
           email: data.email || user.email,
           phone: data.phone || "",
           location: data.location || "",
@@ -91,7 +95,7 @@ export default function Profile({ theme, toggleTheme }) {
     fetchProfile();
   }, []);
 
-  // ✅ Save edited data back to Supabase
+  // ✅ Save edited data
   const handleSave = async () => {
     const {
       data: { user },
@@ -102,10 +106,12 @@ export default function Profile({ theme, toggleTheme }) {
       return;
     }
 
+    const fullName = `${userInfo.firstname} ${userInfo.lastname}`.trim();
+
     const { error } = await supabase
       .from("profiles_page")
       .update({
-        name: userInfo.name,
+        name: fullName,
         email: userInfo.email,
         phone: userInfo.phone,
         location: userInfo.location,
@@ -115,6 +121,7 @@ export default function Profile({ theme, toggleTheme }) {
 
     if (error) {
       console.error("Error updating profile:", error.message);
+      alert("Error saving profile: " + error.message);
     } else {
       alert("Profile updated successfully!");
       setIsEditing(false);
@@ -156,7 +163,6 @@ export default function Profile({ theme, toggleTheme }) {
           </div>
 
           <div className="profile-content">
-            {/* Profile Card */}
             <div className="profile-card">
               <div className="profile-avatar-section">
                 <div className="profile-avatar">
@@ -167,16 +173,30 @@ export default function Profile({ theme, toggleTheme }) {
                 </div>
                 <div className="profile-basic-info">
                   {isEditing ? (
-                    <input
-                      type="text"
-                      value={userInfo.name}
-                      onChange={(e) =>
-                        setUserInfo({ ...userInfo, name: e.target.value })
-                      }
-                      className="edit-input name-input"
-                    />
+                    <>
+                      <input
+                        type="text"
+                        value={userInfo.firstname}
+                        onChange={(e) =>
+                          setUserInfo({ ...userInfo, firstname: e.target.value })
+                        }
+                        className="edit-input name-input"
+                        placeholder="First name"
+                      />
+                      <input
+                        type="text"
+                        value={userInfo.lastname}
+                        onChange={(e) =>
+                          setUserInfo({ ...userInfo, lastname: e.target.value })
+                        }
+                        className="edit-input name-input"
+                        placeholder="Last name"
+                      />
+                    </>
                   ) : (
-                    <h2 className="profile-name">{userInfo.name}</h2>
+                    <h2 className="profile-name">
+                      {userInfo.firstname} {userInfo.lastname}
+                    </h2>
                   )}
                   <p className="profile-member-since">
                     Member since {userInfo.joinDate || "—"}
@@ -189,18 +209,7 @@ export default function Profile({ theme, toggleTheme }) {
                   <Mail size={20} className="detail-icon" />
                   <div className="detail-content">
                     <label>Email</label>
-                    {isEditing ? (
-                      <input
-                        type="email"
-                        value={userInfo.email}
-                        onChange={(e) =>
-                          setUserInfo({ ...userInfo, email: e.target.value })
-                        }
-                        className="edit-input"
-                      />
-                    ) : (
-                      <span>{userInfo.email}</span>
-                    )}
+                    <span>{userInfo.email}</span>
                   </div>
                 </div>
 
@@ -218,7 +227,7 @@ export default function Profile({ theme, toggleTheme }) {
                         className="edit-input"
                       />
                     ) : (
-                      <span>{userInfo.phone}</span>
+                      <span>{userInfo.phone || "—"}</span>
                     )}
                   </div>
                 </div>
@@ -237,7 +246,7 @@ export default function Profile({ theme, toggleTheme }) {
                         className="edit-input"
                       />
                     ) : (
-                      <span>{userInfo.location}</span>
+                      <span>{userInfo.location || "—"}</span>
                     )}
                   </div>
                 </div>
@@ -256,7 +265,7 @@ export default function Profile({ theme, toggleTheme }) {
                         rows="3"
                       />
                     ) : (
-                      <p>{userInfo.bio}</p>
+                      <p>{userInfo.bio || "No bio yet."}</p>
                     )}
                   </div>
                 </div>
@@ -292,57 +301,6 @@ export default function Profile({ theme, toggleTheme }) {
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="activity-section">
-              <h3 className="activity-title">Recent Activity</h3>
-              <div className="activity-list">
-                <div className="activity-item">
-                  <div className="activity-icon">
-                    <BookOpen size={20} />
-                  </div>
-                  <div className="activity-content">
-                    <p className="activity-text">
-                      Created a new note: "Meeting with Alice"
-                    </p>
-                    <span className="activity-time">2 hours ago</span>
-                  </div>
-                </div>
-                <div className="activity-item">
-                  <div className="activity-icon">
-                    <Award size={20} />
-                  </div>
-                  <div className="activity-content">
-                    <p className="activity-text">
-                      Completed quiz: "JavaScript Fundamentals"
-                    </p>
-                    <span className="activity-time">1 day ago</span>
-                  </div>
-                </div>
-                <div className="activity-item">
-                  <div className="activity-icon">
-                    <Clock size={20} />
-                  </div>
-                  <div className="activity-content">
-                    <p className="activity-text">
-                      Recorded 45 minutes of audio notes
-                    </p>
-                    <span className="activity-time">2 days ago</span>
-                  </div>
-                </div>
-                <div className="activity-item">
-                  <div className="activity-icon">
-                    <Settings size={20} />
-                  </div>
-                  <div className="activity-content">
-                    <p className="activity-text">
-                      Generated AI summary for research notes
-                    </p>
-                    <span className="activity-time">3 days ago</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
