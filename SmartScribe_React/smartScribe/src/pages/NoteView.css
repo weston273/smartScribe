@@ -322,6 +322,8 @@
       width: 36px;
       height: 36px;
     }
+    /* Icon sizes are controlled via props on the icon components */
+    
   
     .md-h1 {
       font-size: 1.75rem;
