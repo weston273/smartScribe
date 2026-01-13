@@ -6,8 +6,13 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://smartscribe-yjsf.onrender.com/', // Your backend location
+        target: 'https://smartscribe-yjsf.onrender.com', // Your backend location
         changeOrigin: true,
+      },
+      '/mock': {
+        target: 'https://mocki.io/v1',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/mock/, ''), // strip '/mock'
       },
     },
   },

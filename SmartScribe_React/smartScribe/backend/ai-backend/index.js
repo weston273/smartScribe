@@ -53,19 +53,18 @@ function getModel(task = "general") {
   switch (task) {
     case "chat":
     case "notes":
-      return "mistralai/mistral-7b-instruct";
+      return "alibaba/tongyi-deepresearch-30b-a3b:free"; // ✅ stable, free-tier model on OpenRouter
     case "summarize":
     case "recap":
-      return "openai/gpt-oss-20b:free";
     case "quiz":
     case "video":
       return "openai/gpt-oss-20b:free";
     case "ultralong":
       return "openai/gpt-4o";
     default:
-      return "mistralai/mistral-7b-instruct";
+      return "alibaba/tongyi-deepresearch-30b-a3b:free";
   }
-} 
+}
 
 // Cycle through API keys with fallback for OpenRouter
 async function fetchWithFallback(messages, task) {

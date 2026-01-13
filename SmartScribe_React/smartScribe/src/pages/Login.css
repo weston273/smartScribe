@@ -158,6 +158,42 @@
   margin: 0 auto;
 }
 
+/* Status message box */
+.login-status {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  background-color: var(--essentials-background-color);
+  color: var(--hero-color);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.9;
+  animation: fadeInUp 0.35s ease-in-out;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.login-status.success {
+  color: var(--hero-color);
+}
+
+.login-status.error {
+  color: #ff5c5c;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

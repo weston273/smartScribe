@@ -1,61 +1,168 @@
-import React, { useState } from 'react';
-import { User, Mail, Phone, MapPin, Calendar, Edit3, Camera, Settings, Award, BookOpen, Clock } from 'lucide-react';
-import NavBar1 from '../components/NavBar1';
-import SideBar from '../components/sidebar/SideBar.jsx';
-import Footer from '../components/Footer';
-import AccountDropDown from '../components/account/AccountDropDown.jsx';
-import './Profile.css'
+import React, { useState, useEffect } from "react";
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Edit3,
+  Camera,
+  Settings,
+  Award,
+  BookOpen,
+  Clock,
+} from "lucide-react";
+import NavBar1 from "../components/NavBar1";
+import SideBar from "../components/sidebar/SideBar.jsx";
+import Footer from "../components/Footer";
+import AccountDropDown from "../components/account/AccountDropDown.jsx";
+import { supabase } from './../database/supabaseClient.js';
+import "./Profile.css";
 
 export default function Profile({ theme, toggleTheme }) {
   const [showSideBar, setShowSideBar] = useState(false);
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
-    name: 'Weston N Sululu',
-    email: 'sululuweston@gmail.com',
-    phone: '+263 771 840 862',
-    location: 'Mufakose, Harare',
-    joinDate: 'July 2025',
-    bio: 'Passionate sometimes.'
+    firstname: "",
+    lastname: "",
+    email: "",
+    phone: "",
+    location: "",
+    bio: "",
+    joinDate: "",
   });
 
-  const toggleSideBar = () => setShowSideBar(prev => !prev);
-  const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
-  const handleCloseDropdown = () => setShowAccountDropdown(false);
+  // ✅ Fetch profile data
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-  const handleSave = () => {
-    setIsEditing(false);
-    // Here you would typically save to a backend
+      if (!user) {
+        console.log("No logged in user");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("profiles_page")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+      // If profile doesn't exist yet, create one using sign-up metadata
+      if (error && error.code === "PGRST116") {
+        const meta = user.user_metadata || {};
+        const firstname = meta.firstname || "";
+        const lastname = meta.lastname || "";
+        const fullName = `${firstname} ${lastname}`.trim();
+
+        const { error: insertError } = await supabase.from("profiles_page").insert([
+          {
+            user_id: user.id,
+            name: fullName,
+            email: user.email,
+            created_at: new Date(),
+          },
+        ]);
+
+        if (insertError) console.error("Error creating new profile:", insertError);
+        else console.log("Profile created for new user");
+      } else if (error) {
+        console.error("Error fetching profile:", error.message);
+        return;
+      }
+
+      // ✅ Update UI state
+      if (data) {
+        const [firstname, lastname] = (data.name || "").split(" ");
+        setUserInfo({
+          firstname: firstname || "",
+          lastname: lastname || "",
+          email: data.email || user.email,
+          phone: data.phone || "",
+          location: data.location || "",
+          bio: data.bio || "",
+          joinDate: new Date(data.created_at).toLocaleString("default", {
+            month: "long",
+            year: "numeric",
+          }),
+        });
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // ✅ Save edited data
+  const handleSave = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      alert("You must be logged in to save your profile.");
+      return;
+    }
+
+    const fullName = `${userInfo.firstname} ${userInfo.lastname}`.trim();
+
+    const { error } = await supabase
+      .from("profiles_page")
+      .update({
+        name: fullName,
+        email: userInfo.email,
+        phone: userInfo.phone,
+        location: userInfo.location,
+        bio: userInfo.bio,
+      })
+      .eq("user_id", user.id);
+
+    if (error) {
+      console.error("Error updating profile:", error.message);
+      alert("Error saving profile: " + error.message);
+    } else {
+      alert("Profile updated successfully!");
+      setIsEditing(false);
+    }
   };
 
+  const toggleSideBar = () => setShowSideBar((prev) => !prev);
+  const toggleAccountDropdown = () => setShowAccountDropdown((prev) => !prev);
+  const handleCloseDropdown = () => setShowAccountDropdown(false);
+
   const stats = [
-    { icon: BookOpen, label: 'Notes Created', value: '127' },
-    { icon: Award, label: 'Quizzes Completed', value: '43' },
-    { icon: Clock, label: 'Hours Recorded', value: '28.5' },
-    { icon: Settings, label: 'AI Summaries', value: '89' }
+    { icon: BookOpen, label: "Notes Created", value: "127" },
+    { icon: Award, label: "Quizzes Completed", value: "43" },
+    { icon: Clock, label: "Hours Recorded", value: "28.5" },
+    { icon: Settings, label: "AI Summaries", value: "89" },
   ];
 
   return (
     <div className="page-wrapper">
-      <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
+      <NavBar1
+        theme={theme}
+        onSideBarToggle={toggleSideBar}
+        onProfileClick={toggleAccountDropdown}
+      />
 
       <div className="profile-body">
         {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
-        
+
         <main className="profile-main">
           <div className="profile-header">
             <h1 className="profile-title">Profile</h1>
-            <button 
+            <button
               className="edit-profile-btn"
               onClick={() => setIsEditing(!isEditing)}
             >
               <Edit3 size={20} />
-              {isEditing ? 'Cancel' : 'Edit Profile'}
+              {isEditing ? "Cancel" : "Edit Profile"}
             </button>
           </div>
 
           <div className="profile-content">
-            {/* Profile Card */}
             <div className="profile-card">
               <div className="profile-avatar-section">
                 <div className="profile-avatar">
@@ -66,16 +173,34 @@ export default function Profile({ theme, toggleTheme }) {
                 </div>
                 <div className="profile-basic-info">
                   {isEditing ? (
-                    <input
-                      type="text"
-                      value={userInfo.name}
-                      onChange={(e) => setUserInfo({...userInfo, name: e.target.value})}
-                      className="edit-input name-input"
-                    />
+                    <>
+                      <input
+                        type="text"
+                        value={userInfo.firstname}
+                        onChange={(e) =>
+                          setUserInfo({ ...userInfo, firstname: e.target.value })
+                        }
+                        className="edit-input name-input"
+                        placeholder="First name"
+                      />
+                      <input
+                        type="text"
+                        value={userInfo.lastname}
+                        onChange={(e) =>
+                          setUserInfo({ ...userInfo, lastname: e.target.value })
+                        }
+                        className="edit-input name-input"
+                        placeholder="Last name"
+                      />
+                    </>
                   ) : (
-                    <h2 className="profile-name">{userInfo.name}</h2>
+                    <h2 className="profile-name">
+                      {userInfo.firstname} {userInfo.lastname}
+                    </h2>
                   )}
-                  <p className="profile-member-since">Member since {userInfo.joinDate}</p>
+                  <p className="profile-member-since">
+                    Member since {userInfo.joinDate || "—"}
+                  </p>
                 </div>
               </div>
 
@@ -84,16 +209,7 @@ export default function Profile({ theme, toggleTheme }) {
                   <Mail size={20} className="detail-icon" />
                   <div className="detail-content">
                     <label>Email</label>
-                    {isEditing ? (
-                      <input
-                        type="email"
-                        value={userInfo.email}
-                        onChange={(e) => setUserInfo({...userInfo, email: e.target.value})}
-                        className="edit-input"
-                      />
-                    ) : (
-                      <span>{userInfo.email}</span>
-                    )}
+                    <span>{userInfo.email}</span>
                   </div>
                 </div>
 
@@ -105,11 +221,13 @@ export default function Profile({ theme, toggleTheme }) {
                       <input
                         type="tel"
                         value={userInfo.phone}
-                        onChange={(e) => setUserInfo({...userInfo, phone: e.target.value})}
+                        onChange={(e) =>
+                          setUserInfo({ ...userInfo, phone: e.target.value })
+                        }
                         className="edit-input"
                       />
                     ) : (
-                      <span>{userInfo.phone}</span>
+                      <span>{userInfo.phone || "—"}</span>
                     )}
                   </div>
                 </div>
@@ -122,11 +240,13 @@ export default function Profile({ theme, toggleTheme }) {
                       <input
                         type="text"
                         value={userInfo.location}
-                        onChange={(e) => setUserInfo({...userInfo, location: e.target.value})}
+                        onChange={(e) =>
+                          setUserInfo({ ...userInfo, location: e.target.value })
+                        }
                         className="edit-input"
                       />
                     ) : (
-                      <span>{userInfo.location}</span>
+                      <span>{userInfo.location || "—"}</span>
                     )}
                   </div>
                 </div>
@@ -138,12 +258,14 @@ export default function Profile({ theme, toggleTheme }) {
                     {isEditing ? (
                       <textarea
                         value={userInfo.bio}
-                        onChange={(e) => setUserInfo({...userInfo, bio: e.target.value})}
+                        onChange={(e) =>
+                          setUserInfo({ ...userInfo, bio: e.target.value })
+                        }
                         className="edit-textarea"
                         rows="3"
                       />
                     ) : (
-                      <p>{userInfo.bio}</p>
+                      <p>{userInfo.bio || "No bio yet."}</p>
                     )}
                   </div>
                 </div>
@@ -154,14 +276,17 @@ export default function Profile({ theme, toggleTheme }) {
                   <button className="save-btn" onClick={handleSave}>
                     Save Changes
                   </button>
-                  <button className="cancel-btn" onClick={() => setIsEditing(false)}>
+                  <button
+                    className="cancel-btn"
+                    onClick={() => setIsEditing(false)}
+                  >
                     Cancel
                   </button>
                 </div>
               )}
             </div>
 
-            {/* Stats Cards */}
+            {/* Stats Section */}
             <div className="stats-section">
               <h3 className="stats-title">Your Activity</h3>
               <div className="stats-grid">
@@ -176,49 +301,6 @@ export default function Profile({ theme, toggleTheme }) {
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="activity-section">
-              <h3 className="activity-title">Recent Activity</h3>
-              <div className="activity-list">
-                <div className="activity-item">
-                  <div className="activity-icon">
-                    <BookOpen size={20} />
-                  </div>
-                  <div className="activity-content">
-                    <p className="activity-text">Created a new note: "Meeting with Alice"</p>
-                    <span className="activity-time">2 hours ago</span>
-                  </div>
-                </div>
-                <div className="activity-item">
-                  <div className="activity-icon">
-                    <Award size={20} />
-                  </div>
-                  <div className="activity-content">
-                    <p className="activity-text">Completed quiz: "JavaScript Fundamentals"</p>
-                    <span className="activity-time">1 day ago</span>
-                  </div>
-                </div>
-                <div className="activity-item">
-                  <div className="activity-icon">
-                    <Clock size={20} />
-                  </div>
-                  <div className="activity-content">
-                    <p className="activity-text">Recorded 45 minutes of audio notes</p>
-                    <span className="activity-time">2 days ago</span>
-                  </div>
-                </div>
-                <div className="activity-item">
-                  <div className="activity-icon">
-                    <Settings size={20} />
-                  </div>
-                  <div className="activity-content">
-                    <p className="activity-text">Generated AI summary for research notes</p>
-                    <span className="activity-time">3 days ago</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

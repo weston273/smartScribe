@@ -18,7 +18,7 @@ const SplashScreen = () => {
     const fetchFeatures = async () => {
       try {
         const res = await fetch(
-          "https://mocki.io/v1/f7bfa7b7-8a11-4f7a-bbde-2df2a01b4c8b"
+          "/mock/f7bfa7b7-8a11-4f7a-bbde-2df2a01b4c8b"
         );
         if (!res.ok) throw new Error("Network response not ok");
         const data = await res.json();

@@ -2,11 +2,21 @@ import React, { useRef, useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import { User, Settings, LogOut } from 'lucide-react';
 import { supabase } from './../../database/supabaseClient.js'; 
+
+import { useNavigate } from 'react-router-dom';
 import './AccountDropDown.css';
 
 export default function AccountDropDown({ onClose }) {
+  const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const [userInfo, setUserInfo] = useState({ name: 'User', email: '' });
+  // to make sure logout clears session both locally and from supabase
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    localStorage.removeItem('supabaseSession');
+    navigate('/login');
+  };
+  
 
   useEffect(() => {
     const fetchUserEmail = async () => {
@@ -43,6 +53,8 @@ export default function AccountDropDown({ onClose }) {
     };
   }, [onClose]);
 
+  
+
   return (
     <div className="account-dropdown-overlay">
       <div className="account-dropdown" ref={dropdownRef}>
@@ -68,7 +80,7 @@ export default function AccountDropDown({ onClose }) {
           <Link
             to="/login"
             className="menu-item"
-            onClick={onClose}
+            onClick={() => {handleLogout(); onClose(); }}
           >
             <LogOut size={18} />
             <span>{userInfo.name === 'User' ? 'Sign In' : 'Sign Out'}</span>

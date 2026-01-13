@@ -20,19 +20,43 @@ export default function Login() {
 
     const { username, email, password } = formData;
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    setLoading(false);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       alert(error.message);
+      setLoading(false);
       return;
     }
 
-    localStorage.setItem('username', username);
+    const { user } = data;
+
+    // Retrieve any stored profile info from signup
+    const pendingProfile = JSON.parse(localStorage.getItem('pendingProfile'));
+
+    // Upsert the user profile into Supabase
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .upsert({
+        user_id: user.id,
+        email: user.email,
+        username: pendingProfile?.username || username || user.email.split('@')[0],
+        firstname: pendingProfile?.firstName || null,
+        lastname: pendingProfile?.lastName || null,
+      });
+
+    if (profileError) {
+      console.error("Error upserting profile:", profileError.message);
+    } else {
+      console.log("Profile saved successfully!");
+    }
+
+    // Clean up stored data
+    localStorage.removeItem('pendingProfile');
+
+    // Save user session locally
+    localStorage.setItem('supabaseSession', JSON.stringify(user));
+
+    setLoading(false);
     navigate('/home');
   };
 
@@ -56,7 +80,7 @@ export default function Login() {
             <input
               type="text"
               name="username"
-              placeholder="username"
+              placeholder="Username"
               value={formData.username}
               onChange={handleChange}
               className="form-input"
@@ -68,7 +92,7 @@ export default function Login() {
             <input
               type="email"
               name="email"
-              placeholder="email"
+              placeholder="Email"
               value={formData.email}
               onChange={handleChange}
               className="form-input"
@@ -108,7 +132,7 @@ export default function Login() {
 
         <div className="login-footer">
           <p>
-            Don't have an account?{' '}
+            Don’t have an account?{' '}
             <Link to="/signup" className="signup-link">
               Sign up
             </Link>
