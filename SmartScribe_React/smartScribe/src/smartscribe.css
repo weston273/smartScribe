@@ -115,6 +115,12 @@ body .page-wrapper .recording-time{font:600 26px Manrope,sans-serif;letter-spaci
 body .page-wrapper .recording-status{font-size:11px;color:var(--muted-color)}
 body .page-wrapper .recordings-section{padding:19px;border:1px solid var(--border-color);border-radius:12px;background:var(--surface-color)}
 body .page-wrapper .recordings-title{font:600 15px Manrope,sans-serif;margin:0 0 13px}
+body .page-wrapper .record-feedback{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 auto 14px;padding:10px 12px;border:1px solid #d8e3d8;border-radius:8px;background:#edf3ec;color:#466451;font-size:11px;line-height:1.5}
+body .page-wrapper .record-feedback-error{border-color:#ead5c8;background:#f8eee7;color:#8b5741}
+body .page-wrapper .record-feedback button{height:28px;width:28px;flex:none;display:grid;place-items:center;border:0;border-radius:6px;background:transparent;color:inherit}
+body .page-wrapper .record-feedback button:hover{background:#0000000a}
+body .page-wrapper .voice-unavailable{margin:6px 4px 0;color:var(--muted-color);font-size:9px;text-align:right}
+body .page-wrapper .message-error .message-content{border-color:#ead5c8;background:#f8eee7;color:#774b3c}
 body .page-wrapper .recording-item{padding:13px 2px;border-bottom:1px solid var(--border-color)}
 body .page-wrapper .recording-name{font:600 12px Manrope,sans-serif}
 body .page-wrapper .recording-meta{font-size:10px;color:var(--muted-color)}

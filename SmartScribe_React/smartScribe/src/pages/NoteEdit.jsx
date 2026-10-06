@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Bot } from 'lucide-react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeftIcon, EditIcon, TrashIcon, DownloadIcon, CopyIcon } from '../components/icons/Icons.jsx';
 import NavBar1 from '../components/NavBar1.jsx';
@@ -23,6 +24,7 @@ export default function NoteEdit({ theme, toggleTheme }) {
   const [tags, setTags] = useState('');
   const [isAIGenerating, setIsAIGenerating] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
+  const [aiError, setAiError] = useState('');
   const { t } = useLanguage();
   const { generateNotes } = useAI();
 
@@ -158,20 +160,25 @@ export default function NoteEdit({ theme, toggleTheme }) {
   // ✅ AI generation handler
   const handleGenerateWithAI = async () => {
     if (!aiPrompt.trim()) {
-      alert(t('noteEdit.promptRequired') || 'Please enter a prompt for AI generation.');
+      setAiError(t('noteEdit.promptRequired') || 'Please enter a prompt for AI generation.');
       return;
     }
 
     setIsAIGenerating(true);
+    setAiError('');
     try {
       const generatedContent = await generateNotes(aiPrompt);
+      if (generatedContent.startsWith('Error generating notes')) {
+        setAiError('SmartScribe AI is unavailable right now. Your note is unchanged. Please try again later.');
+        return;
+      }
       setContent(prevContent =>
         prevContent ? `${prevContent}\n\n${generatedContent}` : generatedContent
       );
       setAiPrompt('');
     } catch (error) {
       console.error('Error generating content:', error);
-      alert(t('noteEdit.aiError') || 'Failed to generate content. Please try again.');
+      setAiError('SmartScribe AI is unavailable right now. Your note is unchanged. Please try again later.');
     } finally {
       setIsAIGenerating(false);
     }
@@ -289,7 +296,7 @@ export default function NoteEdit({ theme, toggleTheme }) {
 
               {/* ✅ AI Assistant Section */}
               <div className="ai-assistant">
-                <h3 className="ai-title">🤖 AI Assistant</h3>
+                <h3 className="ai-title"><Bot size={17}/> AI Assistant</h3>
                 <p className="ai-description">
                   Let AI help you generate content for your note. Describe what you want to write about.
                 </p>
@@ -310,6 +317,7 @@ export default function NoteEdit({ theme, toggleTheme }) {
                     {isAIGenerating ? '🧠 Generating...' : '🧠 Generate'}
                   </button>
                 </div>
+                {aiError && <p className="auth-message auth-error" role="alert">{aiError}</p>}
               </div>
             </div>
 

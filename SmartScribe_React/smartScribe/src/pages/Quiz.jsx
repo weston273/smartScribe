@@ -75,7 +75,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
 
       if (generatedQuestions.length === 0) {
         setErrorMessage(
-          'Failed to create quiz, check your internet connection or tokens. Contact the developer if the problem persists.'
+          'SmartScribe couldn’t create a quiz right now. Check your connection and try again. Your notes are unchanged.'
         );
         return;
       }
@@ -88,7 +88,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     } catch (error) {
       console.error('Error generating quiz:', error);
       setErrorMessage(
-        'Failed to create quiz, check your internet connection or tokens. Contact the developer if the problem persists.'
+        'SmartScribe couldn’t create a quiz right now. Check your connection and try again. Your notes are unchanged.'
       );
     } finally {
       setIsGenerating(false);

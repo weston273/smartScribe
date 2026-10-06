@@ -327,8 +327,9 @@ export default function SmartChat({ theme, toggleTheme }) {
                 ref={inputRef}
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyPress}
                 placeholder={t('chat.placeholder') || 'Type your message here...'}
+                aria-label="Your message"
                 className="message-input"
                 rows={1}
                 disabled={isTyping}
@@ -340,6 +341,7 @@ export default function SmartChat({ theme, toggleTheme }) {
                     className={`btn btn-icon btn-ghost voice-btn ${isListening ? 'listening' : ''}`}
                     onClick={toggleVoiceInput}
                     title={isListening ? (t('chat.stopListening') || 'Stop listening') : (t('chat.startVoice') || 'Start voice input')}
+                    aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
                   >
                     {isListening ? <MicOffIcon size={20} /> : <MicIcon size={20} />}
                   </button>
@@ -350,11 +352,13 @@ export default function SmartChat({ theme, toggleTheme }) {
                   onClick={handleSendMessage}
                   disabled={!inputMessage.trim() || isTyping}
                   title={t('chat.send') || 'Send message'}
+                  aria-label="Send message"
                 >
                   <SendIcon size={20} />
                 </button>
               </div>
             </div>
+            {!voiceAvailable && <p className="voice-unavailable" role="status">Voice input is unavailable in this browser. You can still type your message.</p>}
           </div>
         </main>
       </div>
