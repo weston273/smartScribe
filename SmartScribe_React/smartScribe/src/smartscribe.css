@@ -204,3 +204,153 @@ body .page-wrapper .footer{border-top:1px solid var(--border-color);background:v
 @media(max-width:760px){body .page-wrapper .notes-main,body .page-wrapper .record-main,body .page-wrapper .settings-main,body .page-wrapper .profile-main,body .page-wrapper .quiz-main{padding:22px 17px}body .page-wrapper .notes-title{font-size:24px}body .page-wrapper .notes-header{align-items:flex-start}body .page-wrapper .notes-title-section{width:100%;flex-wrap:wrap;gap:12px}body .page-wrapper .note-edit-main,body .page-wrapper .note-view-main{padding:0 15px 20px}body .page-wrapper .note-edit-header,body .page-wrapper .note-view-header{margin:0 -15px 15px;padding:14px 15px;flex-wrap:wrap}body .page-wrapper .note-edit-content{display:flex;flex-direction:column}body .page-wrapper .note-preview{position:static;max-height:380px}body .page-wrapper .note-card.list{flex-direction:column}body .page-wrapper .note-card.list .note-actions{border-left:0;border-top:1px solid var(--border-color);justify-content:flex-start}body .page-wrapper .record-title{font-size:24px}body .page-wrapper .recording-interface{padding:17px}body .page-wrapper .features-grid{grid-template-columns:repeat(2,minmax(0,1fr))}body .page-wrapper .smart-chat-main{height:calc(100dvh - 64px);min-height:480px}body .page-wrapper .chat-header{padding:12px 15px}body .page-wrapper .chat-actions{gap:2px}body .page-wrapper .messages-list{padding:17px 8px}body .page-wrapper .input-container{width:calc(100% - 22px)}body .page-wrapper .settings-section{padding:15px}body .page-wrapper .section-header{align-items:center}body .page-wrapper .profile-content{grid-template-columns:1fr}body .page-wrapper .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){body .page-wrapper .navbar-content{padding:0 14px}body .page-wrapper .notes-title-group{gap:8px}body .page-wrapper .notes-title{font-size:22px}body .page-wrapper .notes-grid.grid{grid-template-columns:1fr}body .page-wrapper .note-meta{flex-wrap:wrap;justify-content:flex-end}body .page-wrapper .note-edit-header .header-actions{width:100%;justify-content:flex-start}body .page-wrapper .content-textarea{min-height:310px}body .page-wrapper .recording-actions{gap:8px}body .page-wrapper .features-grid{gap:8px}body .page-wrapper .feature-card{padding:11px}body .page-wrapper .results-actions{gap:8px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Responsive finishing pass: keep the shared visual system fluid across routes. */
+html{overflow-x:clip;scroll-padding-top:72px}
+body{overflow-x:clip}
+img,video,canvas,svg{max-width:100%}
+:where(.page-wrapper,.home-wrapper,.auth-screen,.splash-screen) :is(h1,h2,h3,p,li,td,th){overflow-wrap:anywhere}
+:where(.page-wrapper,.home-wrapper) :is(input,textarea,select,button){min-width:0}
+:where(.page-wrapper,.home-wrapper) :is(button,.btn,.nav-item,.view-btn,.action-item,.suggestion-btn,.choice-btn,.nav-button,.setting-button,.theme-btn,.action-btn,.send-btn,.fab){min-height:44px}
+body .page-wrapper .sidebar{padding-bottom:max(20px,env(safe-area-inset-bottom))}
+body .page-wrapper .sidebar .nav-item{min-height:44px;height:auto}
+body .page-wrapper .navbar-content{padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right))}
+body .page-wrapper .notes-main,body .page-wrapper .record-main,body .page-wrapper .settings-main,body .page-wrapper .profile-main,body .page-wrapper .note-view-main,body .page-wrapper .quiz-main{min-width:0}
+body .page-wrapper :is(.notes-header,.notes-title-section,.notes-title-group,.note-edit-header,.note-view-header,.header-actions,.recording-actions,.chat-header,.chat-actions,.section-header,.setting-item,.detail-item,.profile-header,.settings-header,.quiz-header,.results-actions){min-width:0;flex-wrap:wrap}
+body .page-wrapper :is(.note-card,.note-link,.note-header,.note-actions,.note-edit-content,.edit-form,.content-display,.recording-item,.message,.message-content,.message-text,.settings-section,.profile-card,.stat-card,.quiz-container,.quiz-settings,.quiz-results){min-width:0;max-width:100%}
+body .page-wrapper .note-link,body .page-wrapper .message-text,body .page-wrapper .content-display{overflow-wrap:anywhere}
+body .page-wrapper .note-preview{overflow-wrap:anywhere}
+body .page-wrapper .note-actions .btn{width:44px;height:44px}
+body .page-wrapper .fab{width:52px;height:52px;bottom:max(20px,env(safe-area-inset-bottom));right:max(20px,env(safe-area-inset-right))}
+body .page-wrapper .content-textarea{width:100%;min-width:0;resize:vertical;overflow-wrap:anywhere}
+body .page-wrapper .content-display{font-size:clamp(15px,1.1vw,17px);line-height:1.8}
+body .page-wrapper .recording-interface{max-width:100%}
+body .page-wrapper .recording-item{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+body .page-wrapper .recording-name{min-width:0;overflow-wrap:anywhere}
+body .page-wrapper .smart-chat-main{min-width:0;width:100%;height:calc(100dvh - 64px);min-height:0}
+body .page-wrapper .messages-container{min-width:0;overscroll-behavior:contain}
+body .page-wrapper .message-content{min-width:0;overflow-wrap:anywhere;word-break:normal}
+body .page-wrapper .message-text :is(pre,code,table){max-width:100%;overflow:auto}
+body .page-wrapper .input-container{padding-bottom:max(12px,env(safe-area-inset-bottom))}
+body .page-wrapper .input-wrapper{min-width:0}
+body .page-wrapper .settings-content,body .page-wrapper .profile-content{min-width:0}
+body .page-wrapper :is(.setting-item,.detail-item){gap:12px}
+body .page-wrapper .setting-item>:first-child,body .page-wrapper .detail-content{min-width:0;overflow-wrap:anywhere}
+body .page-wrapper .toggle-switch{flex:none}
+body .page-wrapper .quiz-main{align-items:flex-start}
+body .page-wrapper .option{min-width:0;overflow-wrap:anywhere}
+body .page-wrapper :is(.modal-overlay,.ai-assistant-overlay,.language-selector-overlay,.topic-breakdown-overlay,.video-processor-overlay,.url-processor-overlay,.voice-command-overlay){padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overflow-y:auto}
+body .page-wrapper :is(.account-dropdown,.modal,.ai-assistant-modal,.language-selector-modal,.topic-breakdown-modal,.video-processor-modal,.url-processor-modal,.voice-command-modal){width:min(100%,620px);max-height:calc(100dvh - 24px);overscroll-behavior:contain}
+body .page-wrapper .account-dropdown-overlay{padding:calc(64px + env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 12px;overflow-y:auto}
+body .page-wrapper .account-dropdown{width:min(100%,360px)}
+.splash-screen{min-height:100svh!important;padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))!important}
+.auth-screen{min-height:100svh!important;padding:max(76px,calc(56px + env(safe-area-inset-top))) max(16px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))!important}
+.auth-brand{top:max(18px,env(safe-area-inset-top))}
+.auth-field .password-toggle{min-width:44px;min-height:44px;display:grid;place-items:center}
+.splash-enter,.auth-submit,.auth-link-button{min-height:44px}
+.splash-corner-mark{max-width:calc(100% - 32px);text-align:right}
+
+@media(min-width:1440px){
+  body .page-wrapper .notes-main,body .page-wrapper .record-main,body .page-wrapper .settings-main,body .page-wrapper .profile-main,body .page-wrapper .note-view-main{max-width:1240px}
+  body .page-wrapper .smart-chat-main{max-width:1100px}
+  .dashboard-content{padding-top:clamp(43px,3vw,62px)}
+}
+@media(max-width:1023px){
+  body .page-wrapper .sidebar{top:64px;height:calc(100dvh - 64px);max-width:min(320px,88vw);padding-top:16px}
+  body .page-wrapper .notes-main,body .page-wrapper .record-main,body .page-wrapper .settings-main,body .page-wrapper .profile-main,body .page-wrapper .note-view-main,body .page-wrapper .quiz-main{padding-inline:clamp(20px,4vw,38px)}
+  body .page-wrapper .features-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dashboard-content{padding-inline:clamp(22px,4vw,38px)}
+}
+@media(max-width:760px){
+  body .page-wrapper .navbar{height:60px}
+  body .page-wrapper .navbar-menu-btn,body .page-wrapper .navbar-profile-btn{width:44px;height:44px}
+  body .page-wrapper .brand-text{display:inline}
+  body .page-wrapper .sidebar{top:60px;height:calc(100dvh - 60px);width:min(320px,88vw);max-width:88vw;padding-top:16px}
+  body .page-wrapper .notes-main,body .page-wrapper .record-main,body .page-wrapper .settings-main,body .page-wrapper .profile-main,body .page-wrapper .quiz-main{padding:24px clamp(16px,4vw,24px)}
+  body .page-wrapper .note-edit-main,body .page-wrapper .note-view-main{padding:0 clamp(16px,4vw,24px) 24px}
+  body .page-wrapper .note-edit-header,body .page-wrapper .note-view-header{margin:0 calc(-1 * clamp(16px,4vw,24px)) 16px;padding:14px clamp(16px,4vw,24px)}
+  body .page-wrapper .note-edit-header .header-actions{width:100%;justify-content:flex-start}
+  body .page-wrapper .content-textarea{min-height:52vh;font-size:16px;line-height:1.65}
+  body .page-wrapper .note-preview{width:100%;max-height:42vh}
+  body .page-wrapper .note-view-header{align-items:flex-start}
+  body .page-wrapper .note-view-header .header-actions{justify-content:flex-end}
+  body .page-wrapper .record-title{font-size:clamp(23px,5vw,28px)}
+  body .page-wrapper .record-btn{width:84px;height:84px}
+  body .page-wrapper .smart-chat-main{height:calc(100dvh - 60px);min-height:0}
+  body .page-wrapper .chat-header{align-items:flex-start}
+  body .page-wrapper .chat-actions{flex-wrap:wrap;justify-content:flex-end}
+  body .page-wrapper .welcome-message{min-height:0;padding:clamp(32px,8vh,76px) 18px}
+  body .page-wrapper .input-container{width:calc(100% - 24px);margin-bottom:max(10px,env(safe-area-inset-bottom))}
+  body .page-wrapper .send-btn{width:44px;height:44px;flex:none}
+  body .page-wrapper .settings-section{padding:clamp(15px,4vw,20px)}
+  body .page-wrapper .settings-title,body .page-wrapper .profile-title{font-size:clamp(23px,5vw,26px)}
+  .dashboard-content{padding:26px clamp(16px,4vw,24px) 18px}
+  .workspace-topbar{padding-inline:clamp(16px,4vw,24px)}
+  .workspace-rail{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+  .rail-link{min-width:44px;min-height:44px}
+}
+@media(max-width:479px){
+  .splash-panel{padding:clamp(24px,8vw,34px);border-radius:13px}
+  .splash-panel h1{font-size:clamp(31px,10vw,39px);letter-spacing:-1.6px}
+  .splash-feature{font-size:12px}
+  .auth-card{padding:24px!important}
+  .auth-heading{margin-bottom:19px}
+  body .page-wrapper .navbar-content{padding-inline:12px}
+  body .page-wrapper .brand-text{font-size:14px}
+  body .page-wrapper .chat-header{padding:10px 12px}
+  body .page-wrapper .chat-title{gap:8px}
+  body .page-wrapper .chat-title h1{font-size:15px}
+  body .page-wrapper .chat-actions{max-width:46%}
+  body .page-wrapper .messages-list{padding:14px 4px;gap:13px}
+  body .page-wrapper .message{gap:7px}
+  body .page-wrapper .message-avatar{width:28px;height:28px}
+  body .page-wrapper .message-content{max-width:calc(100% - 35px);padding:10px 11px}
+  body .page-wrapper .input-container{width:calc(100% - 16px);padding:6px;margin-bottom:max(8px,env(safe-area-inset-bottom))}
+  body .page-wrapper .input-wrapper{gap:5px;padding:6px}
+  body .page-wrapper .message-input{font-size:16px;min-height:42px}
+  body .page-wrapper .notes-header{gap:10px}
+  body .page-wrapper .notes-title{font-size:clamp(21px,7vw,24px)}
+  body .page-wrapper .view-toggle{width:100%}
+  body .page-wrapper .view-btn{flex:1}
+  body .page-wrapper .note-header{flex-wrap:wrap}
+  body .page-wrapper .note-meta{flex:none;justify-content:flex-start}
+  body .page-wrapper .note-card.list .note-actions{flex-wrap:wrap}
+  body .page-wrapper .note-edit-header .header-actions>*{flex:1 1 auto}
+  body .page-wrapper .recording-interface{padding:14px 10px}
+  body .page-wrapper .recording-actions{justify-content:center}
+  body .page-wrapper .recording-actions>*{min-height:44px}
+  body .page-wrapper .features-grid{grid-template-columns:1fr 1fr;gap:8px}
+  body .page-wrapper .feature-card{min-width:0;padding:11px}
+  body .page-wrapper .stats-grid{grid-template-columns:1fr 1fr}
+  body .page-wrapper .profile-card{padding:17px}
+  body .page-wrapper .setting-item{align-items:flex-start}
+  body .page-wrapper .setting-item>:first-child{flex:1 1 190px}
+  body .page-wrapper .quiz-settings,body .page-wrapper .quiz-container,body .page-wrapper .quiz-results{padding:18px 15px}
+  body .page-wrapper .quiz-info h1,body .page-wrapper .results-header h1,body .page-wrapper .settings-header h1{font-size:21px}
+  .welcome-row{align-items:flex-start}
+  .welcome-row h1{font-size:clamp(30px,9vw,36px);letter-spacing:-1.7px}
+  .welcome-copy{font-size:12px}
+  .capture-card{padding:19px 14px;min-height:0}
+  .capture-copy{width:100%}
+  .capture-copy h2{font-size:19px;max-width:85%}
+  .capture-art{opacity:.2}
+  .capture-form{padding-left:10px}
+  .capture-links{gap:9px 12px}
+  .tool-card{min-height:160px;padding:12px}
+  .tool-card h3{font-size:14px;overflow-wrap:anywhere}
+  .recent-date{display:none}
+  .button-secondary{margin-left:auto;min-height:44px}
+  .workspace-footer{gap:8px;flex-wrap:wrap;line-height:1.5}
+}
+@media(max-width:359px){
+  body .page-wrapper .brand-text{display:none}
+  body .page-wrapper .navbar-content{padding-inline:10px}
+  body .page-wrapper .notes-main,body .page-wrapper .record-main,body .page-wrapper .settings-main,body .page-wrapper .profile-main,body .page-wrapper .quiz-main{padding-inline:13px}
+  body .page-wrapper .note-edit-main,body .page-wrapper .note-view-main{padding-inline:12px}
+  body .page-wrapper .note-edit-header,body .page-wrapper .note-view-header{margin-inline:-12px;padding-inline:12px}
+  .dashboard-content{padding-inline:12px}
+  .tool-grid{gap:7px}
+  .tool-card{padding:10px;min-height:154px}
+  .capture-links{gap:8px}
+  body .page-wrapper .chat-actions{max-width:42%}
+}
