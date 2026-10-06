@@ -32,16 +32,16 @@ export default function Home({ theme, toggleTheme }: HomeProps) {
     <aside className="workspace-rail" aria-label="Primary navigation">
       <Link className="brand-lockup" to="/home" aria-label="SmartScribe home"><span className="brand-mark"><FileText size={19}/></span><span>Smart<span className="brand-accent">Scribe</span></span></Link>
       <span className="rail-label">WORKSPACE</span>
-      <Link className="rail-link active" to="/home" aria-label="Overview"><span className="rail-icon"><BookOpen size={18}/></span>Overview</Link>
-      <Link className="rail-link" to="/notes" aria-label={`My notes, ${notes.length} total`}><span className="rail-icon"><FileText size={18}/></span>My notes<span className="rail-count">{notes.length}</span></Link>
-      <Link className="rail-link" to="/record" aria-label="Record"><span className="rail-icon"><Mic size={18}/></span>Record</Link>
-      <Link className="rail-link" to="/quiz" aria-label="Study quiz"><span className="rail-icon"><Brain size={18}/></span>Study quiz</Link>
-      <Link className="rail-link" to="/smart-chat" aria-label="Smart chat"><span className="rail-icon"><Sparkles size={18}/></span>Smart chat</Link>
+      <Link className="rail-link active" to="/home" aria-label="Dashboard"><span className="rail-icon"><BookOpen size={18}/></span><span className="rail-link-label">Home</span></Link>
+      <Link className="rail-link" to="/notes" aria-label={`My notes, ${notes.length} total`}><span className="rail-icon"><FileText size={18}/></span><span className="rail-link-label">Notes</span><span className="rail-count">{notes.length}</span></Link>
+      <Link className="rail-link" to="/record" aria-label="Record"><span className="rail-icon"><Mic size={18}/></span><span className="rail-link-label">Record</span></Link>
+      <Link className="rail-link" to="/quiz" aria-label="Study quiz"><span className="rail-icon"><Brain size={18}/></span><span className="rail-link-label">Quizzes</span></Link>
+      <Link className="rail-link" to="/smart-chat" aria-label="Smart chat"><span className="rail-icon"><Sparkles size={18}/></span><span className="rail-link-label">Chat</span></Link>
       <div className="rail-bottom"><div className="rail-tip"><span className="tip-icon"><Sparkles size={16}/></span><strong>A little more clarity</strong><p>Turn your notes into a study plan with Smart Chat.</p><Link to="/smart-chat">Open Smart Chat <ArrowRight size={14}/></Link></div><Link className="rail-user" to="/profile"><span className="avatar">S</span><span><strong>Your workspace</strong><small>Personal account</small></span><ArrowDownRight size={15}/></Link></div>
     </aside>
 
     <main className="workspace-main">
-      <header className="workspace-topbar"><div className="breadcrumb">Workspace <span>/</span> Overview</div><div className="topbar-actions"><button className="topbar-theme" onClick={toggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`} title="Switch theme">{theme === 'light' ? <Moon size={15}/> : <Sun size={15}/>}</button><Link to="/settings" className="topbar-link">Settings</Link><Link to="/profile" className="avatar" aria-label="Your profile">S</Link></div></header>
+      <header className="workspace-topbar"><div className="breadcrumb"><span className="breadcrumb-context">Workspace / </span>Overview</div><div className="topbar-actions"><button className="topbar-theme" onClick={toggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`} title="Switch theme">{theme === 'light' ? <Moon size={15}/> : <Sun size={15}/>}</button><Link to="/settings" className="topbar-link">Settings</Link><Link to="/profile" className="avatar" aria-label="Your profile">S</Link></div></header>
       <div className="dashboard-content">
         <section className="welcome-row"><div><span className="eyebrow"><span className="status-dot"/> YOUR LEARNING DESK</span><h1>A quieter place to<br/><em>think clearly.</em></h1><p className="welcome-copy">Keep your thoughts, recordings and study notes together. Pick up right where you left off.</p></div><div className="welcome-note" aria-hidden="true"><span className="note-sun"/><span className="note-line line-long"/><span className="note-line"/><span className="note-line line-short"/><span className="note-sign">a thought, kept.</span></div></section>
 
