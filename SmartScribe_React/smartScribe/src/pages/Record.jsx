@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Mic, MicOff, Play, Pause, Square, Download, Trash2, Volume2, Bot, FileText } from 'lucide-react';
+import { Mic, Play, Pause, Square, Download, Trash2, Volume2, Bot, FileText, Brain, Tags, Target, X } from 'lucide-react';
 import { convertAudioToNotes } from '../utils/ai';
 import NavBar1 from '../components/NavBar1';
 import SideBar from '../components/sidebar/SideBar.jsx';
@@ -16,12 +16,13 @@ export default function Record({ theme, toggleTheme }) {
   const [recordings, setRecordings] = useState([]);
   const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
   const [processingAI, setProcessingAI] = useState(null);
+  const [recordingError, setRecordingError] = useState('');
+  const [conversionMessage, setConversionMessage] = useState('');
   
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const timerRef = useRef(null);
   const streamRef = useRef(null);
-  const recognitionRef = useRef(null);
 
   const toggleSideBar = () => setShowSideBar(prev => !prev);
   const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
@@ -29,6 +30,8 @@ export default function Record({ theme, toggleTheme }) {
 
   const startRecording = async () => {
     try {
+      setRecordingError('');
+      if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) throw new Error('Audio recording is not supported by this browser.');
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
       
@@ -72,7 +75,7 @@ export default function Record({ theme, toggleTheme }) {
 
     } catch (error) {
       console.error('Error accessing microphone:', error);
-      alert('Unable to access microphone. Please check permissions.');
+      setRecordingError(error instanceof Error ? error.message : 'Unable to access your microphone. Check browser permissions and try again.');
     }
   };
 
@@ -128,6 +131,7 @@ export default function Record({ theme, toggleTheme }) {
 
   const convertToNote = async (recording) => {
     setProcessingAI(recording.id);
+    setConversionMessage('');
     
     try {
       // Use AI backend to convert audio to structured notes
@@ -137,11 +141,11 @@ export default function Record({ theme, toggleTheme }) {
       saveToNotes(recording.name, structuredNotes);
       
       // Show success message
-      alert('Recording successfully converted to structured notes using AI! You can find it in your Notes section.');
+      setConversionMessage('Your recording has been turned into a note and saved in Notes.');
 
     } catch (error) {
       console.error('Error converting to note:', error);
-      alert(error.message || 'Failed to convert recording to note. Please try again.');
+      setConversionMessage(error.message || 'AI note conversion is unavailable right now. Your recording is safe; try again later.');
     } finally {
       setProcessingAI(null);
     }
@@ -210,6 +214,8 @@ ${aiGeneratedContent}
             <h1 className="record-title">Voice Recorder</h1>
             <p className="record-subtitle">Capture your thoughts and ideas with AI-powered recording</p>
           </div>
+          {recordingError && <div className="record-feedback record-feedback-error" role="alert"><span>{recordingError}</span><button type="button" onClick={()=>setRecordingError('')} aria-label="Dismiss microphone message"><X size={16}/></button></div>}
+          {conversionMessage && <div className={`record-feedback ${conversionMessage.includes('unavailable') ? 'record-feedback-error' : ''}`} role="status"><span>{conversionMessage}</span><button type="button" onClick={()=>setConversionMessage('')} aria-label="Dismiss conversion message"><X size={16}/></button></div>}
 
           {/* Recording Interface */}
           <div className="recording-interface">
@@ -219,6 +225,7 @@ ${aiGeneratedContent}
                   <button 
                     className={`record-btn ${isRecording ? 'recording' : ''}`}
                     onClick={isRecording ? stopRecording : startRecording}
+                    aria-label={isRecording ? 'Stop recording' : 'Start recording'}
                   >
                     {isRecording ? <Square size={32} /> : <Mic size={32} />}
                   </button>
@@ -328,22 +335,22 @@ ${aiGeneratedContent}
             <h3 className="features-title">AI-Powered Features</h3>
             <div className="features-grid">
               <div className="feature-card">
-                <div className="feature-icon">🎯</div>
+                <div className="feature-icon"><Target size={18}/></div>
                 <h4>Smart Transcription</h4>
                 <p>Convert speech to text with high accuracy using our AI backend</p>
               </div>
               <div className="feature-card">
-                <div className="feature-icon">📝</div>
+                <div className="feature-icon"><FileText size={18}/></div>
                 <h4>AI Note Generation</h4>
                 <p>Transform recordings into structured, educational notes with key insights</p>
               </div>
               <div className="feature-card">
-                <div className="feature-icon">🏷️</div>
+                <div className="feature-icon"><Tags size={18}/></div>
                 <h4>Smart Tagging</h4>
                 <p>Automatically categorize and tag your AI-generated voice notes</p>
               </div>
               <div className="feature-card">
-                <div className="feature-icon">🤖</div>
+                <div className="feature-icon"><Brain size={18}/></div>
                 <h4>Advanced AI Processing</h4>
                 <p>Extract key points, create summaries, and structure information intelligently</p>
               </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { SendIcon, MicIcon, MicOffIcon, BotIcon, UserIcon, CopyIcon, DownloadIcon, TrashIcon, SettingsIcon, MenuIcon } from '../components/icons/Icons';
+import { Send as SendIcon, Mic as MicIcon, MicOff as MicOffIcon, Bot as BotIcon, UserRound as UserIcon, Copy as CopyIcon, Download as DownloadIcon, Trash2 as TrashIcon, Settings as SettingsIcon } from 'lucide-react';
 import NavBar1 from '../components/NavBar1';
 import SideBar from '../components/sidebar/SideBar.jsx';
 import Footer from '../components/Footer';
@@ -16,6 +16,7 @@ export default function SmartChat({ theme, toggleTheme }) {
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [voiceAvailable, setVoiceAvailable] = useState(false);
   const [currentStreamingMessage, setCurrentStreamingMessage] = useState('');
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -31,6 +32,7 @@ export default function SmartChat({ theme, toggleTheme }) {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
+      setVoiceAvailable(true);
       recognitionRef.current.continuous = false;
       recognitionRef.current.interimResults = false;
       recognitionRef.current.lang = 'en-US';
@@ -112,8 +114,9 @@ export default function SmartChat({ theme, toggleTheme }) {
       console.error('Error sending message:', error);
       const errorMessage = {
         id: Date.now() + 1,
-        content: t('chat.error') || 'Sorry, I encountered an error. Please try again.',
+        content: 'SmartScribe AI is unavailable right now. Your conversation is still here. Please try again later.',
         role: 'assistant',
+        error: true,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -198,16 +201,16 @@ export default function SmartChat({ theme, toggleTheme }) {
               <BotIcon size={28} className="chat-icon" />
               <div>
                 <h1>{t('chat.title') || 'SmartScribe AI'}</h1>
-                <p className={`status ${isTyping ? 'typing' : 'ready'}`}>
+                <p className={`status ${isTyping ? 'typing' : 'ready'}`} role="status" aria-live="polite">
                   {isTyping ? (t('chat.thinking') || 'Thinking...') : (t('chat.ready') || 'Ready to help')}
                 </p>
               </div>
             </div>
             <div className="chat-actions">
-              <button onClick={downloadChat} className="btn btn-icon btn-ghost" title={t('chat.download') || 'Download chat'}>
+              <button onClick={downloadChat} className="btn btn-icon btn-ghost" title={t('chat.download') || 'Download chat'} aria-label="Download chat">
                 <DownloadIcon size={20} />
               </button>
-              <button onClick={clearChat} className="btn btn-icon btn-ghost" title={t('chat.clear') || 'Clear chat'}>
+              <button onClick={clearChat} className="btn btn-icon btn-ghost" title={t('chat.clear') || 'Clear chat'} aria-label="Clear chat">
                 <TrashIcon size={20} />
               </button>
               <Link to="/settings" className="btn btn-icon btn-ghost" title={t('chat.settings') || 'Settings'}>
@@ -216,7 +219,7 @@ export default function SmartChat({ theme, toggleTheme }) {
             </div>
           </div>
 
-          <div className="messages-container">
+          <div className="messages-container" role="log" aria-live="polite" aria-label="Conversation">
             {messages.length === 0 ? (
               <div className="welcome-message">
                 <BotIcon size={64} className="welcome-icon" />
@@ -246,7 +249,7 @@ export default function SmartChat({ theme, toggleTheme }) {
             ) : (
               <div className="messages-list">
                 {messages.map((message) => (
-                  <div key={message.id} className={`message ${message.role}`}>
+                  <div key={message.id} className={`message ${message.role} ${message.error ? 'message-error' : ''}`} role={message.error ? 'alert' : undefined}>
                     <div className="message-avatar">
                       {message.role === 'user' ? (
                         <UserIcon size={20} />
@@ -263,6 +266,7 @@ export default function SmartChat({ theme, toggleTheme }) {
                           onClick={() => copyMessage(message.content)}
                           className="btn btn-icon btn-ghost btn-sm"
                           title={t('chat.copy') || 'Copy message'}
+                          aria-label="Copy message"
                         >
                           <CopyIcon size={14} />
                         </button>
