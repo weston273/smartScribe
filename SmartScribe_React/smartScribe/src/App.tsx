@@ -6,10 +6,10 @@ import { LanguageProvider } from './components/contexts/LanguageContext';
 import { AuthProvider } from './components/contexts/AuthContext';
 import { supabase } from './database/supabaseClient.js';
 
-const SplashScreen = lazy(() => import('./pages/SplashScreen.jsx'));
+const SplashScreen = lazy(() => import('./pages/SplashScreen'));
 const Home = lazy(() => import('./pages/Home'));
-const Login = lazy(() => import('./pages/Login.jsx'));
-const SignUp = lazy(() => import('./pages/SignUp.jsx'));
+const Login = lazy(() => import('./pages/Login'));
+const SignUp = lazy(() => import('./pages/SignUp'));
 const Quiz = lazy(() => import('./pages/Quiz.jsx'));
 const Record = lazy(() => import('./pages/Record.jsx'));
 const Notes = lazy(() => import('./pages/Notes.jsx'));
