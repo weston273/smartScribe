@@ -207,7 +207,7 @@ export default function NoteEdit({ theme, toggleTheme }) {
       <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
 
       <div className="note-edit-body">
-        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
+        {showSideBar && <SideBar onClose={toggleSideBar} />}
 
         <main className="note-edit-main">
           <div className="note-edit-header">
@@ -341,7 +341,7 @@ export default function NoteEdit({ theme, toggleTheme }) {
         </main>
       </div>
 
-      {showAccountDropdown && <AccountDropDown theme={theme} onClose={handleCloseDropdown} />}
+      {showAccountDropdown && <AccountDropDown onClose={handleCloseDropdown} />}
       <Footer theme={theme} toggleTheme={toggleTheme} />
     </div>
   );

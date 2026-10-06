@@ -145,7 +145,7 @@ export default function Record({ theme, toggleTheme }) {
 
     } catch (error) {
       console.error('Error converting to note:', error);
-      setConversionMessage(error.message || 'AI note conversion is unavailable right now. Your recording is safe; try again later.');
+      setConversionMessage('SmartScribe AI couldn’t turn this recording into a note right now. Your recording is safe; try again later.');
     } finally {
       setProcessingAI(null);
     }
@@ -207,7 +207,7 @@ ${aiGeneratedContent}
       <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
 
       <div className="record-body">
-        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
+        {showSideBar && <SideBar onClose={toggleSideBar} />}
         
         <main className="record-main">
           <div className="record-header">
@@ -215,7 +215,7 @@ ${aiGeneratedContent}
             <p className="record-subtitle">Capture your thoughts and ideas with AI-powered recording</p>
           </div>
           {recordingError && <div className="record-feedback record-feedback-error" role="alert"><span>{recordingError}</span><button type="button" onClick={()=>setRecordingError('')} aria-label="Dismiss microphone message"><X size={16}/></button></div>}
-          {conversionMessage && <div className={`record-feedback ${conversionMessage.includes('unavailable') ? 'record-feedback-error' : ''}`} role="status"><span>{conversionMessage}</span><button type="button" onClick={()=>setConversionMessage('')} aria-label="Dismiss conversion message"><X size={16}/></button></div>}
+          {conversionMessage && <div className={`record-feedback ${conversionMessage.includes('couldn’t') ? 'record-feedback-error' : ''}`} role={conversionMessage.includes('couldn’t') ? 'alert' : 'status'}><span>{conversionMessage}</span><button type="button" onClick={()=>setConversionMessage('')} aria-label="Dismiss conversion message"><X size={16}/></button></div>}
 
           {/* Recording Interface */}
           <div className="recording-interface">
@@ -360,7 +360,7 @@ ${aiGeneratedContent}
       </div>
 
       {showAccountDropdown && (
-        <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
+        <AccountDropDown onClose={handleCloseDropdown} />
       )}
 
       <Footer theme={theme} toggleTheme={toggleTheme} />

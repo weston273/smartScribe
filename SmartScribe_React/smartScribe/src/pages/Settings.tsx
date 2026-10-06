@@ -215,7 +215,7 @@ export default function Settings({ theme, toggleTheme }) {
       <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
 
       <div className="settings-body">
-        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
+        {showSideBar && <SideBar onClose={toggleSideBar} />}
         
         <main className="settings-main">
           <div className="settings-header">
@@ -339,7 +339,7 @@ export default function Settings({ theme, toggleTheme }) {
       </div>
 
       {showAccountDropdown && (
-        <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
+        <AccountDropDown onClose={handleCloseDropdown} />
       )}
 
       <Footer theme={theme} toggleTheme={toggleTheme} />

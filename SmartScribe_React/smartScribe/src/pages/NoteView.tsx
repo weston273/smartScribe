@@ -151,7 +151,7 @@ export default function NoteView({ theme, toggleTheme }) {
       <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
 
       <div className="note-view-body">
-        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
+        {showSideBar && <SideBar onClose={toggleSideBar} />}
         
         <main className="note-view-main">
           <div className="note-view-header">
@@ -236,7 +236,7 @@ export default function NoteView({ theme, toggleTheme }) {
       </div>
 
       {showAccountDropdown && (
-        <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
+        <AccountDropDown onClose={handleCloseDropdown} />
       )}
 
       <Footer theme={theme} toggleTheme={toggleTheme} />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { 
   Home, 
   FileText, 
@@ -39,8 +39,8 @@ export default function SideBar({ onClose }) {
     <>
       <div className="sidebar">
         <div className="sidebar-header">
-          <h2 className="sidebar-logo">SmartScribe</h2>
-          <button className="sidebar-close" onClick={onClose}>
+          <h2 className="sidebar-logo"><span className="sidebar-brand-mark"><FileText size={16} /></span><span>Smart<span className="sidebar-brand-accent">Scribe</span></span></h2>
+          <button type="button" className="sidebar-close" onClick={onClose} aria-label="Close navigation" title="Close navigation">
             <X size={24} />
           </button>
         </div>
@@ -48,32 +48,32 @@ export default function SideBar({ onClose }) {
         <nav className="sidebar-nav">
           {/* Main Navigation */}
           <div className="nav-section">
-            <h3 className="nav-section-title">Main</h3>
-            <Link to="/home" className="nav-item" onClick={onClose}>
+            <h3 className="nav-section-title">Workspace</h3>
+            <NavLink to="/home" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`} onClick={onClose}>
               <Home size={20} />
               <span>Dashboard</span>
-            </Link>
-            <Link to="/notes" className="nav-item" onClick={onClose}>
+            </NavLink>
+            <NavLink to="/notes" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`} onClick={onClose}>
               <FileText size={20} />
               <span>Notes</span>
-            </Link>
-            <Link to="/quiz" className="nav-item" onClick={onClose}>
+            </NavLink>
+            <NavLink to="/quiz" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`} onClick={onClose}>
               <HelpCircle size={20} />
               <span>Quiz</span>
-            </Link>
-            <Link to="/record" className="nav-item" onClick={onClose}>
+            </NavLink>
+            <NavLink to="/record" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`} onClick={onClose}>
               <Mic size={20} />
               <span>Record</span>
-            </Link>
-            <Link to="/profile" className="nav-item" onClick={onClose}>
+            </NavLink>
+            <NavLink to="/profile" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`} onClick={onClose}>
               <User size={20} />
               <span>Profile</span>
-            </Link>
+            </NavLink>
           </div>
 
           {/* AI Features */}
           <div className="nav-section">
-            <h3 className="nav-section-title">AI Features</h3>
+            <h3 className="nav-section-title">AI tools</h3>
             <button 
               className="nav-item" 
               onClick={() => setShowAIAssistant(true)}
@@ -137,10 +137,10 @@ export default function SideBar({ onClose }) {
               <Lightbulb size={20} />
               <span>Generate Quiz</span>
             </Link>
-            {/* <Link to="/smart-chat" className="nav-item" onClick={onClose}>
+            <Link to="/smart-chat" className="nav-item" onClick={onClose}>
               <MessageCircle size={20} />
               <span>Smart Chat</span>
-            </Link> */}
+            </Link>
           </div>
         </nav>
       </div>

@@ -44,8 +44,8 @@ export default function Notes({ theme, toggleTheme }) {
     [...local, ...cloud].forEach((n) => map.set(n.id, n));
     return Array.from(map.values()).sort(
       (a, b) =>
-        new Date(b.updated_at || b.updatedAt) -
-        new Date(a.updated_at || a.updatedAt)
+        new Date(b.updated_at || b.updatedAt).getTime() -
+        new Date(a.updated_at || a.updatedAt).getTime()
     );
   };
 
@@ -102,7 +102,7 @@ export default function Notes({ theme, toggleTheme }) {
       )
       .subscribe();
 
-    return () => supabase.removeChannel(channel);
+    return () => { void supabase.removeChannel(channel); };
   }, [user]);
 
   // ✅ Persist view + notes
@@ -254,7 +254,7 @@ export default function Notes({ theme, toggleTheme }) {
       />
 
       <div className="notes-body">
-        {showSideBar && <SideBar theme={theme} onClose={() => setShowSideBar(false)} />}
+        {showSideBar && <SideBar onClose={() => setShowSideBar(false)} />}
 
         <main className="notes-main">
           {/* HEADER */}
@@ -404,7 +404,6 @@ export default function Notes({ theme, toggleTheme }) {
 
       {showAccountDropdown && (
         <AccountDropDown
-          theme={theme}
           onClose={() => setShowAccountDropdown(false)}
         />
       )}

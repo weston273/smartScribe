@@ -7,7 +7,7 @@ import AccountDropDown from '../components/account/AccountDropDown';
 import { generateQuiz, generateTopicQuiz } from '../utils/ai';
 import './Quiz.css';
 
-export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
+export default function Quiz({ theme, toggleTheme, fromNotes = false, notesContent = '' }) {
   const [showSideBar, setShowSideBar] = useState(false);
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [showSettings, setShowSettings] = useState(true);
@@ -138,7 +138,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     return (
       <div className="page-wrapper">
         <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
+        {showSideBar && <SideBar onClose={toggleSideBar} />}
         <main className="quiz-main">
           <div className="quiz-settings">
             <div className="settings-header">
@@ -213,8 +213,8 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
             </div>
           </div>
         </main>
-        {showAccountDropdown && <AccountDropDown theme={theme} onClose={handleCloseDropdown} />}
-        <Footer theme={theme} />
+        {showAccountDropdown && <AccountDropDown onClose={handleCloseDropdown} />}
+        <Footer theme={theme} toggleTheme={toggleTheme} />
       </div>
     );
   }
@@ -257,7 +257,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
     return (
       <div className="page-wrapper">
         <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown}/>
-        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar}/>}
+        {showSideBar && <SideBar onClose={toggleSideBar}/>}
         <main className="quiz-main">
           <div className="quiz-results">
             <div className="results-header">
@@ -299,8 +299,8 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
             </div>
           </div>
         </main>
-        {showAccountDropdown && <AccountDropDown theme={theme} onClose={handleCloseDropdown}/>}
-        <Footer theme={theme}/>
+        {showAccountDropdown && <AccountDropDown onClose={handleCloseDropdown}/>}
+        <Footer theme={theme} toggleTheme={toggleTheme}/>
       </div>
     );
   }
@@ -311,7 +311,7 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
   return (
     <div className="page-wrapper">
       <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown}/>
-      {showSideBar && <SideBar theme={theme} onClose={toggleSideBar}/>}
+      {showSideBar && <SideBar onClose={toggleSideBar}/>}
       <main className="quiz-main">
         <div className="quiz-container">
           <div className="quiz-header">
@@ -351,8 +351,8 @@ export default function Quiz({ theme, fromNotes = false, notesContent = '' }) {
           </div>
         </div>
       </main>
-      {showAccountDropdown && <AccountDropDown theme={theme} onClose={handleCloseDropdown}/>}
-      <Footer theme={theme}/>
+      {showAccountDropdown && <AccountDropDown onClose={handleCloseDropdown}/>}
+      <Footer theme={theme} toggleTheme={toggleTheme}/>
     </div>
   );
 }

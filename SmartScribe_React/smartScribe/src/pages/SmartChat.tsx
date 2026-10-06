@@ -30,7 +30,8 @@ export default function SmartChat({ theme, toggleTheme }) {
   // Initialize speech recognition
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+      const speechWindow = window as Window & { webkitSpeechRecognition?: new () => any; SpeechRecognition?: new () => any };
+      const SpeechRecognition = speechWindow.webkitSpeechRecognition || speechWindow.SpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
       setVoiceAvailable(true);
       recognitionRef.current.continuous = false;
@@ -193,7 +194,7 @@ export default function SmartChat({ theme, toggleTheme }) {
       <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
 
       <div className="smart-chat-body">
-        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
+        {showSideBar && <SideBar onClose={toggleSideBar} />}
         
         <main className="smart-chat-main">
           <div className="chat-header">
@@ -336,7 +337,7 @@ export default function SmartChat({ theme, toggleTheme }) {
               />
               
               <div className="input-actions">
-                {recognitionRef.current && (
+                {voiceAvailable && recognitionRef.current && (
                   <button
                     className={`btn btn-icon btn-ghost voice-btn ${isListening ? 'listening' : ''}`}
                     onClick={toggleVoiceInput}
@@ -364,7 +365,7 @@ export default function SmartChat({ theme, toggleTheme }) {
       </div>
 
       {showAccountDropdown && (
-        <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
+        <AccountDropDown onClose={handleCloseDropdown} />
       )}
 
       <Footer theme={theme} toggleTheme={toggleTheme} />

@@ -10,14 +10,14 @@ const SplashScreen = lazy(() => import('./pages/SplashScreen'));
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const SignUp = lazy(() => import('./pages/SignUp'));
-const Quiz = lazy(() => import('./pages/Quiz.jsx'));
-const Record = lazy(() => import('./pages/Record.jsx'));
-const Notes = lazy(() => import('./pages/Notes.jsx'));
-const NoteView = lazy(() => import('./pages/NoteView.jsx'));
-const NoteEdit = lazy(() => import('./pages/NoteEdit.jsx'));
-const SmartChat = lazy(() => import('./pages/SmartChat.jsx'));
-const Settings = lazy(() => import('./pages/Settings.jsx'));
-const Profile = lazy(() => import('./pages/Profile.jsx'));
+const Quiz = lazy(() => import('./pages/Quiz'));
+const Record = lazy(() => import('./pages/Record'));
+const Notes = lazy(() => import('./pages/Notes'));
+const NoteView = lazy(() => import('./pages/NoteView'));
+const NoteEdit = lazy(() => import('./pages/NoteEdit'));
+const SmartChat = lazy(() => import('./pages/SmartChat'));
+const Settings = lazy(() => import('./pages/Settings'));
+const Profile = lazy(() => import('./pages/Profile'));
 
 export default function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
@@ -46,7 +46,7 @@ export default function App() {
     <Route path="/smart-chat" element={<SmartChat theme={theme} toggleTheme={toggleTheme}/>}/>
     <Route path="/settings" element={<Settings theme={theme} toggleTheme={toggleTheme}/>}/>
     <Route path="/profile" element={<Profile theme={theme} toggleTheme={toggleTheme}/>}/>
-    <Route path="/quiz" element={<Quiz theme={theme}/>}/>
+    <Route path="/quiz" element={<Quiz theme={theme} toggleTheme={toggleTheme}/>}/>
     <Route path="/home" element={<Home theme={theme} toggleTheme={toggleTheme}/>}/>
     <Route path="*" element={<Home theme={theme} toggleTheme={toggleTheme}/>}/>
   </Routes></Suspense></AuthProvider></VoiceProvider></AIProvider></LanguageProvider></div>;

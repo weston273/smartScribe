@@ -32,11 +32,11 @@ export default function Home({ theme, toggleTheme }: HomeProps) {
     <aside className="workspace-rail" aria-label="Primary navigation">
       <Link className="brand-lockup" to="/home" aria-label="SmartScribe home"><span className="brand-mark"><FileText size={19}/></span><span>Smart<span className="brand-accent">Scribe</span></span></Link>
       <span className="rail-label">WORKSPACE</span>
-      <Link className="rail-link active" to="/home"><span className="rail-icon"><BookOpen size={18}/></span>Overview</Link>
-      <Link className="rail-link" to="/notes"><span className="rail-icon"><FileText size={18}/></span>My notes<span className="rail-count">{notes.length}</span></Link>
-      <Link className="rail-link" to="/record"><span className="rail-icon"><Mic size={18}/></span>Record</Link>
-      <Link className="rail-link" to="/quiz"><span className="rail-icon"><Brain size={18}/></span>Study quiz</Link>
-      <Link className="rail-link" to="/smart-chat"><span className="rail-icon"><Sparkles size={18}/></span>Smart chat</Link>
+      <Link className="rail-link active" to="/home" aria-label="Overview"><span className="rail-icon"><BookOpen size={18}/></span>Overview</Link>
+      <Link className="rail-link" to="/notes" aria-label={`My notes, ${notes.length} total`}><span className="rail-icon"><FileText size={18}/></span>My notes<span className="rail-count">{notes.length}</span></Link>
+      <Link className="rail-link" to="/record" aria-label="Record"><span className="rail-icon"><Mic size={18}/></span>Record</Link>
+      <Link className="rail-link" to="/quiz" aria-label="Study quiz"><span className="rail-icon"><Brain size={18}/></span>Study quiz</Link>
+      <Link className="rail-link" to="/smart-chat" aria-label="Smart chat"><span className="rail-icon"><Sparkles size={18}/></span>Smart chat</Link>
       <div className="rail-bottom"><div className="rail-tip"><span className="tip-icon"><Sparkles size={16}/></span><strong>A little more clarity</strong><p>Turn your notes into a study plan with Smart Chat.</p><Link to="/smart-chat">Open Smart Chat <ArrowRight size={14}/></Link></div><Link className="rail-user" to="/profile"><span className="avatar">S</span><span><strong>Your workspace</strong><small>Personal account</small></span><ArrowDownRight size={15}/></Link></div>
     </aside>
 

@@ -148,7 +148,7 @@ export default function Profile({ theme, toggleTheme }) {
       />
 
       <div className="profile-body">
-        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
+        {showSideBar && <SideBar onClose={toggleSideBar} />}
 
         <main className="profile-main">
           <div className="profile-header">
@@ -262,7 +262,7 @@ export default function Profile({ theme, toggleTheme }) {
                           setUserInfo({ ...userInfo, bio: e.target.value })
                         }
                         className="edit-textarea"
-                        rows="3"
+                        rows={3}
                       />
                     ) : (
                       <p>{userInfo.bio || "No bio yet."}</p>
@@ -308,7 +308,7 @@ export default function Profile({ theme, toggleTheme }) {
       </div>
 
       {showAccountDropdown && (
-        <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
+        <AccountDropDown onClose={handleCloseDropdown} />
       )}
 
       <Footer theme={theme} toggleTheme={toggleTheme} />
