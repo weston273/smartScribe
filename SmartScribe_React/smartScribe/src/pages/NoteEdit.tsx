@@ -86,11 +86,14 @@ export default function NoteEdit({ theme, toggleTheme }) {
             .eq('user_id', user.id);
           if (error) throw error;
         } else {
-          const { error } = await supabase.from('notes').insert({
+          const { data, error } = await supabase.from('notes').insert({
             ...noteData,
             user_id: user.id,
-          });
+          }).select().single();
           if (error) throw error;
+          const savedNotes = JSON.parse(localStorage.getItem('smartscribe-notes') || '[]');
+          const nextNotes = [data, ...savedNotes.filter(note => String(note.id) !== String(data.id))];
+          localStorage.setItem('smartscribe-notes', JSON.stringify(nextNotes));
         }
         navigate('/notes');
       } catch (error) {
@@ -106,14 +109,14 @@ export default function NoteEdit({ theme, toggleTheme }) {
 
     if (isEditing) {
       const updatedNotes = savedNotes.map(n =>
-        n.id === parseInt(id)
+        String(n.id) === String(id)
           ? { ...n, ...noteData, updatedAt: now }
           : n
       );
       localStorage.setItem('smartscribe-notes', JSON.stringify(updatedNotes));
     } else {
       const newNote = {
-        id: Date.now(),
+        id: crypto.randomUUID(),
         ...noteData,
         createdAt: now,
         updatedAt: now,

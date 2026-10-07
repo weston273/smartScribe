@@ -37,16 +37,17 @@ export default function Notes({ theme, toggleTheme }) {
   // 🧩 Merge helper for local/cloud sync
   const mergeNotes = (local, cloud) => {
     const map = new Map();
-    [...local, ...cloud].forEach((n) => map.set(n.id, n));
+    [...local, ...cloud].forEach((n) => map.set(String(n.id), n));
     return Array.from(map.values()).sort(
       (a, b) =>
-        new Date(b.updated_at || b.updatedAt).getTime() -
-        new Date(a.updated_at || a.updatedAt).getTime()
+        new Date(b.updated_at || b.updatedAt || b.created_at || b.createdAt || 0).getTime() -
+        new Date(a.updated_at || a.updatedAt || a.created_at || a.createdAt || 0).getTime()
     );
   };
 
   // ✅ Fetch notes when user logs in
   useEffect(() => {
+    let active = true;
     const fetchNotes = async () => {
       if (!user) return;
 
@@ -61,15 +62,15 @@ export default function Notes({ theme, toggleTheme }) {
         return;
       }
 
-      const localNotes = JSON.parse(
-        localStorage.getItem("smartscribe-notes") || "[]"
-      );
+      const localNotes = JSON.parse(localStorage.getItem("smartscribe-notes") || "[]");
       const merged = mergeNotes(localNotes, data);
+      if (!active) return;
       setNotes(merged);
       localStorage.setItem("smartscribe-notes", JSON.stringify(merged));
     };
 
     fetchNotes();
+    return () => { active = false; };
   }, [user]);
 
   // ✅ Real-time updates
@@ -92,8 +93,10 @@ export default function Notes({ theme, toggleTheme }) {
             .select("*")
             .eq("user_id", user.id)
             .order("updated_at", { ascending: false });
-          setNotes(data);
-          localStorage.setItem("smartscribe-notes", JSON.stringify(data));
+          const localNotes = JSON.parse(localStorage.getItem("smartscribe-notes") || "[]");
+          const merged = mergeNotes(localNotes, data || []);
+          setNotes(merged);
+          localStorage.setItem("smartscribe-notes", JSON.stringify(merged));
         }
       )
       .subscribe();

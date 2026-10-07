@@ -4,67 +4,88 @@ import { ArrowLeft, Edit, Trash2, Share, MoreVertical, Copy, Download, HelpCircl
 import Footer from '../components/Footer';
 import './NoteView.css';
 
-// === Markdown-style renderer (uses your md-* classNames) ===
-function renderNoteContent(content) {
-  let inCodeBlock = false;
-  return content.split('\n').map((line, index) => {
-    // Code blocks (```
-    if (line.trim().startsWith('```')) {
-      inCodeBlock = !inCodeBlock;
-      // Open or close block
-      if (inCodeBlock) {
-        return <div key={index} className="md-code-block"> {/* opening tag only, code lines follow */} </div>;
+function renderInlineMarkdown(text, keyPrefix) {
+  const pattern = /(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|\[[^\]]+\]\([^)]+\))/g;
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+  let key = 0;
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    const token = match[0];
+    if (token.startsWith('**') || token.startsWith('__')) {
+      parts.push(<strong key={`${keyPrefix}-${key++}`}>{token.slice(2, -2)}</strong>);
+    } else if (token.startsWith('*') || token.startsWith('_')) {
+      parts.push(<em key={`${keyPrefix}-${key++}`}>{token.slice(1, -1)}</em>);
+    } else if (token.startsWith('`')) {
+      parts.push(<code key={`${keyPrefix}-${key++}`}>{token.slice(1, -1)}</code>);
+    } else {
+      const link = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(token);
+      const safeHref = link?.[2].trim();
+      if (link && /^(https?:|mailto:|\/|#)/i.test(safeHref)) {
+        parts.push(<a key={`${keyPrefix}-${key++}`} href={safeHref} target={safeHref.startsWith('http') ? '_blank' : undefined} rel={safeHref.startsWith('http') ? 'noreferrer' : undefined}>{link[1]}</a>);
       } else {
-        // closing tag; nothing to return (code lines in-between handled below)
-        return null;
+        parts.push(token);
       }
     }
-    if (inCodeBlock) {
-      // Inside code block - show as pre/code inside md-code-block
-      return <pre key={index} className="md-code-block" style={{margin:0, background: 'none', padding: 0}}><code>{line}</code></pre>;
+    lastIndex = pattern.lastIndex;
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts;
+}
+
+function renderNoteContent(content = '') {
+  const lines = content.split(/\r?\n/);
+  const blocks = [];
+  let index = 0;
+  while (index < lines.length) {
+    const line = lines[index];
+    const fence = /^\s*```(.*)$/.exec(line);
+    if (fence) {
+      const code = [];
+      index += 1;
+      while (index < lines.length && !/^\s*```/.test(lines[index])) code.push(lines[index++]);
+      if (index < lines.length) index += 1;
+      blocks.push(<pre key={`code-${index}`} className="md-code-block"><code>{code.join('\n')}</code></pre>);
+      continue;
+    }
+    if (!line.trim()) { index += 1; continue; }
+
+    const heading = /^(#{1,3})\s+(.+?)\s*#*\s*$/.exec(line);
+    if (heading) {
+      const level = heading[1].length;
+      const headingContent = renderInlineMarkdown(heading[2], `h-${index}`);
+      if (level === 1) blocks.push(<h1 key={`heading-${index}`} className="md-h1">{headingContent}</h1>);
+      else if (level === 2) blocks.push(<h2 key={`heading-${index}`} className="md-h2">{headingContent}</h2>);
+      else blocks.push(<h3 key={`heading-${index}`} className="md-h3">{headingContent}</h3>);
+      index += 1;
+      continue;
     }
 
-    // Markdown headers
-    if (line.startsWith('### ')) {
-      return <h3 key={index} className="md-h3">{line.substring(4)}</h3>;
-    }
-    if (line.startsWith('## ')) {
-      return <h2 key={index} className="md-h2">{line.substring(3)}</h2>;
-    }
-    if (line.startsWith('# ')) {
-      return <h1 key={index} className="md-h1">{line.substring(2)}</h1>;
-    }
-    // List items
-    if (line.startsWith('- ') || line.startsWith('* ')) {
-      return <li key={index} className="md-li">{line.substring(2)}</li>;
-    }
-    // Multiple bold segments per paragraph ( **like this** and **that** )
-    if (line.includes('**')) {
-      const boldRegex = /\*\*(.*?)\*\*/g;
-      let lastIndex = 0;
-      let match;
-      let parts = [];
-      let boldKey = 0;
-      while ((match = boldRegex.exec(line)) !== null) {
-        if (match.index > lastIndex) {
-          parts.push(line.slice(lastIndex, match.index));
-        }
-        // matched phrase is match[1]
-        parts.push(<span key={`${index}-b${boldKey++}`} className="md-bold">{match[1]}</span>
-        );
-        lastIndex = match.index + match[0].length;
+    const listMatch = /^\s*((?:[-*+])|(?:\d+[.)]))\s+(.+)$/.exec(line);
+    if (listMatch) {
+      const ordered = /^\d/.test(listMatch[1]);
+      const items = [];
+      while (index < lines.length) {
+        const item = /^\s*((?:[-*+])|(?:\d+[.)]))\s+(.+)$/.exec(lines[index]);
+        if (!item || /^\d/.test(item[1]) !== ordered) break;
+        items.push(<li key={`item-${index}`} className="md-li">{renderInlineMarkdown(item[2], `li-${index}`)}</li>);
+        index += 1;
       }
-      if (lastIndex < line.length) {
-        parts.push(line.slice(lastIndex));
-      }
-      return <p key={index} className="md-p">{parts}</p>;
+      const List = ordered ? 'ol' : 'ul';
+      blocks.push(<List key={`list-${index}`}>{items}</List>);
+      continue;
     }
-    if (line.trim() === '') {
-      return <br key={index} />;
+
+    const paragraph = [line.trim()];
+    index += 1;
+    while (index < lines.length && lines[index].trim() && !/^(#{1,3})\s+/.test(lines[index]) && !/^\s*((?:[-*+])|(?:\d+[.)]))\s+/.test(lines[index]) && !/^\s*```/.test(lines[index])) {
+      paragraph.push(lines[index].trim());
+      index += 1;
     }
-    // Plain paragraph
-    return <p key={index} className="md-p">{line}</p>;
-  });
+    blocks.push(<p key={`paragraph-${index}`} className="md-p">{renderInlineMarkdown(paragraph.join(' '), `p-${index}`)}</p>);
+  }
+  return blocks;
 }
 
 export default function NoteView({ theme, toggleTheme }) {
