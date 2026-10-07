@@ -2,9 +2,9 @@
  * AI utility functions that communicate with the backend
  */
 
-const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://smartscribe-yjsf.onrender.com' // deployed backend base URL
-  : 'http://localhost:3001'; // local backend base URL (change as needed)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? (
+  import.meta.env.PROD ? 'https://smartscribe-yjsf.onrender.com' : ''
+);
 
 /**
  * Calls the AI backend with given messages.
