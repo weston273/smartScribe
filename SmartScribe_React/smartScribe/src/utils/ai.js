@@ -108,6 +108,15 @@ export async function streamChatResponse(messages, onChunk) {
     return fullResponse;
   } catch (err) {
     console.error('Error streaming from AI:', err);
+    try {
+      const fallbackResponse = await askOpenAI(messages, 'chat');
+      if (fallbackResponse && fallbackResponse !== 'AI did not reply.') {
+        onChunk(fallbackResponse);
+        return fallbackResponse;
+      }
+    } catch {
+      // Keep the UI error generic if both streaming and the standard chat request fail.
+    }
     throw new Error('SmartScribe AI is unavailable right now. Please try again later.');
   }
 }
