@@ -7,22 +7,28 @@ import {
   Calendar,
   Edit3,
   Camera,
-  Settings,
-  Award,
   BookOpen,
-  Clock,
 } from "lucide-react";
-import NavBar1 from "../components/NavBar1";
-import SideBar from "../components/sidebar/SideBar.jsx";
 import Footer from "../components/Footer";
-import AccountDropDown from "../components/account/AccountDropDown.jsx";
 import { supabase } from './../database/supabaseClient.js';
 import "./Profile.css";
 
 export default function Profile({ theme, toggleTheme }) {
-  const [showSideBar, setShowSideBar] = useState(false);
-  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+
   const [isEditing, setIsEditing] = useState(false);
+  const [recentNotes, setRecentNotes] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadNotes = () => {
+      try {
+        const notes = JSON.parse(localStorage.getItem('smartscribe-notes') || '[]');
+        setRecentNotes(Array.isArray(notes) ? [...notes].sort((a, b) => new Date(b.updatedAt || b.updated_at || b.createdAt || b.created_at || 0).getTime() - new Date(a.updatedAt || a.updated_at || a.createdAt || a.created_at || 0).getTime()).slice(0, 5) : []);
+      } catch { setRecentNotes([]); }
+    };
+    loadNotes();
+    window.addEventListener('storage', loadNotes);
+    return () => window.removeEventListener('storage', loadNotes);
+  }, []);
   const [userInfo, setUserInfo] = useState({
     firstname: "",
     lastname: "",
@@ -127,30 +133,10 @@ export default function Profile({ theme, toggleTheme }) {
       setIsEditing(false);
     }
   };
-
-  const toggleSideBar = () => setShowSideBar((prev) => !prev);
-  const toggleAccountDropdown = () => setShowAccountDropdown((prev) => !prev);
-  const handleCloseDropdown = () => setShowAccountDropdown(false);
-
-  const stats = [
-    { icon: BookOpen, label: "Notes Created", value: "127" },
-    { icon: Award, label: "Quizzes Completed", value: "43" },
-    { icon: Clock, label: "Hours Recorded", value: "28.5" },
-    { icon: Settings, label: "AI Summaries", value: "89" },
-  ];
-
   return (
     <div className="page-wrapper">
-      <NavBar1
-        theme={theme}
-        onSideBarToggle={toggleSideBar}
-        onProfileClick={toggleAccountDropdown}
-      />
-
-      <div className="profile-body">
-        {showSideBar && <SideBar onClose={toggleSideBar} />}
-
-        <main className="profile-main">
+<div className="profile-body">
+<main className="profile-main">
           <div className="profile-header">
             <h1 className="profile-title">Profile</h1>
             <button
@@ -289,29 +275,12 @@ export default function Profile({ theme, toggleTheme }) {
             {/* Stats Section */}
             <div className="stats-section">
               <h3 className="stats-title">Your Activity</h3>
-              <div className="stats-grid">
-                {stats.map((stat, index) => (
-                  <div key={index} className="stat-card">
-                    <div className="stat-icon">
-                      <stat.icon size={24} />
-                    </div>
-                    <div className="stat-content">
-                      <div className="stat-value">{stat.value}</div>
-                      <div className="stat-label">{stat.label}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {recentNotes.length ? <div className="profile-activity-list">{recentNotes.map((note, index) => <div className="profile-activity-item" key={note.id || `${note.title}-${index}`}><BookOpen size={18}/><div><strong>{note.title || 'Untitled note'}</strong><small>{note.updatedAt || note.updated_at || note.createdAt || note.created_at ? new Date(note.updatedAt || note.updated_at || note.createdAt || note.created_at).toLocaleDateString() : 'Saved note'}</small></div></div>)}</div> : <p className="profile-activity-empty">No recent activity yet.</p>}
             </div>
           </div>
         </main>
       </div>
-
-      {showAccountDropdown && (
-        <AccountDropDown onClose={handleCloseDropdown} />
-      )}
-
-      <Footer theme={theme} toggleTheme={toggleTheme} />
+<Footer theme={theme} toggleTheme={toggleTheme} />
     </div>
   );
 }

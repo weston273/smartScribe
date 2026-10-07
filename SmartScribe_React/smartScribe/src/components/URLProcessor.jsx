@@ -8,6 +8,8 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated, onNo
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState('summary');
   const [summaryWordCount, setSummaryWordCount] = useState(150);
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const [generatedContent, setGeneratedContent] = useState({
     notes: '',
     summary: '',
@@ -26,15 +28,16 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated, onNo
 
   const processURLContent = async () => {
     if (!url.trim()) {
-      alert('Please enter a valid URL');
+      setError('Enter a website address to get started.');
       return;
     }
 
     if (!isValidUrl(url)) {
-      alert('Please enter a valid URL (including http:// or https://)');
+      setError('Enter a complete address beginning with https:// or http://.');
       return;
     }
 
+    setError(''); setNotice('');
     setIsProcessing(true);
     
     try {
@@ -60,7 +63,7 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated, onNo
 
     } catch (error) {
       console.error('Error processing URL:', error);
-      alert('Error processing URL. Please try again.');
+      setError('We could not analyze that page. Check the address and try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -76,14 +79,15 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated, onNo
     URL.revokeObjectURL(url);
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    alert('Copied to clipboard!');
+  const copyToClipboard = async (text) => {
+    try { await navigator.clipboard.writeText(text); setNotice('Copied to clipboard.'); }
+    catch { setError('Copy is unavailable in this browser. You can still select the result text.'); }
   };
 
   const clearResults = () => {
     setGeneratedContent({ notes: '', summary: '', quiz: [], title: '' });
     setUrl('');
+    setError(''); setNotice('');
   };
 
   if (!isOpen) return null;
@@ -99,7 +103,7 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated, onNo
               <p>Analyze websites and generate notes, summaries, and quizzes</p>
             </div>
           </div>
-          <button className="close-btn" onClick={onClose}>
+          <button className="close-btn" onClick={onClose} aria-label="Close URL summarizer">
             <X size={20} />
           </button>
         </div>
@@ -112,7 +116,8 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated, onNo
                 type="text"
                 placeholder="Enter URL to analyze (e.g., https://example.com/article)"
                 value={url}
-                onChange={(e) => setUrl(e.target.value)}
+                onChange={(e) => { setUrl(e.target.value); setError(''); }}
+                aria-label="Website address"
                 className="url-input"
                 onKeyPress={(e) => e.key === 'Enter' && processURLContent()}
               />
@@ -162,6 +167,10 @@ export default function URLProcessor({ isOpen, onClose, onSummaryGenerated, onNo
               )}
             </div>
           </div>
+
+          {error && <p className="inline-error" role="alert">{error}</p>}
+          {notice && <p className="inline-success" role="status">{notice}</p>}
+          {isProcessing && <p className="processor-status" role="status">Reading the page and preparing your summary, notes and quiz…</p>}
 
           {generatedContent.summary && (
             <div className="results-section">

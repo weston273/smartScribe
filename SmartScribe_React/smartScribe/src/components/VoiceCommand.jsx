@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Mic, MicOff, Volume2, VolumeX, X, MessageCircle, Settings } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Mic, MicOff, Volume2, VolumeX, X } from 'lucide-react';
 import { useVoice } from './contexts/VoiceContext';
-import { useLanguage } from './contexts/LanguageContext';
 import './VoiceCommand.css';
 
 export default function VoiceCommand({ isOpen, onClose }) {
   const [commandHistory, setCommandHistory] = useState([]);
   const [currentLanguage, setCurrentLanguage] = useState('en-US');
-  const [isWakeWordEnabled, setIsWakeWordEnabled] = useState(true);
-  const [sensitivity, setSensitivity] = useState(0.8);
 
   const {
     isListening,
@@ -19,10 +16,9 @@ export default function VoiceCommand({ isOpen, onClose }) {
     stopSpeaking,
     transcript,
     clearTranscript,
-    isSupported
+    isSupported,
+    voiceError
   } = useVoice();
-
-  const { supportedLanguages } = useLanguage();
 
   const voiceLanguages = [
     { code: 'en-US', name: 'English (US)', flag: '🇺🇸' },
@@ -37,22 +33,7 @@ export default function VoiceCommand({ isOpen, onClose }) {
     { code: 'zh-CN', name: 'Chinese (Simplified)', flag: '🇨🇳' }
   ];
 
-  useEffect(() => {
-    if (transcript && transcript.trim()) {
-      const newCommand = {
-        id: Date.now(),
-        text: transcript,
-        timestamp: new Date(),
-        language: currentLanguage
-      };
-      setCommandHistory(prev => [newCommand, ...prev.slice(0, 9)]); // Keep last 10 commands
-      
-      // Process the command
-      processVoiceCommand(transcript);
-    }
-  }, [transcript, currentLanguage]);
-
-  const processVoiceCommand = (command) => {
+  const processVoiceCommand = useCallback((command) => {
     const lowerCommand = command.toLowerCase();
     
     // Basic voice commands
@@ -79,7 +60,15 @@ export default function VoiceCommand({ isOpen, onClose }) {
     } else {
       speak('I understand you said: ' + command + '. How can I help you with that?');
     }
-  };
+  }, [speak]);
+
+  useEffect(() => {
+    if (transcript && transcript.trim()) {
+      const newCommand = { id: Date.now(), text: transcript, timestamp: new Date(), language: currentLanguage };
+      setCommandHistory(prev => [newCommand, ...prev.slice(0, 9)]);
+      processVoiceCommand(transcript);
+    }
+  }, [transcript, currentLanguage, processVoiceCommand]);
 
   const handleVoiceToggle = () => {
     if (isListening) {
@@ -107,10 +96,10 @@ export default function VoiceCommand({ isOpen, onClose }) {
   if (!isSupported) {
     return (
       <div className="voice-command-overlay">
-        <div className="voice-command-modal">
+        <div className="voice-command-modal" role="dialog" aria-modal="true" aria-label="Voice commands">
           <div className="voice-command-header">
             <h2>Voice Commands</h2>
-            <button className="close-btn" onClick={onClose}>
+            <button className="close-btn" onClick={onClose} aria-label="Close voice commands">
               <X size={20} />
             </button>
           </div>
@@ -127,10 +116,10 @@ export default function VoiceCommand({ isOpen, onClose }) {
 
   return (
     <div className="voice-command-overlay">
-      <div className="voice-command-modal">
+      <div className="voice-command-modal" role="dialog" aria-modal="true" aria-label="Voice commands">
         <div className="voice-command-header">
           <h2>Voice Commands</h2>
-          <button className="close-btn" onClick={onClose}>
+          <button className="close-btn" onClick={onClose} aria-label="Close voice commands">
             <X size={20} />
           </button>
         </div>
@@ -142,6 +131,7 @@ export default function VoiceCommand({ isOpen, onClose }) {
               <button
                 className={`voice-btn ${isListening ? 'listening' : ''}`}
                 onClick={handleVoiceToggle}
+                aria-pressed={isListening}
               >
                 {isListening ? <MicOff size={24} /> : <Mic size={24} />}
                 <span>{isListening ? 'Stop Listening' : 'Start Listening'}</span>
@@ -150,6 +140,7 @@ export default function VoiceCommand({ isOpen, onClose }) {
               <button
                 className={`voice-btn ${isSpeaking ? 'speaking' : ''}`}
                 onClick={handleSpeakToggle}
+                aria-pressed={isSpeaking}
               >
                 {isSpeaking ? <VolumeX size={24} /> : <Volume2 size={24} />}
                 <span>{isSpeaking ? 'Stop Speaking' : 'Test Voice'}</span>
@@ -162,6 +153,8 @@ export default function VoiceCommand({ isOpen, onClose }) {
                 <span>Listening... Speak now</span>
               </div>
             )}
+
+            {voiceError && <p className="inline-error" role="alert">{voiceError}</p>}
 
             {transcript && (
               <div className="current-transcript">
@@ -189,16 +182,6 @@ export default function VoiceCommand({ isOpen, onClose }) {
               </select>
             </div>
 
-            <div className="setting-group">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={isWakeWordEnabled}
-                  onChange={(e) => setIsWakeWordEnabled(e.target.checked)}
-                />
-                Enable wake word ("SmartScribe")
-              </label>
-            </div>
           </div>
 
           {/* Command Examples */}

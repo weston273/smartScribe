@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Settings as SettingsIcon, 
   User, 
@@ -15,43 +15,25 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
-import NavBar1 from '../components/NavBar1';
-import SideBar from '../components/sidebar/SideBar.jsx';
 import Footer from '../components/Footer';
-import AccountDropDown from '../components/account/AccountDropDown.jsx';
 import './Settings.css'
 
-export default function Settings({ theme, toggleTheme }) {
-  const [showSideBar, setShowSideBar] = useState(false);
-  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
-  const [settings, setSettings] = useState({
-    notifications: {
-      email: true,
-      push: false,
-      sound: true,
-      reminders: true
-    },
-    privacy: {
-      profileVisible: true,
-      dataCollection: false,
-      analytics: true
-    },
-    appearance: {
-      theme: theme,
-      fontSize: 'medium',
-      language: 'en'
-    },
-    audio: {
-      autoSave: true,
-      quality: 'high',
-      noiseReduction: true
-    }
+const defaultSettings = {
+  notifications: { email: true, push: false, sound: true, reminders: true },
+  privacy: { profileVisible: true, dataCollection: false, analytics: true },
+  appearance: { theme: 'dark', fontSize: 'medium', language: 'en' },
+  audio: { autoSave: true, quality: 'high', noiseReduction: true }
+};
+
+export default function Settings({ theme, setTheme, palette, setPalette, fontSize, setFontSize }) {
+
+  const [settings, setSettings] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('smartscribe-settings') || '{}');
+      return { ...defaultSettings, ...saved, notifications: { ...defaultSettings.notifications, ...saved.notifications }, privacy: { ...defaultSettings.privacy, ...saved.privacy }, audio: { ...defaultSettings.audio, ...saved.audio } };
+    } catch { return defaultSettings; }
   });
-
-  const toggleSideBar = () => setShowSideBar(prev => !prev);
-  const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
-  const handleCloseDropdown = () => setShowAccountDropdown(false);
-
+  useEffect(() => { localStorage.setItem('smartscribe-settings', JSON.stringify(settings)); }, [settings]);
   const updateSetting = (category, key, value) => {
     setSettings(prev => ({
       ...prev,
@@ -62,10 +44,7 @@ export default function Settings({ theme, toggleTheme }) {
     }));
   };
 
-  const handleThemeChange = (newTheme) => {
-    updateSetting('appearance', 'theme', newTheme);
-    toggleTheme();
-  };
+  const handleThemeChange = (newTheme) => setTheme(newTheme);
 
   const settingSections = [
     {
@@ -160,7 +139,7 @@ export default function Settings({ theme, toggleTheme }) {
           key: 'fontSize',
           label: 'Font Size',
           description: 'Choose your preferred text size',
-          value: settings.appearance.fontSize,
+          value: fontSize,
           options: [
             { value: 'small', label: 'Small' },
             { value: 'medium', label: 'Medium' },
@@ -170,10 +149,13 @@ export default function Settings({ theme, toggleTheme }) {
         {
           type: 'theme',
           label: 'Theme',
-          description: 'Choose between light and dark mode',
+          description: 'Choose a light or dark surface treatment',
           value: settings.appearance.theme
         }
       ]
+    },
+    {
+      id: 'palette', title: 'Color palette', icon: Palette, items: []
     },
     {
       id: 'audio',
@@ -212,12 +194,8 @@ export default function Settings({ theme, toggleTheme }) {
 
   return (
     <div className="page-wrapper">
-      <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-
-      <div className="settings-body">
-        {showSideBar && <SideBar onClose={toggleSideBar} />}
-        
-        <main className="settings-main">
+<div className="settings-body">
+<main className="settings-main">
           <div className="settings-header">
             <h1 className="settings-title">
               <SettingsIcon size={32} />
@@ -257,7 +235,8 @@ export default function Settings({ theme, toggleTheme }) {
                         {item.type === 'select' && (
                           <select
                             value={item.value}
-                            onChange={(e) => updateSetting(section.id, item.key, e.target.value)}
+                            aria-label={item.label}
+                            onChange={(e) => item.key === 'fontSize' ? setFontSize(e.target.value) : updateSetting(section.id, item.key, e.target.value)}
                             className="setting-select"
                           >
                             {item.options.map(option => (
@@ -271,14 +250,14 @@ export default function Settings({ theme, toggleTheme }) {
                         {item.type === 'theme' && (
                           <div className="theme-selector">
                             <button
-                              className={`theme-btn ${item.value === 'light' ? 'active' : ''}`}
+                              type="button" aria-pressed={theme === 'light'} className={`theme-btn ${theme === 'light' ? 'active' : ''}`}
                               onClick={() => handleThemeChange('light')}
                             >
                               <Sun size={20} />
                               Light
                             </button>
                             <button
-                              className={`theme-btn ${item.value === 'dark' ? 'active' : ''}`}
+                              type="button" aria-pressed={theme === 'dark'} className={`theme-btn ${theme === 'dark' ? 'active' : ''}`}
                               onClick={() => handleThemeChange('dark')}
                             >
                               <Moon size={20} />
@@ -296,6 +275,9 @@ export default function Settings({ theme, toggleTheme }) {
                     </div>
                   ))}
                 </div>
+                {section.id === 'palette' && <div className="palette-options" role="group" aria-label="Color palette">
+                  {[['sage','Sage'],['ocean','Ocean'],['clay','Clay'],['plum','Plum']].map(([value,label]) => <button key={value} type="button" className={`palette-option palette-${value}${palette === value ? ' active' : ''}`} onClick={() => setPalette(value)} aria-pressed={palette === value}><span className="palette-swatch"/><span>{label}</span></button>)}
+                </div>}
               </div>
             ))}
 
@@ -337,12 +319,7 @@ export default function Settings({ theme, toggleTheme }) {
           </div>
         </main>
       </div>
-
-      {showAccountDropdown && (
-        <AccountDropDown onClose={handleCloseDropdown} />
-      )}
-
-      <Footer theme={theme} toggleTheme={toggleTheme} />
+<Footer />
     </div>
   );
 }

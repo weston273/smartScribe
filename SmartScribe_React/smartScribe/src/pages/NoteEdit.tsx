@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Bot } from 'lucide-react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeftIcon, EditIcon, TrashIcon, DownloadIcon, CopyIcon } from '../components/icons/Icons.jsx';
-import NavBar1 from '../components/NavBar1.jsx';
-import SideBar from '../components/sidebar/SideBar.jsx';
 import Footer from '../components/Footer.jsx';
-import AccountDropDown from '../components/account/AccountDropDown.jsx';
 import { useLanguage } from '../components/contexts/LanguageContext.jsx';
 import { useAI } from '../components/contexts/AIContext.jsx';
 import { supabase } from '../database/supabaseClient.js';
@@ -17,8 +14,7 @@ export default function NoteEdit({ theme, toggleTheme }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = Boolean(id);
-  const [showSideBar, setShowSideBar] = useState(false);
-  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
@@ -27,11 +23,6 @@ export default function NoteEdit({ theme, toggleTheme }) {
   const [aiError, setAiError] = useState('');
   const { t } = useLanguage();
   const { generateNotes } = useAI();
-
-  const toggleSideBar = () => setShowSideBar(prev => !prev);
-  const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
-  const handleCloseDropdown = () => setShowAccountDropdown(false);
-
   // ✅ Load existing note from Supabase or localStorage
   useEffect(() => {
     const loadNote = async () => {
@@ -204,12 +195,8 @@ export default function NoteEdit({ theme, toggleTheme }) {
   // ✅ UI Layout
   return (
     <div className="page-wrapper">
-      <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-
-      <div className="note-edit-body">
-        {showSideBar && <SideBar onClose={toggleSideBar} />}
-
-        <main className="note-edit-main">
+<div className="note-edit-body">
+<main className="note-edit-main">
           <div className="note-edit-header">
             <div className="header-left">
               <Link to="/notes" className="btn btn-icon btn-ghost">
@@ -340,9 +327,7 @@ export default function NoteEdit({ theme, toggleTheme }) {
           </div>
         </main>
       </div>
-
-      {showAccountDropdown && <AccountDropDown onClose={handleCloseDropdown} />}
-      <Footer theme={theme} toggleTheme={toggleTheme} />
+<Footer theme={theme} toggleTheme={toggleTheme} />
     </div>
   );
 }

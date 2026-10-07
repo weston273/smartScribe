@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Save, ArrowLeft, Trash2, Bot, FileText, HelpCircle, Loader } from 'lucide-react';
-import NavBar1 from '../components/NavBar1';
-import SideBar from '../components/sidebar/SideBar';
 import Footer from '../components/Footer';
-import AccountDropDown from '../components/account/AccountDropDown';
 import { useAI } from '../components/contexts/AIContext';
 
 import './NoteEditor.css';
@@ -14,9 +11,6 @@ export default function NoteEditor({ theme, toggleTheme }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = id && id !== 'new';
-  
-  const [showSideBar, setShowSideBar] = useState(false);
-  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -24,11 +18,6 @@ export default function NoteEditor({ theme, toggleTheme }) {
   const [showAIOptions, setShowAIOptions] = useState(false);
 
   const { generateSummary, generateNotes, generateQuiz, isProcessing } = useAI();
-
-  const toggleSideBar = () => setShowSideBar(prev => !prev);
-  const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
-  const handleCloseDropdown = () => setShowAccountDropdown(false);
-
   useEffect(() => {
     if (isEditing) {
       // Load existing note
@@ -162,12 +151,8 @@ export default function NoteEditor({ theme, toggleTheme }) {
 
   return (
     <div className="page-wrapper">
-      <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-
-      <div className="note-editor-body">
-        {showSideBar && <SideBar theme={theme} onClose={toggleSideBar} />}
-
-        <main className="note-editor-main">
+<div className="note-editor-body">
+<main className="note-editor-main">
           <div className="editor-header">
             <div className="header-left">
               <Link to="/notes" className="back-btn">
@@ -269,12 +254,7 @@ export default function NoteEditor({ theme, toggleTheme }) {
           </div>
         </main>
       </div>
-
-      {showAccountDropdown && (
-        <AccountDropDown theme={theme} onClose={handleCloseDropdown} />
-      )}
-
-      <Footer theme={theme} toggleTheme={toggleTheme} />
+<Footer theme={theme} toggleTheme={toggleTheme} />
     </div>
   );
 }

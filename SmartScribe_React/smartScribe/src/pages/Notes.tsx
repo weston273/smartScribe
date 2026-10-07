@@ -10,10 +10,7 @@ import {
   QuestionIcon,
   NotesIcon,
 } from "../components/icons/Icons";
-import NavBar1 from "../components/NavBar1";
-import SideBar from "../components/sidebar/SideBar.jsx";
 import Footer from "../components/Footer";
-import AccountDropDown from "../components/account/AccountDropDown.jsx";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { supabase } from "../database/supabaseClient.js";
 import { useAuth } from "../components/contexts/AuthContext";
@@ -29,8 +26,7 @@ export default function Notes({ theme, toggleTheme }) {
     const saved = localStorage.getItem("smartscribe-notes");
     return saved ? JSON.parse(saved) : [];
   });
-  const [showSideBar, setShowSideBar] = useState(false);
-  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [selectedNoteForQuiz, setSelectedNoteForQuiz] = useState(null);
   const [viewMode, setViewMode] = useState(
@@ -247,16 +243,8 @@ export default function Notes({ theme, toggleTheme }) {
 
   return (
     <div className="page-wrapper">
-      <NavBar1
-        theme={theme}
-        onSideBarToggle={() => setShowSideBar((p) => !p)}
-        onProfileClick={() => setShowAccountDropdown((p) => !p)}
-      />
-
-      <div className="notes-body">
-        {showSideBar && <SideBar onClose={() => setShowSideBar(false)} />}
-
-        <main className="notes-main">
+<div className="notes-body">
+<main className="notes-main">
           {/* HEADER */}
           <div className="notes-header">
             <div className="notes-title-section">
@@ -400,12 +388,6 @@ export default function Notes({ theme, toggleTheme }) {
             </div>
           </div>
         </div>
-      )}
-
-      {showAccountDropdown && (
-        <AccountDropDown
-          onClose={() => setShowAccountDropdown(false)}
-        />
       )}
 
       <Footer theme={theme} toggleTheme={toggleTheme} />

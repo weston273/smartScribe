@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Edit, Trash2, Share, MoreVertical, Copy, Download, HelpCircle } from 'lucide-react';
-import NavBar1 from '../components/NavBar1';
-import SideBar from '../components/sidebar/SideBar.jsx';
 import Footer from '../components/Footer';
-import AccountDropDown from '../components/account/AccountDropDown.jsx';
 import './NoteView.css';
 
 // === Markdown-style renderer (uses your md-* classNames) ===
@@ -73,15 +70,9 @@ function renderNoteContent(content) {
 export default function NoteView({ theme, toggleTheme }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [showSideBar, setShowSideBar] = useState(false);
-  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+
   const [showActions, setShowActions] = useState(false);
   const [note, setNote] = useState(null);
-
-  const toggleSideBar = () => setShowSideBar(prev => !prev);
-  const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
-  const handleCloseDropdown = () => setShowAccountDropdown(false);
-
   useEffect(() => {
     // Read notes from localStorage
     const savedNotes = JSON.parse(localStorage.getItem('smartscribe-notes') || '[]');
@@ -129,8 +120,7 @@ export default function NoteView({ theme, toggleTheme }) {
   if (!note) {
     return (
       <div className="page-wrapper">
-        <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-        <div className="note-view-body">
+<div className="note-view-body">
           <main className="note-view-main">
             <div className="note-not-found">
               <h1>Note not found</h1>
@@ -148,12 +138,8 @@ export default function NoteView({ theme, toggleTheme }) {
 
   return (
     <div className="page-wrapper">
-      <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-
-      <div className="note-view-body">
-        {showSideBar && <SideBar onClose={toggleSideBar} />}
-        
-        <main className="note-view-main">
+<div className="note-view-body">
+<main className="note-view-main">
           <div className="note-view-header">
             <div className="header-left">
               <Link to="/notes" className="back-btn">
@@ -234,12 +220,7 @@ export default function NoteView({ theme, toggleTheme }) {
           </div>
         </main>
       </div>
-
-      {showAccountDropdown && (
-        <AccountDropDown onClose={handleCloseDropdown} />
-      )}
-
-      <Footer theme={theme} toggleTheme={toggleTheme} />
+<Footer theme={theme} toggleTheme={toggleTheme} />
     </div>
   );
 }

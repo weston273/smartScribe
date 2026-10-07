@@ -8,6 +8,8 @@ export default function VideoProcessor({ isOpen, onClose, onNotesGenerated, onSu
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState('notes');
   const [summaryWordCount, setSummaryWordCount] = useState(150);
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const [generatedContent, setGeneratedContent] = useState({
     notes: '',
     summary: '',
@@ -15,24 +17,24 @@ export default function VideoProcessor({ isOpen, onClose, onNotesGenerated, onSu
   });
 
   const extractVideoId = (url) => {
-    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const regex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/;
     const match = url.match(regex);
     return match ? match[1] : null;
   };
 
   const processVideo = async () => {
     if (!videoUrl.trim()) {
-      alert('Please enter a valid video URL');
+      setError('Paste a YouTube video address to get started.');
       return;
     }
 
     const videoId = extractVideoId(videoUrl);
     if (!videoId) {
-      alert('Please enter a valid YouTube URL');
+      setError('Enter a valid YouTube video address.');
       return;
     }
 
-    setIsProcessing(true);
+    setError(''); setNotice(''); setIsProcessing(true);
 
     try {
       // Create content context for AI processing
@@ -64,7 +66,7 @@ Focus on extracting educational value and creating structured learning materials
 
     } catch (error) {
       console.error('Error processing video:', error);
-      alert('Error processing video. Please try again.');
+      setError('We could not prepare this video. Check the address and try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -74,9 +76,9 @@ Focus on extracting educational value and creating structured learning materials
     setActiveTab(tab);
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    alert('Copied to clipboard!');
+  const copyToClipboard = async (text) => {
+    try { await navigator.clipboard.writeText(text); setNotice('Copied to clipboard.'); }
+    catch { setError('Copy is unavailable in this browser. You can still select the result text.'); }
   };
 
   const downloadContent = (content, filename, type = 'txt') => {
@@ -102,7 +104,7 @@ Focus on extracting educational value and creating structured learning materials
               <p>Extract notes, summaries, and quizzes from videos using AI</p>
             </div>
           </div>
-          <button className="close-btn" onClick={onClose}>
+          <button className="close-btn" onClick={onClose} aria-label="Close video summarizer">
             <X size={20} />
           </button>
         </div>
@@ -116,6 +118,7 @@ Focus on extracting educational value and creating structured learning materials
                 placeholder="Paste YouTube video URL here..."
                 value={videoUrl}
                 onChange={(e) => setVideoUrl(e.target.value)}
+                aria-label="YouTube video address"
                 className="video-url-input"
                 onKeyPress={(e) => e.key === 'Enter' && processVideo()}
               />
@@ -157,6 +160,10 @@ Focus on extracting educational value and creating structured learning materials
               )}
             </button>
           </div>
+
+          {error && <p className="inline-error" role="alert">{error}</p>}
+          {notice && <p className="inline-success" role="status">{notice}</p>}
+          {isProcessing && <p className="processor-status" role="status">Preparing learning materials from your video…</p>}
 
           {generatedContent.notes && (
             <div className="results-section">

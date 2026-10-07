@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Settings, RefreshCw, Brain, XCircle } from 'lucide-react';
-import NavBar1 from '../components/NavBar1';
-import SideBar from '../components/sidebar/SideBar';
 import Footer from '../components/Footer';
-import AccountDropDown from '../components/account/AccountDropDown';
 import { generateQuiz, generateTopicQuiz } from '../utils/ai';
 import './Quiz.css';
 
 export default function Quiz({ theme, toggleTheme, fromNotes = false, notesContent = '' }) {
-  const [showSideBar, setShowSideBar] = useState(false);
-  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+
   const [showSettings, setShowSettings] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -24,11 +20,6 @@ export default function Quiz({ theme, toggleTheme, fromNotes = false, notesConte
     topic: '',
     useNotes: fromNotes
   });
-
-  const toggleSideBar = () => setShowSideBar(prev => !prev);
-  const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
-  const handleCloseDropdown = () => setShowAccountDropdown(false);
-
   useEffect(() => {
     if (fromNotes && notesContent) {
       setQuizSettings(prev => ({ ...prev, useNotes: true }));
@@ -137,9 +128,7 @@ export default function Quiz({ theme, toggleTheme, fromNotes = false, notesConte
   if (showSettings) {
     return (
       <div className="page-wrapper">
-        <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-        {showSideBar && <SideBar onClose={toggleSideBar} />}
-        <main className="quiz-main">
+<main className="quiz-main">
           <div className="quiz-settings">
             <div className="settings-header">
               <div className="icon-wrapper"><Brain size={48} className="settings-icon" /></div>
@@ -213,8 +202,7 @@ export default function Quiz({ theme, toggleTheme, fromNotes = false, notesConte
             </div>
           </div>
         </main>
-        {showAccountDropdown && <AccountDropDown onClose={handleCloseDropdown} />}
-        <Footer theme={theme} toggleTheme={toggleTheme} />
+<Footer theme={theme} toggleTheme={toggleTheme} />
       </div>
     );
   }
@@ -256,9 +244,7 @@ export default function Quiz({ theme, toggleTheme, fromNotes = false, notesConte
 
     return (
       <div className="page-wrapper">
-        <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown}/>
-        {showSideBar && <SideBar onClose={toggleSideBar}/>}
-        <main className="quiz-main">
+<main className="quiz-main">
           <div className="quiz-results">
             <div className="results-header">
               <div className="score-circle">
@@ -299,8 +285,7 @@ export default function Quiz({ theme, toggleTheme, fromNotes = false, notesConte
             </div>
           </div>
         </main>
-        {showAccountDropdown && <AccountDropDown onClose={handleCloseDropdown}/>}
-        <Footer theme={theme} toggleTheme={toggleTheme}/>
+<Footer theme={theme} toggleTheme={toggleTheme}/>
       </div>
     );
   }
@@ -310,9 +295,7 @@ export default function Quiz({ theme, toggleTheme, fromNotes = false, notesConte
 
   return (
     <div className="page-wrapper">
-      <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown}/>
-      {showSideBar && <SideBar onClose={toggleSideBar}/>}
-      <main className="quiz-main">
+<main className="quiz-main">
         <div className="quiz-container">
           <div className="quiz-header">
             <div className="quiz-info">
@@ -351,8 +334,7 @@ export default function Quiz({ theme, toggleTheme, fromNotes = false, notesConte
           </div>
         </div>
       </main>
-      {showAccountDropdown && <AccountDropDown onClose={handleCloseDropdown}/>}
-      <Footer theme={theme} toggleTheme={toggleTheme}/>
+<Footer theme={theme} toggleTheme={toggleTheme}/>
     </div>
   );
 }

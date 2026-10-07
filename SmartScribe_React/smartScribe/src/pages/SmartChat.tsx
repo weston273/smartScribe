@@ -1,17 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Send as SendIcon, Mic as MicIcon, MicOff as MicOffIcon, Bot as BotIcon, UserRound as UserIcon, Copy as CopyIcon, Download as DownloadIcon, Trash2 as TrashIcon, Settings as SettingsIcon } from 'lucide-react';
-import NavBar1 from '../components/NavBar1';
-import SideBar from '../components/sidebar/SideBar.jsx';
 import Footer from '../components/Footer';
-import AccountDropDown from '../components/account/AccountDropDown.jsx';
 import { streamChatResponse } from '../utils/ai';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import './SmartChat.css';
 
 export default function SmartChat({ theme, toggleTheme }) {
-  const [showSideBar, setShowSideBar] = useState(false);
-  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -22,11 +18,6 @@ export default function SmartChat({ theme, toggleTheme }) {
   const recognitionRef = useRef(null);
   const inputRef = useRef(null);
   const { t } = useLanguage();
-
-  const toggleSideBar = () => setShowSideBar(prev => !prev);
-  const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
-  const handleCloseDropdown = () => setShowAccountDropdown(false);
-
   // Initialize speech recognition
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -191,12 +182,8 @@ export default function SmartChat({ theme, toggleTheme }) {
 
   return (
     <div className="page-wrapper">
-      <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-
-      <div className="smart-chat-body">
-        {showSideBar && <SideBar onClose={toggleSideBar} />}
-        
-        <main className="smart-chat-main">
+<div className="smart-chat-body">
+<main className="smart-chat-main">
           <div className="chat-header">
             <div className="chat-title">
               <BotIcon size={28} className="chat-icon" />
@@ -363,12 +350,7 @@ export default function SmartChat({ theme, toggleTheme }) {
           </div>
         </main>
       </div>
-
-      {showAccountDropdown && (
-        <AccountDropDown onClose={handleCloseDropdown} />
-      )}
-
-      <Footer theme={theme} toggleTheme={toggleTheme} />
+<Footer theme={theme} toggleTheme={toggleTheme} />
     </div>
   );
 }

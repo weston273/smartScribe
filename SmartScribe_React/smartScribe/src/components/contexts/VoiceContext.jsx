@@ -9,6 +9,7 @@ export const VoiceProvider = ({ children }) => {
   const [transcript, setTranscript] = useState('');
   const [isSupported, setIsSupported] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceError, setVoiceError] = useState('');
   const recognitionRef = useRef(null);
   const utteranceRef = useRef(null);
 
@@ -21,7 +22,7 @@ export const VoiceProvider = ({ children }) => {
       recognitionRef.current = new SpeechRecognition();
       
       recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = true;
+      recognitionRef.current.interimResults = false;
       recognitionRef.current.lang = 'en-US';
 
       recognitionRef.current.onstart = () => {
@@ -50,6 +51,9 @@ export const VoiceProvider = ({ children }) => {
 
       recognitionRef.current.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
+        setVoiceError(event.error === 'not-allowed' || event.error === 'service-not-allowed'
+          ? 'Microphone access is blocked. Allow microphone access in your browser settings and try again.'
+          : 'Voice input stopped unexpectedly. Try starting it again.');
         setIsListening(false);
       };
     }
@@ -67,12 +71,14 @@ export const VoiceProvider = ({ children }) => {
 
   const startListening = (languageCode) => {
     if (recognitionRef.current && !isListening) {
+      setVoiceError('');
       setTranscript('');
       if (languageCode) {
         recognitionRef.current.lang = languageCode;
       }
       setIsListening(true);
-      recognitionRef.current.start();
+      try { recognitionRef.current.start(); }
+      catch { setIsListening(false); setVoiceError('Voice input could not start. Check microphone access and try again.'); }
     }
   };
 
@@ -134,6 +140,7 @@ export const VoiceProvider = ({ children }) => {
     transcript,
     isSupported,
     isSpeaking,
+    voiceError,
     startListening,
     stopListening,
     toggleListening,

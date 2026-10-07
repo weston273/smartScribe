@@ -1,15 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { Mic, Play, Pause, Square, Download, Trash2, Volume2, Bot, FileText, Brain, Tags, Target, X } from 'lucide-react';
 import { convertAudioToNotes } from '../utils/ai';
-import NavBar1 from '../components/NavBar1';
-import SideBar from '../components/sidebar/SideBar.jsx';
 import Footer from '../components/Footer';
-import AccountDropDown from '../components/account/AccountDropDown.jsx';
 import './Record.css'
 
 export default function Record({ theme, toggleTheme }) {
-  const [showSideBar, setShowSideBar] = useState(false);
-  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -23,11 +19,6 @@ export default function Record({ theme, toggleTheme }) {
   const audioChunksRef = useRef([]);
   const timerRef = useRef(null);
   const streamRef = useRef(null);
-
-  const toggleSideBar = () => setShowSideBar(prev => !prev);
-  const toggleAccountDropdown = () => setShowAccountDropdown(prev => !prev);
-  const handleCloseDropdown = () => setShowAccountDropdown(false);
-
   const startRecording = async () => {
     try {
       setRecordingError('');
@@ -204,12 +195,8 @@ ${aiGeneratedContent}
 
   return (
     <div className="page-wrapper">
-      <NavBar1 theme={theme} onSideBarToggle={toggleSideBar} onProfileClick={toggleAccountDropdown} />
-
-      <div className="record-body">
-        {showSideBar && <SideBar onClose={toggleSideBar} />}
-        
-        <main className="record-main">
+<div className="record-body">
+<main className="record-main">
           <div className="record-header">
             <h1 className="record-title">Voice Recorder</h1>
             <p className="record-subtitle">Capture your thoughts and ideas with AI-powered recording</p>
@@ -358,12 +345,7 @@ ${aiGeneratedContent}
           </div>
         </main>
       </div>
-
-      {showAccountDropdown && (
-        <AccountDropDown onClose={handleCloseDropdown} />
-      )}
-
-      <Footer theme={theme} toggleTheme={toggleTheme} />
+<Footer theme={theme} toggleTheme={toggleTheme} />
     </div>
   );
 }

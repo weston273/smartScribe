@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, Send, Mic, MicOff, Volume2, VolumeX, X, Bot } from 'lucide-react';
+import { Send, Mic, MicOff, Volume2, VolumeX, X, Bot, Minus, Maximize2 } from 'lucide-react';
 import { useAI } from './contexts/AIContext';
 import { useVoice } from './contexts/VoiceContext';
-import { useLanguage } from './contexts/LanguageContext';
 import './AIAssistant.css';
 
 export default function AIAssistant({ isOpen, onClose, context }) {
@@ -17,7 +16,7 @@ export default function AIAssistant({ isOpen, onClose, context }) {
 
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [messageAnimations, setMessageAnimations] = useState({});
+  const [isMinimized, setIsMinimized] = useState(false);
   const messagesEndRef = useRef(null);
 
   const { chatWithAI, isProcessing } = useAI();
@@ -32,8 +31,6 @@ export default function AIAssistant({ isOpen, onClose, context }) {
     clearTranscript
   } = useVoice();
 
-  const { translate } = useLanguage();
-
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -46,22 +43,12 @@ export default function AIAssistant({ isOpen, onClose, context }) {
     }
   }, [transcript]);
 
-  // Initialize animations for new messages
   useEffect(() => {
-    const newAnimations = {};
-    messages.forEach((message, index) => {
-      if (!messageAnimations[message.id]) {
-        newAnimations[message.id] = {
-          shouldAnimate: true,
-          delay: index * 100
-        };
-      }
-    });
-    
-    if (Object.keys(newAnimations).length > 0) {
-      setMessageAnimations(prev => ({ ...prev, ...newAnimations }));
-    }
-  }, [messages]);
+    if (!isOpen) return;
+    const onKeyDown = (event) => { if (event.key === 'Escape') onClose?.(); };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isOpen, onClose]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isProcessing) return;
@@ -129,8 +116,8 @@ export default function AIAssistant({ isOpen, onClose, context }) {
   if (!isOpen) return null;
 
   return (
-    <div className="ai-assistant-overlay">
-      <div className="ai-assistant-container">
+    <div className={`ai-assistant-overlay${isMinimized ? ' is-minimized' : ''}`}>
+      <section className={`ai-assistant-container${isMinimized ? ' is-minimized' : ''}`} role="dialog" aria-label="AI Assistant" aria-modal="false">
         <div className="ai-assistant-header">
           <div className="assistant-info">
             <div className="assistant-icon-wrapper">
@@ -165,13 +152,19 @@ export default function AIAssistant({ isOpen, onClose, context }) {
               </p>
             </div>
           </div>
-          <button className="close-btn" onClick={onClose}>
+          <div className="assistant-window-actions">
+          <button className="assistant-window-btn" type="button" onClick={() => setIsMinimized(value => !value)} aria-label={isMinimized ? 'Expand assistant' : 'Minimize assistant'} title={isMinimized ? 'Expand' : 'Minimize'}>
+            {isMinimized ? <Maximize2 size={18}/> : <Minus size={18}/>}
+          </button>
+          <button className="close-btn" type="button" onClick={onClose} aria-label="Close AI Assistant" title="Close assistant">
             <X size={20} />
             <div className="button-ripple"></div>
             <div className="close-hover-effect"></div>
           </button>
+          </div>
         </div>
 
+        {!isMinimized && <>
         <div className="messages-container">
           <div className="messages-background">
             <div className="floating-orb orb-1"></div>
@@ -196,6 +189,7 @@ export default function AIAssistant({ isOpen, onClose, context }) {
                       className={`speak-btn ${isSpeaking ? 'speaking' : ''}`}
                     onClick={() => handleSpeak(message.text)}
                     title="Read aloud"
+                    aria-label={isSpeaking ? 'Stop reading aloud' : 'Read response aloud'}
                   >
                     {isSpeaking ? <VolumeX size={16} /> : <Volume2 size={16} />}
                       <div className="button-ripple"></div>
@@ -257,6 +251,7 @@ export default function AIAssistant({ isOpen, onClose, context }) {
               className={`ai-voice-btn ${isListening ? 'listening' : ''} ${isSpeaking ? 'speaking' : ''}`}
               onClick={handleVoiceToggle}
               title={isListening ? 'Stop listening' : 'Start voice input'}
+              aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
             >
               {isListening ? <MicOff size={20} /> : <Mic size={20} />}
               <div className="button-ripple"></div>
@@ -271,12 +266,13 @@ export default function AIAssistant({ isOpen, onClose, context }) {
             </button>
 
             <div className="input-wrapper">
-            <textarea
+              <textarea
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message or use voice input..."
               className="message-input"
+              aria-label="Message the AI assistant"
               rows={1}
               disabled={isProcessing}
             />
@@ -289,6 +285,7 @@ export default function AIAssistant({ isOpen, onClose, context }) {
               onClick={handleSendMessage}
               disabled={!inputMessage.trim() || isProcessing}
               title="Send message"
+              aria-label="Send message"
             >
               {isProcessing ? (
                 <div className="loading-spinner">
@@ -302,7 +299,8 @@ export default function AIAssistant({ isOpen, onClose, context }) {
             </button>
           </div>
         </div>
-      </div>
+        </>}
+      </section>
     </div>
   );
 }
