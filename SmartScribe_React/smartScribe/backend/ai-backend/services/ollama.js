@@ -3,6 +3,8 @@ import fetch from "node-fetch";
 const OLLAMA_CHAT_URL = "https://ollama.com/api/chat";
 const DEFAULT_MODEL = "gemma4:31b-cloud";
 const DEFAULT_LONG_CONTEXT_MODEL = "nemotron-3-nano:30b-cloud";
+const DEFAULT_RECORDING_MODEL = "gpt-oss:120b-cloud";
+const LONG_RECORDING_THRESHOLD = 400_000;
 const DEFAULT_TIMEOUT_MS = 120_000;
 
 export class OllamaProviderError extends Error {
@@ -69,13 +71,21 @@ export function createOllamaProvider({
       throw new OllamaProviderError(503, "AI service is not configured.");
     }
 
-    const model = task === "ultralong"
+    const recordingLength = task === "recording"
+      ? messages.reduce((length, message) => length + message.content.length, 0)
+      : 0;
+    const useLongContext = task === "ultralong"
+      || (task === "recording" && recordingLength > LONG_RECORDING_THRESHOLD);
+    const model = useLongContext
       ? (env.OLLAMA_LONG_CONTEXT_MODEL?.trim() || DEFAULT_LONG_CONTEXT_MODEL)
-      : (env.OLLAMA_MODEL?.trim() || DEFAULT_MODEL);
+      : task === "recording"
+        ? (env.OLLAMA_RECORDING_MODEL?.trim() || DEFAULT_RECORDING_MODEL)
+        : (env.OLLAMA_MODEL?.trim() || DEFAULT_MODEL);
     const requestBody = { model, messages, stream };
-    if (task === "quiz") requestBody.format = "json";
+    if (task === "quiz" || task === "recording") requestBody.format = "json";
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    const requestTimeoutMs = task === "recording" ? Math.max(timeoutMs, 240_000) : timeoutMs;
+    const timeout = setTimeout(() => controller.abort(), requestTimeoutMs);
 
     let response;
     try {

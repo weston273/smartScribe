@@ -15,7 +15,7 @@ The server listens on `PORT` or `3001` by default. Keep real credentials out of 
 
 ## Render configuration
 
-Set `OLLAMA_API_KEY` in the Render service environment. `OLLAMA_MODEL` is optional and defaults to `gemma4:31b-cloud`; the existing `ultralong` task defaults to `nemotron-3-nano:30b-cloud` and can be changed with `OLLAMA_LONG_CONTEXT_MODEL`. Keep `DEEPGRAM_API_KEY` configured for transcription. The existing start command (`npm start`, which runs `node index.js`) remains valid.
+Set `OLLAMA_API_KEY` in the Render service environment. `OLLAMA_MODEL` is optional and defaults to `gemma4:31b-cloud`. Recording notes use `OLLAMA_RECORDING_MODEL` (default `gpt-oss:120b-cloud`); transcripts over 400,000 characters use the long-context model configured by `OLLAMA_LONG_CONTEXT_MODEL` (default `nemotron-3-nano:30b-cloud`). Keep `DEEPGRAM_API_KEY` configured for transcription. The existing start command (`npm start`, which runs `node index.js`) remains valid.
 
 ## API routes
 

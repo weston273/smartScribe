@@ -265,26 +265,80 @@ export async function chatWithAI(userMessage, context = '') {
 /**
  * Convert audio to notes
  */
-export async function convertAudioToNotes(audioBlob, recordingName) {
-  try {
-    const formData = new FormData();
-    formData.append('audio', audioBlob, recordingName + '.webm');
-
-    const transcriptionResponse = await fetch(`${API_BASE_URL}/api/transcribe`, { method: 'POST', body: formData });
-    if (!transcriptionResponse.ok) throw new Error(await transcriptionResponse.text());
-
-    const { transcription } = await transcriptionResponse.json();
-    if (!transcription || typeof transcription !== "string") throw new Error("No transcription received");
-
-    const messages = [
-      { role: 'system', content: 'Convert voice to structured notes with markdown.' },
-      { role: 'user', content: `Transcription:\n\n${transcription}` }
-    ];
-
-    return await askOpenAI(messages);
-
-  } catch (error) {
-    console.error('Error converting audio:', error);
-    throw new Error(error.message || 'Failed to convert recording to notes.');
+export async function convertAudioToNotes(audioBlob, recordingName, onProgress = Function.prototype) {
+  if (!(audioBlob instanceof Blob) || !audioBlob.size) {
+    throw new Error('This recording is empty. Please record audio and try again.');
   }
+
+  const request = async (url, options, timeoutMs) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      if (!response.ok) {
+        let message = 'The recording could not be processed. Please try again.';
+        try {
+          const payload = await response.json();
+          if (typeof payload?.error === 'string') message = payload.error;
+        } catch { /* Use the safe fallback for non-JSON errors. */ }
+        throw new Error(message);
+      }
+      try {
+        return await response.json();
+      } catch {
+        throw new Error('The recording service returned an unreadable response. Please try again.');
+      }
+    } catch (error) {
+      if (controller.signal.aborted) throw new Error('Recording processing timed out. Please try again.');
+      if (error instanceof TypeError) throw new Error('Could not reach the recording service. Check your connection and try again.');
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
+  };
+
+  onProgress('uploading');
+  const formData = new FormData();
+  const mimeType = audioBlob.type || 'audio/webm';
+  const extension = mimeType.includes('mp4') ? 'm4a' : mimeType.includes('ogg') ? 'ogg' : 'webm';
+  const safeName = String(recordingName || 'recording').replace(/[^a-z0-9-_]/gi, '-');
+  formData.append('audio', audioBlob, `${safeName}.${extension}`);
+  const { transcription } = await request(`${API_BASE_URL}/api/transcribe`, { method: 'POST', body: formData }, 240_000);
+  if (typeof transcription !== 'string' || !transcription.trim()) {
+    throw new Error('No speech was detected in this recording. You can try again with clearer audio.');
+  }
+
+  onProgress('processing');
+  const messages = [
+    {
+      role: 'system',
+      content: 'Prepare a useful recording note. Return only a valid JSON object with string fields "title", "summary", and "notes". The notes field must be clear Markdown with a short heading and organized bullets. Preserve the speaker’s meaning and do not invent facts.'
+    },
+    {
+      role: 'user',
+      content: `Recording name: ${recordingName}\n\nTranscript:\n${transcription}`
+    }
+  ];
+  const result = await request(`${API_BASE_URL}/api/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages, task: 'recording' })
+  }, 240_000);
+
+  let structured;
+  try {
+    const json = result.choices?.[0]?.message?.content?.trim().replace(/^```(?:json)?\s*|\s*```$/g, '');
+    structured = JSON.parse(json);
+  } catch {
+    throw new Error('AI could not format the recording notes. Your audio is still available to retry.');
+  }
+  if (typeof structured?.notes !== 'string' || !structured.notes.trim()) {
+    throw new Error('AI returned incomplete recording notes. Your audio is still available to retry.');
+  }
+  return {
+    transcription: transcription.trim(),
+    title: typeof structured.title === 'string' && structured.title.trim() ? structured.title.trim() : recordingName,
+    summary: typeof structured.summary === 'string' ? structured.summary.trim() : '',
+    notes: structured.notes.trim()
+  };
 }
