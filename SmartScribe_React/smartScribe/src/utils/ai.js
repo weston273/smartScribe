@@ -54,44 +54,61 @@ export async function streamChatResponse(messages, onChunk) {
     });
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      let message = 'AI service is temporarily unavailable.';
+      try {
+        const error = await response.json();
+        if (typeof error?.error === 'string') message = error.error;
+      } catch {
+        // Keep the response generic if the backend did not return JSON.
+      }
+      throw new Error(message);
     }
 
+    if (!response.body) throw new Error('AI service returned an empty response.');
+
     const reader = response.body.getReader();
+    const decoder = new TextDecoder();
     let fullResponse = '';
+    let pending = '';
+
+    const readEvent = (line) => {
+      if (!line.startsWith('data: ')) return false;
+      const data = line.slice(6);
+      if (data === '[DONE]') return true;
+
+      const parsed = JSON.parse(data);
+      if (parsed?.error) {
+        throw new Error(parsed.error.message || 'AI service is temporarily unavailable.');
+      }
+
+      const content = parsed.choices?.[0]?.delta?.content || '';
+      if (content) {
+        fullResponse += content;
+        onChunk(content);
+      }
+      return false;
+    };
 
     while (true) {
       const { done, value } = await reader.read();
-      if (done) break;
-
-      const chunk = new TextDecoder().decode(value);
-      const lines = chunk.split('\n').filter(line => line.trim());
+      pending += decoder.decode(value || new Uint8Array(), { stream: !done });
+      const lines = pending.split('\n');
+      pending = done ? '' : lines.pop();
 
       for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6);
-          if (data === '[DONE]') continue;
-
-          try {
-            const parsed = JSON.parse(data);
-            const content = parsed.choices?.[0]?.delta?.content || '';
-            if (content) {
-              fullResponse += content;
-              onChunk(content);
-            }
-          } catch (e) {
-            // Ignore chunk parsing errors
-          }
+        if (readEvent(line.trimEnd())) {
+          await reader.cancel();
+          return fullResponse;
         }
       }
+      if (done) break;
     }
 
+    if (!fullResponse) throw new Error('AI service returned an empty response.');
     return fullResponse;
   } catch (err) {
     console.error('Error streaming from AI:', err);
-    const fallbackResponse = await askOpenAI(messages);
-    onChunk(fallbackResponse);
-    return fallbackResponse;
+    throw new Error('SmartScribe AI is unavailable right now. Please try again later.');
   }
 }
 
@@ -123,7 +140,7 @@ export async function generateNotes(content) {
 function safeJSONParse(str) {
   try {
     return JSON.parse(str);
-  } catch (err) {
+  } catch {
     console.warn('AI returned invalid JSON, attempting fix...', str);
 
     // Attempt quick repairs
